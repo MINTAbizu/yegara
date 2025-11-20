@@ -25,7 +25,7 @@ import ADDphysicalproducts from './component/Shope/userprofilepage/ADDphysicalpr
 import AddBook from './component/Shope/userprofilepage/AddBook';
 import SellSocialMediaAccount from './component/Shope/userprofilepage/SellSocialMediaAccount';
 import FullMultiStepKYC from './kyc/FullMultiStepKYC';
-import ShopPage from './kyc/ShopPage';
+import Claims from './component/Shope/userprofilepage/Claims';
 import AdminUsersTable from './Admin/AdminUsersTable/AdminUsersTable';
 import AdminDashboard from './Admin/AdminDashboard';
 import AdminKYCList from './Admin/AdminUsersTable/AdminKYCList';
@@ -115,11 +115,11 @@ function App() {
           <Route
             path="/listings"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <DashboardLayout>
                   <ListingsDashboard />
                 </DashboardLayout>
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
 
@@ -130,28 +130,38 @@ function App() {
                 <DashboardLayout>
                   <AffiliateOrders />
                 </DashboardLayout>
-              </ProtectedRoute>
+               </ProtectedRoute>
             }
-          />
+          />   
+            <Route
+            path="/claims"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <Claims />
+                </DashboardLayout>
+               </ProtectedRoute>
+            }
+          /> 
 
           <Route
             path="/digitalproduct"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <DashboardLayout>
                   <AddDigitalProduct />
                 </DashboardLayout>
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />  
             <Route
             path="/ADDphysicalproducts"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <DashboardLayout>
                   <ADDphysicalproducts />
                 </DashboardLayout>
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />  
                         <Route
