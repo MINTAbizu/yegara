@@ -69,3 +69,46 @@ export const getAllProductsAdmin = async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 };
+
+export const getSingleProduct = async (req, res) => {
+  try {
+    const product = await physicalProduct.findById(req.params.id)
+      .populate("seller", "name email");
+
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+export const getphysicalProductById = async (req, res) => {
+  try {
+    const product = await physicalProduct.findById(req.params.id)
+      .populate("seller", "name email"); // populate seller info
+
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// controllers/digitalProduct.controller/digitalProductDetail.controller.js
+
+// Get single digital product with seller stats
+export const getproductProductWithSellerStats = async (req, res) => {
+  try {
+    const product = await physicalProduct.findById(req.params.id).populate("seller", "name email");
+
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // Count total products uploaded by seller
+    const totalProducts = await physicalProduct.countDocuments({ seller: product.seller._id, status: "approved" });
+
+    // Count sold products (adjust according to your schema)
+    const soldProducts = await physicalProduct.countDocuments({ seller: product.seller._id, status: "sold" }); 
+
+    res.json({ product, sellerStats: { totalProducts, soldProducts } });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

@@ -8,6 +8,7 @@ import product2 from '../../assets/image/test2.jpg';
 import  './Handmadeproduct.css'
 import { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 // const products = [
 //   { id: 1, name: 'Product 1', image: product1 },
@@ -87,6 +88,10 @@ function Handmadeproduct() {
             )}
             <h5>{p.productName}</h5>
             <p className="price">{p.price} ETB</p>
+            {/* <p className="seller">Seller: {p.seller?.name}</p> */}
+             <Link to={`/ProductDetails/${p._id}?type=physical`}>
+              <button>View</button>
+            </Link>
           </div>
         ))}
       </div>

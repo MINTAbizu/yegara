@@ -22,7 +22,22 @@ const DigitalProductDetail = () => {
         console.error(err);
       }
     };
+     const feacthphysical = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/physical-products/${id}`);
+        setProduct(res.data);
+
+        // Fetch seller stats if seller exists
+        if (res.data.seller?._id) {
+          const statsRes = await axios.get(`http://localhost:5000/api/users/${res.data.seller._id}/stats`);
+          setSellerStats(statsRes.data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
     fetchProduct();
+    feacthphysical();
   }, [id]);
 
   const handleBuy = async (productId, amount, recipientWallet) => {
@@ -80,7 +95,7 @@ const DigitalProductDetail = () => {
                 <div className="card mt-3 shadow-sm p-2">
                   <h5>Uploaded by:</h5>
                   <p>Name: {product.seller.name}</p>
-                  <p>Email: {product.seller.email}</p>
+                  {/* <p>Email: {product.seller.email}</p> */}
                 </div>
               )}
 

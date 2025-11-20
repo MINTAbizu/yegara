@@ -43,14 +43,14 @@ import {
 import { protect } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
-
+// CREATE PRODUCT
 router.post("/create", protect, upload.single("image"), addDigitalProduct);
 
 // USER PAGES
 router.get("/", getApprovedProducts);
 router.get("/:id", getSingleProduct);
 
-// CREATE PRODUCT
+
 
 
 // ADMIN PAGES
