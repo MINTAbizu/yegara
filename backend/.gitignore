@@ -1,0 +1,82 @@
+# Node modules
+node_modules/
+# Ignore all files inside uploads, but keep the folder
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# Node modules
+node_modules/
+
+# Ignore all files inside uploads, but keep the folder
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Frontend assets (optional if you have user-generated files)
+front-end/src/assets/uploads/*
+!front-end/src/assets/uploads/.gitkeep
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build / dist folders (for bundlers like Vite, Webpack, TypeScript)
+dist/
+build/
+
+# Coverage reports (for testing)
+coverage/
+
+# Temporary files
+*.tmp
+*.swp
+
+# Optional npm cache directory
+.npm/
+
+# VSCode settings (optional)
+.vscode/
+
+# Optional: MacOS system files
+*.DS_Store
+
+# Optional: Editor swap files
+*.swp
+
+.DS_Store
+Thumbs.db
+
+# Build / dist folders (if you ever use TypeScript or bundlers)
+dist/
+build/
+
+# Coverage reports (for testing)
+coverage/
+
+# Temporary files
+*.tmp
+*.swp
+
+# Optional npm cache directory
+.npm/
+
+# VSCode settings (optional)
+.vscode/
