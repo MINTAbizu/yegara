@@ -21,6 +21,17 @@ const idBack = req.files.idBack?.[0]?.filename;
     });
 
     await newKYC.save();
+   
+
+await User.findByIdAndUpdate(req.user._id, {
+  kycSubmitted: true
+});
+
+// res.status(201).json({
+//   message: "KYC submitted successfully",
+//   data: newKYC
+// });
+
     res.status(201).json({ message: "KYC submitted successfully", data: newKYC });
   } catch (error) {
     console.error("submitKYC error:", error);

@@ -6,7 +6,7 @@ import {
     getUserById,
     updateUser,
     deleteUser,
-    getCurrentUser,
+    
     googleLogin  // <-- import the new controller function
 } from '../../controller/user.controller/user.controller.js';
 import { protect } from '../../middleware/authMiddleware.js';
@@ -24,7 +24,7 @@ router.post('/login', loginUser);
 router.post('/google', googleLogin);
 
 // Protected routes
-router.get('/me', protect, getCurrentUser);
+
 router.get('/', protect, getUsers);
 router.get('/:id', protect, getUserById);
 router.put('/:id', protect, updateUser);
@@ -37,12 +37,31 @@ import KYC from "../../model/kyc/kyc.model.js";
 import Profile from "../../model/UserProfile/UserProfile.js";
 
 
+// router.get("/me", protect, async (req, res) => {
+//   try {
+//     const kyc = await KYC.findOne({ user: req.user._id });
+//     // profileApproved only when status === 'approved'
+//     const profileApproved = await Profile.findOne({ user: req.user._id, status: "approved" });
+//     // profileSubmitted if any profile record exists (pending or approved)
+//     const profileAny = await Profile.findOne({ user: req.user._id });
+
+//     res.json({
+//       _id: req.user._id,
+//       name: req.user.name,
+//       email: req.user.email,
+//       kycSubmitted: !!kyc,
+//       profileSubmitted: !!profileAny,
+//       profileApproved: !!profileApproved,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// });
 router.get("/me", protect, async (req, res) => {
   try {
     const kyc = await KYC.findOne({ user: req.user._id });
-    // profileApproved only when status === 'approved'
     const profileApproved = await Profile.findOne({ user: req.user._id, status: "approved" });
-    // profileSubmitted if any profile record exists (pending or approved)
     const profileAny = await Profile.findOne({ user: req.user._id });
 
     res.json({
@@ -58,5 +77,6 @@ router.get("/me", protect, async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
 
 export default router;

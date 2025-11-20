@@ -20,8 +20,7 @@ const PROFESSIONAL_FIELDS = [
 ];
 
 const UserProfileFormFixed = () => {
-  const { user } = useAuth();
-  const { refreshUser } = useAuth();
+  const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [about, setAbout] = useState("");
   const [region, setRegion] = useState("");
@@ -76,6 +75,7 @@ const UserProfileFormFixed = () => {
           // Refresh user and redirect to shop if KYC already submitted
           if (typeof refreshUser === 'function') {
             const updated = await refreshUser();
+            console.debug('after profile refresh user:', updated);
             if (updated?.kycSubmitted) {
               navigate('/orders');
             }

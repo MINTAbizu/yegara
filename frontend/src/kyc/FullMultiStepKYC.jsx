@@ -6,7 +6,7 @@ import DashboardLayout from "./DashboardLayout";
 
 const FullMultiStepKYC = () => {
   const [step, setStep] = useState(1);
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -73,51 +73,62 @@ const FullMultiStepKYC = () => {
 
   const prevStep = () => setStep(step - 1);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const data = new FormData();
-    Object.keys(formData).forEach((key) => data.append(key, formData[key]));
+  const data = new FormData();
+  Object.keys(formData).forEach((key) => data.append(key, formData[key]));
 
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert('Not authenticated — please log in.');
+      navigate('/login');
+      return;
+    }
+
+    const res = await fetch("http://localhost:5000/api/kyc/submit-kyc", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: data,
+    });
+
+    const text = await res.text();  // read the body once
+
+    let result;
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert('Not authenticated — please log in.');
-        navigate('/login');
-        return;
-      }
+      result = JSON.parse(text);    // attempt to parse JSON
+    } catch (err) {
+      console.error("Response is not JSON:", text);
+      alert("Server returned an unexpected response.");
+      return;
+    }
 
-      const res = await fetch("http://localhost:5000/api/kyc/submit-kyc", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: data,
-      });
+    console.log("RESULT:", result);
 
-      const result = await res.json();
-      console.log("RESULT:", result);
-
-      if (res.ok) {
-        alert("KYC Submitted Successfully!");
-        // refresh auth user state so flags like kycSubmitted are updated
-        if (typeof refreshUser === 'function') {
-          const updated = await refreshUser();
-          // if profile already completed, send user to shop
-          if (updated?.profileCompleted) {
-            navigate('/orders');
-          } else {
-            navigate('/UserProfile');
-          }
+    if (res.ok) {
+      alert("KYC Submitted Successfully!");
+      if (typeof refreshUser === 'function') {
+        const updated = await refreshUser();
+        if (updated?.profileApproved || updated?.profileCompleted) {
+          navigate('/orders');
         } else {
           navigate('/UserProfile');
         }
       } else {
-        alert("Submission failed!");
+        navigate('/UserProfile');
       }
-    } catch (error) {
-      alert("Server Error");
-      console.error(error);
+    } else {
+      alert(result.message || "Submission failed!");
     }
-  };
+
+  } catch (error) {
+    alert("Server Error");
+    console.error(error);
+  }
+};
+
+
 
   return (
     <DashboardLayout>

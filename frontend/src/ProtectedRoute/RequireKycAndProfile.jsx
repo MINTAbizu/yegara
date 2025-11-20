@@ -1,31 +1,39 @@
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../Context/Authcontext';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const RequireKycAndProfile = ({ children }) => {
-  const { user, loading } = useAuth();
-  const location = useLocation();
+const ShopGuard = ({ children }) => {
+  const [loading, setLoading] = useState(true);
+  const [allowed, setAllowed] = useState(false);
+  const navigate = useNavigate();
 
-  if (loading) return <div>Loading...</div>;
+  useEffect(() => {
+    const checkPermissions = async () => {
+      try {
+        const kyc = await axios.get("/api/kyc/my-kyc");
+        const profile = await axios.get("/api/profile/my-profile");
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
+        if (!kyc.data || !profile.data) {
+          alert("Please complete your KYC and Profile first!");
+          return navigate("/complete-kyc");
+        }
 
-  // If user hasn't submitted KYC, redirect to KYC form
-  if (!user.kycSubmitted) {
-    return <Navigate to="/RecognitionForm" state={{ from: location }} replace />;
-  }
+        setAllowed(true);
+      } catch (err) {
+        alert("Please complete your KYC and Profile first!");
+        navigate("/complete-kyc");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // If user hasn't completed profile, redirect to profile form
-  // Note: backend now exposes both `profileSubmitted` (exists) and `profileApproved`.
-  // Allow access if profile has been submitted; if you prefer to require admin approval,
-  // change this to check `!user.profileApproved` instead.
-  if (!user.profileSubmitted && !user.profileApproved) {
-    return <Navigate to="/UserProfile" state={{ from: location }} replace />;
-  }
+    checkPermissions();
+  }, []);
+
+  if (loading) return <p>Checking access...</p>;
+  if (!allowed) return null;
 
   return children;
 };
 
-export default RequireKycAndProfile;
+export default ShopGuard;

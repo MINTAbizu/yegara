@@ -27,29 +27,28 @@ const DashboardLayout = ({ children }) => {
 
   // handle Shop link clicks: prevent navigation and prompt user to complete KYC/profile
   const handleShopClick = (e) => {
-    if (!user) {
-      e.preventDefault();
-      navigate('/login', { state: { from: location } });
-      return;
-    }
+  // If KYC not submitted
+  if (!user?.kycSubmitted) {
+    e.preventDefault();
+    setModalMessage("You must complete KYC before accessing the shop.");
+    setModalTarget("/RecognitionForm");
+    setModalOpen(true);
+    return;
+  }
 
-    if (!user.kycSubmitted) {
-      e.preventDefault();
-      setModalMessage('You must complete KYC before accessing the shop.');
-      setModalTarget('/RecognitionForm');
-      setModalOpen(true);
-      return;
-    }
+  // If profile not completed
+  if (!user?.profileCompleted) {
+    e.preventDefault();
+    setModalMessage("You must complete your profile before accessing the shop.");
+    setModalTarget("/UserProfile");
+    setModalOpen(true);
+    return;
+  }
 
-    if (!user.profileCompleted) {
-      e.preventDefault();
-      setModalMessage('You must complete your profile before accessing the shop.');
-      setModalTarget('/UserProfile');
-      setModalOpen(true);
-      return;
-    }
-    // otherwise allow the link to proceed
-  };
+  // Allow access
+  navigate("/shop");
+};
+
 
   return (
     <div className="dashboard-wrapper d-flex">

@@ -63,21 +63,33 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
   // Authcontext.jsx
+// const refreshUser = async () => {
+//   const token = localStorage.getItem("token");
+//   if (!token) return;
+
+//   try {
+//     const res = await axios.get("http://localhost:5000/api/users/me", {
+//       headers: { Authorization: `Bearer ${token}` },
+//     });
+//     setUser(res.data);
+//     console.debug('refreshUser result:', res.data);
+//     return res.data;
+//   } catch (err) {
+//     console.error(err);
+//     setUser(null);
+//   }
+// };
 const refreshUser = async () => {
   const token = localStorage.getItem("token");
-  if (!token) return;
+  const res = await fetch("/api/auth/me", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
 
-  try {
-    const res = await axios.get("http://localhost:5000/api/users/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setUser(res.data);
-    return res.data;
-  } catch (err) {
-    console.error(err);
-    setUser(null);
-  }
+  const data = await res.json();
+  setUser(data.user);
+  return data.user;
 };
+
 
 
   return (

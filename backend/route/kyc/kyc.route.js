@@ -3,6 +3,7 @@ import upload from "../../middleware/kyc/middlewareupload.js";
 import { submitKYC, getAllKYC, deleteKYC } from "../../controller/kyc/kyc.controller.js";
 import { protect } from '../../middleware/authMiddleware.js';
 import KYC from "../../model/kyc/kyc.model.js";
+import User from "../../model/user.model/user.model.js";
 const router = express.Router();
 
 router.post(
@@ -34,6 +35,10 @@ router.post(
     }
   }
 );
+router.get("/me", protect, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  res.json({ user });
+});
 
 
 router.get("/", getAllKYC);           // Get all KYC
