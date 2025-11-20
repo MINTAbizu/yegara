@@ -47,11 +47,12 @@ function App() {
           <Route
             path="/orders"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <RequireKycAndProfile>
-                  <ShopPage />
+                  {/* <ShopPage /> */}
+                   <OrdersDashboard />
                 </RequireKycAndProfile>
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
          <Route path="/ProductDetails/:id" element={

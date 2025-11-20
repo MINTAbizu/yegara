@@ -36,33 +36,39 @@ const FullMultiStepKYC = () => {
   const nextStep = () => { if (validateStep()) setStep(step + 1); };
   const prevStep = () => setStep(step - 1);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = new FormData();
-    Object.keys(formData).forEach(key => data.append(key, formData[key]));
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  const data = new FormData();
+  Object.keys(formData).forEach(key => data.append(key, formData[key]));
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return navigate("/login");
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return navigate("/login");
 
-      const res = await fetch("http://localhost:5000/api/kyc/submit-kyc", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: data,
-      });
+    const res = await fetch("http://localhost:5000/api/kyc/submit-kyc", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: data,
+    });
 
-      const result = await res.json();
+    const result = await res.json();
 
-      if (res.ok) {
-        alert("KYC Submitted Successfully!");
-        if (refreshUser) await refreshUser();
-        navigate("/Shop", { replace: true }); // go to Shop directly
-      } else alert(result.message || "Submission failed!");
-    } catch (err) {
-      console.error(err);
-      alert("Server Error");
+    if (res.ok) {
+      alert("KYC Submitted Successfully!");
+
+      // IMPORTANT FIX
+      await refreshUser();
+
+      navigate("/orders", { replace: true });
+    } else {
+      alert(result.message || "Submission failed!");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Server Error");
+  }
+};
+
 
   return (
     <DashboardLayout>

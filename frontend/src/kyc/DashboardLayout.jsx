@@ -46,7 +46,7 @@ const DashboardLayout = ({ children }) => {
   }
 
   // Allow access
-  navigate("/shop");
+  navigate("/orders");
 };
 
 

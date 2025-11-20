@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Load user on app start
-  useEffect(() => {
+   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        setUser(res.data);
+        setUser(res.data.user);   // <-- FIXED
       })
       .catch(() => {
         setUser(null);
@@ -80,15 +80,16 @@ export const AuthProvider = ({ children }) => {
 //   }
 // };
 const refreshUser = async () => {
-  const token = localStorage.getItem("token");
-  const res = await fetch("/api/auth/me", {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-  const data = await res.json();
-  setUser(data.user);
-  return data.user;
-};
+    const res = await axios.get("http://localhost:5000/api/users/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setUser(res.data.user);  // <-- FIXED
+    return res.data.user;
+  };
 
 
 
