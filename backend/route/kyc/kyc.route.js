@@ -2,6 +2,7 @@ import express from "express";
 import upload from "../../middleware/kyc/middlewareupload.js";
 import { submitKYC, getAllKYC, deleteKYC } from "../../controller/kyc/kyc.controller.js";
 import { protect } from '../../middleware/authMiddleware.js';
+import KYC from "../../model/kyc/kyc.model.js";
 const router = express.Router();
 
 router.post(
@@ -13,6 +14,7 @@ router.post(
     { name: "idBack", maxCount: 1 },
   ]),
   async (req, res) => {
+    
     try {
       const { fullName, dob, gender, nationality, maritalStatus, idType, idNumber, issueDate, expireDate, residentialAddress, phone, email } = req.body;
       const kyc = new KYC({

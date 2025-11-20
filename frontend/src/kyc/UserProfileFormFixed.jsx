@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../Context/Authcontext";
+import { useNavigate } from 'react-router-dom';
 
 const ETHIOPIA_REGIONS = [
   "Addis Ababa", "Afar", "Amhara", "Benishangul-Gumuz", "Dire Dawa",
@@ -20,6 +21,8 @@ const PROFESSIONAL_FIELDS = [
 
 const UserProfileFormFixed = () => {
   const { user } = useAuth();
+  const { refreshUser } = useAuth();
+  const navigate = useNavigate();
   const [about, setAbout] = useState("");
   const [region, setRegion] = useState("");
   const [shopLocation, setShopLocation] = useState("");
@@ -51,6 +54,12 @@ const UserProfileFormFixed = () => {
 
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        setMessage({ type: "error", text: "Not authenticated — please log in." });
+        navigate('/login');
+        return;
+      }
+
       const res = await fetch("http://localhost:5000/api/profile/create", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -63,7 +72,14 @@ const UserProfileFormFixed = () => {
         // Display friendly message if profile already exists
         setMessage({ type: "error", text: result.message || "Failed to create profile" });
       } else {
-        setMessage({ type: "success", text: result.message || "Profile created successfully!" });
+          setMessage({ type: "success", text: result.message || "Profile created successfully!" });
+          // Refresh user and redirect to shop if KYC already submitted
+          if (typeof refreshUser === 'function') {
+            const updated = await refreshUser();
+            if (updated?.kycSubmitted) {
+              navigate('/orders');
+            }
+          }
       }
     } catch (error) {
       console.error(error);

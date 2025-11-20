@@ -81,6 +81,11 @@ const FullMultiStepKYC = () => {
 
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        alert('Not authenticated — please log in.');
+        navigate('/login');
+        return;
+      }
 
       const res = await fetch("http://localhost:5000/api/kyc/submit-kyc", {
         method: "POST",
@@ -93,7 +98,18 @@ const FullMultiStepKYC = () => {
 
       if (res.ok) {
         alert("KYC Submitted Successfully!");
-        navigate("/UserProfile");
+        // refresh auth user state so flags like kycSubmitted are updated
+        if (typeof refreshUser === 'function') {
+          const updated = await refreshUser();
+          // if profile already completed, send user to shop
+          if (updated?.profileCompleted) {
+            navigate('/orders');
+          } else {
+            navigate('/UserProfile');
+          }
+        } else {
+          navigate('/UserProfile');
+        }
       } else {
         alert("Submission failed!");
       }

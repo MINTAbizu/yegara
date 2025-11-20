@@ -72,6 +72,7 @@ const refreshUser = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     setUser(res.data);
+    return res.data;
   } catch (err) {
     console.error(err);
     setUser(null);

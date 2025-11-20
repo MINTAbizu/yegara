@@ -7,6 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 
 import { AuthProvider } from './Context/Authcontext';
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
+import RequireKycAndProfile from './ProtectedRoute/RequireKycAndProfile';
 
 import Landingpage from './component/Landingpage';
 import Register from './pages/Register';
@@ -43,7 +44,16 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />
-          <Route path="/orders" element={<ShopPage />} />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <RequireKycAndProfile>
+                  <ShopPage />
+                </RequireKycAndProfile>
+              </ProtectedRoute>
+            }
+          />
          <Route path="/ProductDetails/:id" element={
           <ProtectedRoute>
           <ProductDetails />
@@ -93,11 +103,11 @@ function App() {
           <Route
             path="/orders"
             element={
-              
-                
+              <ProtectedRoute>
+                <RequireKycAndProfile>
                   <OrdersDashboard />
-                
-              
+                </RequireKycAndProfile>
+              </ProtectedRoute>
             }
           />
 

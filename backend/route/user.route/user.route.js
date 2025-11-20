@@ -40,14 +40,18 @@ import Profile from "../../model/UserProfile/UserProfile.js";
 router.get("/me", protect, async (req, res) => {
   try {
     const kyc = await KYC.findOne({ user: req.user._id });
-    const profile = await Profile.findOne({ user: req.user._id, status: "approved" });
+    // profileApproved only when status === 'approved'
+    const profileApproved = await Profile.findOne({ user: req.user._id, status: "approved" });
+    // profileSubmitted if any profile record exists (pending or approved)
+    const profileAny = await Profile.findOne({ user: req.user._id });
 
     res.json({
       _id: req.user._id,
       name: req.user.name,
       email: req.user.email,
       kycSubmitted: !!kyc,
-      profileCompleted: !!profile,
+      profileSubmitted: !!profileAny,
+      profileApproved: !!profileApproved,
     });
   } catch (err) {
     console.error(err);

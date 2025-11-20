@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import "./DashboardLayout.css";
 import { useAuth } from "../Context/Authcontext";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaHome, FaTachometerAlt, FaUserPlus, FaEye, FaCog, FaUniversity, FaMoneyCheckAlt, FaQuestionCircle, FaBars, FaTimes } from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalTarget, setModalTarget] = useState("");
+  const navigate = useNavigate();
 
   const sidebarItems = [
     { name: "Home", path: "/", icon: <FaHome /> },
@@ -20,6 +24,32 @@ const DashboardLayout = ({ children }) => {
     { name: "Payments", path: "/payments", icon: <FaMoneyCheckAlt /> },
     { name: "Help", path: "/help", icon: <FaQuestionCircle /> },
   ];
+
+  // handle Shop link clicks: prevent navigation and prompt user to complete KYC/profile
+  const handleShopClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+
+    if (!user.kycSubmitted) {
+      e.preventDefault();
+      setModalMessage('You must complete KYC before accessing the shop.');
+      setModalTarget('/RecognitionForm');
+      setModalOpen(true);
+      return;
+    }
+
+    if (!user.profileCompleted) {
+      e.preventDefault();
+      setModalMessage('You must complete your profile before accessing the shop.');
+      setModalTarget('/UserProfile');
+      setModalOpen(true);
+      return;
+    }
+    // otherwise allow the link to proceed
+  };
 
   return (
     <div className="dashboard-wrapper d-flex">
@@ -45,7 +75,11 @@ const DashboardLayout = ({ children }) => {
                 className={`d-flex align-items-center gap-2 p-2 rounded text-decoration-none ${
                   location.pathname === item.path ? "bg-primary text-white" : "text-dark"
                 }`}
-                onClick={() => setSidebarOpen(false)} // close sidebar on mobile
+                onClick={(e) => {
+                  setSidebarOpen(false); // close sidebar on mobile
+                  // Intercept shop link to enforce KYC/profile completion
+                  if (item.name === "Shope") handleShopClick(e);
+                }}
               >
                 <span>{item.icon}</span>
                 <span>{item.name}</span>
@@ -92,9 +126,60 @@ const DashboardLayout = ({ children }) => {
         </header>
 
         <main className="p-4">{children}</main>
+
+        {/* Simple modal shown when user needs to complete KYC/profile */}
+        {modalOpen && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 2000,
+            }}
+            onClick={() => setModalOpen(false)}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: '#fff',
+                padding: '20px',
+                borderRadius: '8px',
+                maxWidth: '420px',
+                width: '100%',
+                boxShadow: '0 6px 18px rgba(0,0,0,0.2)'
+              }}
+            >
+              <h5 className="mb-3">Action required</h5>
+              <p>{modalMessage}</p>
+              <div className="d-flex justify-content-end gap-2">
+                <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancel</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(modalTarget);
+                  }}
+                >
+                  Go to form
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default DashboardLayout;
+
+// Helper: handle click to Shop link and show modal if user not ready
+function handleShopClick(e) {
+  // `this` is not bound here; we'll rely on closures of variables defined in component
+}
