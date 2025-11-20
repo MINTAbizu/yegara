@@ -64,5 +64,12 @@ app.use("/api/kyc", kycRoutes)
 app.use("/api/profile", profileRoutes);
 app.use("/api/payment", chapapayment);
 
+// Error handler (return JSON for API errors)
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  if (res.headersSent) return next(err);
+  res.status(err.status || 500).json({ message: err.message || 'Server error' });
+});
+
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

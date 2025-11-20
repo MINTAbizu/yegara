@@ -6,6 +6,11 @@ import KYC from "../../model/kyc/kyc.model.js";
 import User from "../../model/user.model/user.model.js";
 const router = express.Router();
 
+
+
+
+
+// Submit KYC
 router.post(
   "/submit-kyc",
   protect,
@@ -15,9 +20,14 @@ router.post(
     { name: "idBack", maxCount: 1 },
   ]),
   async (req, res) => {
-    
     try {
-      const { fullName, dob, gender, nationality, maritalStatus, idType, idNumber, issueDate, expireDate, residentialAddress, phone, email } = req.body;
+      const {
+        fullName, dob, gender, nationality, maritalStatus,
+        idType, idNumber, issueDate, expireDate,
+        residentialAddress, phone, email
+      } = req.body;
+
+      // Create KYC entry
       const kyc = new KYC({
         user: req.user._id,
         fullName, dob, gender, nationality, maritalStatus,
@@ -27,17 +37,28 @@ router.post(
         idFront: req.files.idFront?.[0]?.filename,
         idBack: req.files.idBack?.[0]?.filename,
       });
+
       await kyc.save();
-      res.status(201).json({ message: "KYC submitted successfully", data: kyc });
+
+      // Update user KYC status
+      await User.findByIdAndUpdate(req.user._id, { kycSubmitted: true });
+
+      return res.status(201).json({ message: "KYC submitted successfully", data: kyc });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "Server Error" });
+      console.error("submitKYC error:", err);
+      return res.status(500).json({ message: "Server Error", error: err.message });
     }
   }
 );
+
+// Get current user data
 router.get("/me", protect, async (req, res) => {
-  const user = await User.findById(req.user._id);
-  res.json({ user });
+  try {
+    const user = await User.findById(req.user._id);
+    return res.json({ user });
+  } catch (err) {
+    return res.status(500).json({ message: "Server Error", error: err.message });
+  }
 });
 
 

@@ -1,20 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../Context/Authcontext";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 import OrdersDashboard from "../component/Shope/userprofilepage/OrdersDashboard";
+
 const ShopPage = () => {
   const { user, loading } = useAuth();
+  const [checked, setChecked] = useState(false);
+  const navigate = useNavigate();
 
-  if (loading) return <div>Loading...</div>;
+  useEffect(() => {
+    if (!loading && user) {
+      if (!user.kycSubmitted) return navigate("/RecognitionForm", { replace: true });
+      setChecked(true);
+    }
+  }, [loading, user, navigate]);
 
-  if (!user.kycSubmitted) {
-    return <Navigate to="/RecognitionForm" replace />;
-  }
-
-  if (!user.profileCompleted) {
-    return <Navigate to="/UserProfile" replace />;
-  }
+  if (loading || !checked) return <div>Loading...</div>;
 
   return (
     <DashboardLayout>
@@ -22,4 +24,5 @@ const ShopPage = () => {
     </DashboardLayout>
   );
 };
+
 export default ShopPage;

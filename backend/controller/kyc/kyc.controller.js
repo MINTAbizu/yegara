@@ -1,4 +1,5 @@
 import KYC from "../../model/kyc/kyc.model.js";
+import User from "../../model/user.model/user.model.js";
 
 // Submit KYC
 export const submitKYC = async (req, res) => {
