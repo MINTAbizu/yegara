@@ -37,13 +37,13 @@ const DashboardLayout = ({ children }) => {
   }
 
   // If profile not completed
-  // if (!user?.profileCompleted) {
-  //   e.preventDefault();
-  //   setModalMessage("You must complete your profile before accessing the shop.");
-  //   setModalTarget("/UserProfile");
-  //   setModalOpen(true);
-  //   return;
-  // }
+  if (!user?.profileCompleted) {
+    e.preventDefault();
+    setModalMessage("You must complete your profile before accessing the shop.");
+    setModalTarget("/UserProfile");
+    setModalOpen(true);
+    return;
+  }
 
   // Allow access
   navigate("/orders");

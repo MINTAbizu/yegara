@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/Authcontext";
 import DashboardLayout from "./DashboardLayout";
-const API_URL = import.meta.env.VITE_API_URL;
+
 const FullMultiStepKYC = () => {
   const { refreshUser } = useAuth();
   const navigate = useNavigate();
@@ -45,8 +45,7 @@ const FullMultiStepKYC = () => {
     const token = localStorage.getItem("token");
     if (!token) return navigate("/login");
 
-
-    const res = await fetch(`${API_URL}/api/kyc/submit-kyc`, {
+    const res = await fetch("http://localhost:5000/api/kyc/submit-kyc", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: data,
@@ -73,7 +72,7 @@ const FullMultiStepKYC = () => {
 
   return (
     <DashboardLayout>
-      <p className="dan" style={{color:'red'}}>You must complete KYC before accessing the shop  page </p>
+      <p className="dan" style={{color:'red'}}>You must complete KYC before accessing the shop special shop page </p>
       <div className="d-flex justify-content-center py-5">
         <div className="card shadow p-3" style={{ maxWidth: 500, width: "100%" }}>
           <div className="card-body">
