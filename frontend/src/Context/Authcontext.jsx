@@ -2,7 +2,6 @@ import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
-const API_URL = import.meta.env.VITE_API_URL;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -35,7 +34,7 @@ export const AuthProvider = ({ children }) => {
   // Register
   const register = async (data) => {
     const res = await axios.post(
-      `${API_URL}/api/users/register`,
+      "http://localhost:5000/api/users/register",
       data
     );
 
@@ -84,7 +83,7 @@ const refreshUser = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    const res = await axios.get(`${API_URL}/api/users/me`, {
+    const res = await axios.get("http://localhost:5000/api/users/me", {
       headers: { Authorization: `Bearer ${token}` },
     });
 

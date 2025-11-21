@@ -180,7 +180,7 @@ import KYC from "../../model/kyc/kyc.model.js";
 import Profile from "../../model/UserProfile/UserProfile.js";
 import { OAuth2Client } from "google-auth-library";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
+const JWT_SECRET = process.env.JWT_SECRET || "yourSecretKey";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "1d";
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 

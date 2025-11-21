@@ -72,7 +72,6 @@ const FullMultiStepKYC = () => {
 
   return (
     <DashboardLayout>
-      <p className="dan" style={{color:'red'}}>You must complete KYC before accessing the shop special shop page </p>
       <div className="d-flex justify-content-center py-5">
         <div className="card shadow p-3" style={{ maxWidth: 500, width: "100%" }}>
           <div className="card-body">

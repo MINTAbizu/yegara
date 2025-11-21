@@ -1,5 +1,8 @@
+
 import express from "express";
-import dotenv from "dotenv";
+import dotenv from "dotenv"
+dotenv.config();
+
 import mongoose from "mongoose";
 import cors from "cors";
 import fs from "fs";
@@ -15,7 +18,7 @@ import kycRoutes from './route/kyc/kyc.route.js'
 // profileRoutes
 import profileRoutes from './route/profile.route/profile.route.js'
 // import productdetail from './route/digitalProduct.route/ProductDetails.route.js'
-dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 

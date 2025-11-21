@@ -1,34 +1,45 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/Authcontext";
 
-const ShopGuard = ({ children }) => {
+const RequireKycAndProfile = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [allowed, setAllowed] = useState(false);
   const navigate = useNavigate();
+  const { user, refreshUser } = useAuth();
 
   useEffect(() => {
     const checkPermissions = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       try {
-        const kyc = await axios.get("/api/kyc/my-kyc");
-        const profile = await axios.get("/api/profile/my-profile");
+        // Fetch current user's KYC
+        const res = await axios.get("http://localhost:5000/api/kyc/my-kyc", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        if (!kyc.data || !profile.data) {
-          alert("Please complete your KYC and Profile first!");
-          return navigate("/complete-kyc");
+        // If KYC exists, allow access
+        if (res.data) {
+          await refreshUser(); // refresh AuthContext user info
+          setAllowed(true);
         }
-
-        setAllowed(true);
       } catch (err) {
-        alert("Please complete your KYC and Profile first!");
-        navigate("/complete-kyc");
+        // If 404 or error, redirect to KYC form
+        console.log("KYC check failed:", err.response?.data || err.message);
+        alert("Please complete your KYC first!");
+        navigate("/RecognitionForm", { replace: true });
       } finally {
         setLoading(false);
       }
     };
 
     checkPermissions();
-  }, []);
+  }, [navigate, refreshUser]);
 
   if (loading) return <p>Checking access...</p>;
   if (!allowed) return null;
@@ -36,4 +47,4 @@ const ShopGuard = ({ children }) => {
   return children;
 };
 
-export default ShopGuard;
+export default RequireKycAndProfile;

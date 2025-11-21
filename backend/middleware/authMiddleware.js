@@ -52,7 +52,7 @@
 import jwt from "jsonwebtoken";
 import User from "../model/user.model/user.model.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
+const JWT_SECRET = process.env.JWT_SECRET || "yourSecretKey";
 
 /**
  * protect middleware

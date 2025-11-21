@@ -61,6 +61,17 @@ router.get("/me", protect, async (req, res) => {
   }
 });
 
+// Get current user's KYC
+router.get("/my-kyc", protect, async (req, res) => {
+  try {
+    const kyc = await KYC.findOne({ user: req.user._id });
+    if (!kyc) return res.status(404).json({ message: "No KYC found" });
+    return res.json(kyc);
+  } catch (err) {
+    console.error("getMyKYC error:", err);
+    return res.status(500).json({ message: "Server Error", error: err.message });
+  }
+});
 
 router.get("/", getAllKYC);           // Get all KYC
 router.delete("/:id", deleteKYC);     // Delete KYC
