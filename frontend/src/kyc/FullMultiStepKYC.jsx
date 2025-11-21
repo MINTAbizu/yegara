@@ -45,11 +45,12 @@ const FullMultiStepKYC = () => {
     const token = localStorage.getItem("token");
     if (!token) return navigate("/login");
 
-  const res = await fetch(`${API_URL}/api/kyc/submit-kyc`, {
-  method: "POST",
-  headers: { Authorization: `Bearer ${token}` },
-  body: data
-});
+
+    const res = await fetch(`${API_URL}/api/kyc/submit-kyc`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: data,
+    });
 
     const result = await res.json();
 
@@ -73,7 +74,6 @@ const FullMultiStepKYC = () => {
   return (
     <DashboardLayout>
       <p className="dan" style={{color:'red'}}>You must complete KYC before accessing the shop  page </p>
-      <small style={{backgroundColor:'orange' ,color:"black"}}>from this page only avilabel future is shop page </small>
       <div className="d-flex justify-content-center py-5">
         <div className="card shadow p-3" style={{ maxWidth: 500, width: "100%" }}>
           <div className="card-body">
