@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+const API_URL = import.meta.env.VITE_API_URL;
 const AdminDigitalProductsTable = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ const fetchProducts = async () => {
   try {
     const token = localStorage.getItem("adminToken");
     const res = await axios.get(
-      "http://localhost:5000/api/digital-products/admin/all",
+      `${API_URL}/api/digital-products/admin/all`,
       {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       }
@@ -41,7 +41,7 @@ const fetchProducts = async () => {
     try {
       const token = localStorage.getItem("adminToken"); // or userToken
       await axios.patch(
-        `http://localhost:5000/api/digital-products/admin/toggle/${id}`,
+        `${API_URL}/api/digital-products/admin/toggle/${id}`,
         {},
         {
           headers: token
@@ -82,7 +82,7 @@ const fetchProducts = async () => {
                 <td>
                   {p.image && (
                     <img
-                      src={`http://localhost:5000${p.image}`}
+                      src={`${API_URL}${p.image}`}
                       alt={p.productName}
                       style={{
                         width: "50px",

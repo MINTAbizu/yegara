@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+const API_URL = import.meta.env.VITE_API_URL;
 const AdminProfileList = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -7,7 +7,7 @@ const AdminProfileList = () => {
   const fetchProfiles = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/profile", {
+      const res = await fetch(`${API_URL}/api/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -29,7 +29,7 @@ const AdminProfileList = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/profile/${id}/status`, {
+      const res = await fetch(`${API_URL}/api/profile/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import '../Admin.css'
+const API_URL = import.meta.env.VITE_API_URL;
 const AdminKYCList = () => {
   const [kycList, setKycList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -8,7 +9,7 @@ const AdminKYCList = () => {
   const fetchKYC = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/kyc", {
+      const res = await fetch(`${API_URL}/api/kyc`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -29,7 +30,7 @@ const AdminKYCList = () => {
     if (!window.confirm("Are you sure you want to delete this KYC?")) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/kyc/${id}`, {
+      const res = await fetch(`${API_URL}/api/kyc/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
