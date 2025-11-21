@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+const API_URL = import.meta.env.VITE_API_URL;
 const AdminPhysicalproducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ const AdminPhysicalproducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/physical-products/Admin");
+      const res = await axios.get(`${API_URL}/api/physical-products/Admin`);
       setProducts(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
@@ -23,7 +23,7 @@ const AdminPhysicalproducts = () => {
 
   const handleToggleStatus = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/api/physical-products/toggle-status/${id}`);
+      await axios.patch(`${API_URL}/api/physical-products/toggle-status/${id}`);
       
       setProducts((prev) =>
         prev.map((p) =>
