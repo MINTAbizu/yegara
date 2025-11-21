@@ -21,7 +21,7 @@ const ShopGuard = ({ children }) => {
         setAllowed(true);
       } catch (err) {
         alert("Please complete your KYC and Profile first!");
-        navigate("/RecognitionForm");
+        navigate("/orders");
       } finally {
         setLoading(false);
       }
