@@ -72,6 +72,7 @@ const FullMultiStepKYC = () => {
 
   return (
     <DashboardLayout>
+      <p className="danger">please fil all required form in detai to access this platform special shop page </p>
       <div className="d-flex justify-content-center py-5">
         <div className="card shadow p-3" style={{ maxWidth: 500, width: "100%" }}>
           <div className="card-body">
