@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ADDphysicalproducts = () => {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ const ADDphysicalproducts = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/physical-products/create", data, {
+      const res = await axios.post(`${API_URL}/api/physical-products/create`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("physical Product Added Successfully!");

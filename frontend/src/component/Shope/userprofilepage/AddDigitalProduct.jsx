@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+const API_URL = import.meta.env.VITE_API_URL;
 const AddDigitalProduct = () => {
   const [formData, setFormData] = useState({
     productName: "",
@@ -39,7 +39,7 @@ const AddDigitalProduct = () => {
       }
 
       const res = await axios.post(
-        "http://localhost:5000/api/digital-products/create",
+        `${API_URL}/api/digital-products/create`,
         data,
         {
           headers: {
