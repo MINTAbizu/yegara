@@ -7,7 +7,7 @@ const OrdersDashboard = () => {
   return (
     <DashboardLayout>
       <div className="orders-container">
-
+        <h2 className="mb-4">to create post shop click on listing </h2>
         {/* Tabs Navigation */}
         <div className="orders-tabs">
           <Link to="/shop" className="orders-tab-btn">Shop</Link>
