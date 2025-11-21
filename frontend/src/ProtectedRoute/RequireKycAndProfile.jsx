@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/Authcontext";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const RequireKycAndProfile = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ const RequireKycAndProfile = ({ children }) => {
 
       try {
         // Fetch current user's KYC
-        const res = await axios.get("http://localhost:5000/api/kyc/my-kyc", {
+        const res = await axios.get(`${API_URL}/api/kyc/my-kyc`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
