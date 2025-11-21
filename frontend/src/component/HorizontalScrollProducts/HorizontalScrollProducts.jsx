@@ -3,13 +3,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './HorizontalScrollProducts.css';
+const API_URL = import.meta.env.VITE_API_URL;
 
 function HorizontalProductList() {
   const [products, setProducts] = useState([]);
   const listRef = useRef(null);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/digital-products/")
+    axios.get(`${API_URL}/api/digital-products/`)
       .then(res => setProducts(res.data))
       .catch(err => console.log(err));
   }, []);
@@ -21,7 +22,7 @@ function HorizontalProductList() {
       <div className="horizontal-product-list" ref={listRef}>
         {products.map((p) => (
           <div key={p._id} className="product-card">
-            <img src={`http://localhost:5000${p.image}`} alt="" />
+            <img src={`${API_URL}${p.image}`} alt="" />
 
             <h5>{p.productName}</h5>
             <p className="price">{p.price} ETB</p>
