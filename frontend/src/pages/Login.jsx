@@ -24,15 +24,16 @@ const Login = () => {
       const res = await axios.post(`${API_URL}/api/users/login`, formData);
       const { token, user } = res.data;
 
-      // Save token in localStorage
       localStorage.setItem("token", token);
+      localStorage.setItem("role", user.role);
 
-      // Redirect based on role from backend
+      // Redirect based on role
       if (user.role === "admin") {
-        navigate("/AdminKYCList"); // Admin route
+        navigate("/AdminKYCList");
       } else {
-        navigate("/RecognitionForm"); // Normal user route
+        navigate("/RecognitionForm");
       }
+
     } catch (err) {
       setMessage(err.response?.data?.message || "Login failed");
     }
