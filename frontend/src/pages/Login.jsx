@@ -1,79 +1,85 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import {  useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Login = () => {
-    const [formData, setFormData] = useState({ email: '', password: '' });
-    const [message, setMessage] = useState('');
-    const [loading, setLoading] = useState(false);
-  const Navigate=useNavigate()
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-   const handleSubmit = async (e) => {
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
+    setMessage("");
 
     try {
-        const res = await axios.post(`${API_URL}/api/users/login`, formData);
+      const res = await axios.post(`${API_URL}/api/users/login`, formData);
+      const { token, user } = res.data;
 
-        const { token, user } = res.data;  // get user role
-        localStorage.setItem("token", token);
+      // Save token in localStorage
+      localStorage.setItem("token", token);
 
-        if (user.role === "admin") {
-            Navigate("/admin/dashboard");   // ADMIN ROUTE
-        } else {
-            Navigate("/RecognitionForm");   // NORMAL USER ROUTE
-        }
-
+      // Redirect based on role from backend
+      if (user.role === "admin") {
+        navigate("/admin/dashboard"); // Admin route
+      } else {
+        navigate("/RecognitionForm"); // Normal user route
+      }
     } catch (err) {
-        setMessage(err.response?.data?.message || "Error occurred");
+      setMessage(err.response?.data?.message || "Login failed");
     }
 
     setLoading(false);
-};
+  };
 
+  return (
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <div className="card p-4 shadow-sm" style={{ maxWidth: "400px", width: "100%" }}>
+        <h2 className="card-title text-center mb-3">Login</h2>
+        {message && <div className="alert alert-danger">{message}</div>}
 
-    return (
-        <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-            <div className="card p-4 shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
-                <h2 className="card-title text-center mb-3">Login</h2>
-                {message && <div className="alert alert-danger">{message}</div>}
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                        <label className="form-label">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="form-control"
-                            placeholder="Enter your email"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            className="form-control"
-                            placeholder="Enter your password"
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-                        {loading ? 'Logging in...' : 'Login'}
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default Login;
