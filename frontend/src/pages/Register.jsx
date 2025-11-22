@@ -43,6 +43,7 @@ const Register = () => {
       const adminEmails = ["admin@yegna.com", "super@yegna.com"];
       if (adminEmails.includes(formData.email)) {
         payload.secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
+        
       }
 
       await register(payload);

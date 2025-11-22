@@ -29,7 +29,7 @@ const Login = () => {
 
       // Redirect based on role from backend
       if (user.role === "admin") {
-        navigate("/admin/dashboard"); // Admin route
+        navigate("/AdminKYCList"); // Admin route
       } else {
         navigate("/RecognitionForm"); // Normal user route
       }
