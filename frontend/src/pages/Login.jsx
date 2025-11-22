@@ -12,21 +12,30 @@ const Login = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setMessage('');
-        try {
-            const res = await axios.post(`${API_URL}/api/users/login`, formData);
-            // const res = await axios.post('/api/users/login', formData);
-            setMessage(res.data.message);
-            localStorage.setItem('token', res.data.token);
-            Navigate('/RecognitionForm')
-        } catch (err) {
-            setMessage(err.response?.data?.message || 'Error occurred');
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
+    try {
+        const res = await axios.post(`${API_URL}/api/users/login`, formData);
+
+        const { token, user } = res.data;  // get user role
+        localStorage.setItem("token", token);
+
+        if (user.role === "admin") {
+            Navigate("/admin/dashboard");   // ADMIN ROUTE
+        } else {
+            Navigate("/RecognitionForm");   // NORMAL USER ROUTE
         }
-        setLoading(false);
-    };
+
+    } catch (err) {
+        setMessage(err.response?.data?.message || "Error occurred");
+    }
+
+    setLoading(false);
+};
+
 
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 bg-light">

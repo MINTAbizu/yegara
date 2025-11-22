@@ -32,17 +32,24 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Register
-  const register = async (data) => {
-    const res = await axios.post(
-     ` ${API_URL}/api/users/register`,
-      data
-    );
+ const register = async (data) => {
+  let payload = { ...data };
 
-    localStorage.setItem("token", res.data.token);
-    setUser(res.data.user);
+  // Auto-detect admin emails
+  const adminEmails = ["admin@yegara.com", "owner@yegara.com"];
 
-    return res;
-  };
+  if (adminEmails.includes(data.email)) {
+    payload.secret = "MY_SUPER_SECRET_KEY_2025"; // Must match backend .env
+  }
+
+  const res = await axios.post(`${API_URL}/api/users/register`, payload);
+
+  localStorage.setItem("token", res.data.token);
+  setUser(res.data.user);
+
+  return res;
+};
+
 
   // Login
   const login = async (data) => {
