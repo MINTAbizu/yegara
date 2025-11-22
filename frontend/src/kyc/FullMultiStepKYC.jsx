@@ -22,7 +22,7 @@ const FullMultiStepKYC = () => {
 
   const validateStep = () => {
     if (step === 1) {
-      const { fullName, dob, gender, nationality, maritalStatus } =  ;
+      const { fullName, dob, gender, nationality, maritalStatus } = formData;
       if (!fullName || !dob || !gender || !nationality || !maritalStatus) return false;
     } else if (step === 2) {
       const { faceId, idType, idFront, idBack, idNumber, issueDate, expireDate } = formData;
@@ -82,7 +82,7 @@ const FullMultiStepKYC = () => {
               {step === 1 && (
                 <>
                   <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name*" className="form-control mb-2" />
-                  <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-control mb-2" placeholder="Birth of date"/>
+                  <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-control mb-2" placeholder="Birthdate"/>
                   <select name="gender" value={formData.gender} onChange={handleChange} className="form-select mb-2">
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -100,18 +100,18 @@ const FullMultiStepKYC = () => {
               )}
               {step === 2 && (
                 <>
-                  <input type="file" name="faceId" accept="image/*" onChange={handleChange} className="form-control mb-2" placeholder="face/selfephot" />
+                  <input type="file" name="faceId" accept="image/*" onChange={handleChange} className="form-control mb-2" placeholder="facephoto/selfe-photo"/>
                   <select name="idType" value={formData.idType} onChange={handleChange} className="form-select mb-2">
                     <option value="">Select ID Type</option>
                     <option value="Drivers Licence">Drivers Licence</option>
                     <option value="Passport">Passport</option>
                     <option value="National ID">National ID</option>
                   </select>
-                  <input type="text" name="idNumber" value={formData.idNumber} onChange={handleChange} placeholder="ID Number*" className="form-control mb-2" />
-                  <input type="file" name="idFront" accept="image/*,application/pdf" onChange={handleChange} className="form-control mb-2" placeholder="idFront" />
-                  <input type="file" name="idBack" accept="image/*,application/pdf" onChange={handleChange} className="form-control mb-2" placeholder="idback"/>
-                  <input type="date" name="issueDate" value={formData.issueDate} onChange={handleChange} className="form-control mb-2" placeholder="issuedate"/>
-                  <input type="date" name="expireDate" value={formData.expireDate} onChange={handleChange} className="form-control mb-2" placeholder="expiredate"/>
+                  <input type="text" name="idNumber" value={formData.idNumber} onChange={handleChange} placeholder="ID Number*" className="form-control mb-2"  />
+                  <input type="file" name="idFront" accept="image/*,application/pdf" onChange={handleChange} className="form-control mb-2" placeholder="idfront"/>
+                  <input type="file" name="idBack" accept="image/*,application/pdf" onChange={handleChange} className="form-control mb-2" placeholder="idback" />
+                  <input type="date" name="issueDate" value={formData.issueDate} onChange={handleChange} className="form-control mb-2" placeholder="issuedate" />
+                  <input type="date" name="expireDate" value={formData.expireDate} onChange={handleChange} className="form-control mb-2"  placeholder="expiredate"/>
                 </>
               )}
               {step === 3 && (
