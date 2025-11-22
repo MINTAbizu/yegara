@@ -50,10 +50,8 @@ const Register = () => {
 
       // Redirect: admin goes to dashboard, others to recognition form
       if (adminEmails.includes(formData.email)) {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/RecognitionForm");
-      }
+        navigate("/login");
+      } 
     } catch (err) {
       setMessage(err.response?.data?.message || "Registration failed!");
     }
