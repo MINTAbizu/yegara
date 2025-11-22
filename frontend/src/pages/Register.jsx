@@ -18,26 +18,38 @@ const Register = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+const strongPasswordRegex =
+  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage("");
 
-    try {
-      await register({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      });
-
-      navigate("/login"); // redirect after success
-    } catch (err) {
-      setMessage(err.response?.data?.message || "Registration failed!");
-    }
-
+  // ✅ Strong password check
+  if (!strongPasswordRegex.test(formData.password)) {
     setLoading(false);
-  };
+    setMessage(
+      "Password must contain: uppercase, lowercase, number, special character, minimum 8 characters."
+    );
+    return;
+  }
+
+  try {
+    await register({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+    });
+
+    navigate("/login"); // redirect after success
+  } catch (err) {
+    setMessage(err.response?.data?.message || "Registration failed!");
+  }
+
+  setLoading(false);
+};
+
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -73,18 +85,21 @@ const Register = () => {
             />
           </div>
 
-          <div className="mb-3">
-            <label className="form-label">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="form-control"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+         <div className="mb-3">
+  <label className="form-label">Password</label>
+  <input
+    type="password"
+    name="password"
+    value={formData.password}
+    onChange={handleChange}
+    className="form-control"
+    placeholder="Enter your password"
+    required
+  />
+  <small className="text-muted">
+    Must include uppercase, lowercase, number, special character, min 8 characters.
+  </small>
+</div>
 
           <button type="submit" className="btn btn-primary w-100" disabled={loading}>
             {loading ? "Registering..." : "Register"}
