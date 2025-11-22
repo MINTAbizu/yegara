@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-
+const API_URL = import.meta.env.VITE_API_URL;
 const DigitalProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -10,12 +10,12 @@ const DigitalProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/digital-products/${id}`);
+        const res = await axios.get(`${API_URL}/api/digital-products/${id}`);
         setProduct(res.data);
 
         // Fetch seller stats if seller exists
         if (res.data.seller?._id) {
-          const statsRes = await axios.get(`http://localhost:5000/api/users/${res.data.seller._id}/stats`);
+          const statsRes = await axios.get(`${API_URL}/api/users/${res.data.seller._id}/stats`);
           setSellerStats(statsRes.data);
         }
       } catch (err) {
@@ -24,12 +24,12 @@ const DigitalProductDetail = () => {
     };
      const feacthphysical = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/physical-products/${id}`);
+        const res = await axios.get(`${API_URL}/api/physical-products/${id}`);
         setProduct(res.data);
 
         // Fetch seller stats if seller exists
         if (res.data.seller?._id) {
-          const statsRes = await axios.get(`http://localhost:5000/api/users/${res.data.seller._id}/stats`);
+          const statsRes = await axios.get(`${API_URL}/api/users/${res.data.seller._id}/stats`);
           setSellerStats(statsRes.data);
         }
       } catch (err) {
@@ -42,7 +42,7 @@ const DigitalProductDetail = () => {
 
   const handleBuy = async (productId, amount, recipientWallet) => {
   try {
-    const res = await axios.post("http://localhost:5000/api/payment/initiate", {
+    const res = await axios.post(`${API_URL}/api/payment/initiate`, {
       productId,
       amount,
       recipientWallet,
@@ -71,7 +71,7 @@ const DigitalProductDetail = () => {
             {/* Image container */}
             <div style={{ width: "100%", height: "300px", overflow: "hidden" }}>
               <img
-                src={`http://localhost:5000${product.image}`}
+                src={`${API_URL}${product.image}`}
                 alt={product.productName}
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
