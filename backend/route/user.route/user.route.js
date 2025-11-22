@@ -96,8 +96,8 @@ import { protect, adminOnly } from "../../middleware/authMiddleware.js";
 const router = express.Router();
 
 // Public
-router.post("/register",protect, createUser);
-router.post("/login",protect, loginUser);
+router.post("/register", createUser);
+router.post("/login", loginUser);
 router.post("/google", googleLogin);
 
 // Protected
@@ -110,4 +110,3 @@ router.put("/:id", protect, adminOnly, updateUser);
 router.delete("/:id", protect, adminOnly, deleteUser);
 
 export default router;
-  
