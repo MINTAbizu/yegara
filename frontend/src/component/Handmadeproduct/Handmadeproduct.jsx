@@ -9,7 +9,7 @@ import  './Handmadeproduct.css'
 import { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
+const API_URL = import.meta.env.VITE_API_URL;
 // const products = [
 //   { id: 1, name: 'Product 1', image: product1 },
 //   { id: 2, name: 'Product 2', image: product2 },
@@ -59,7 +59,7 @@ function Handmadeproduct() {
    useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/physical-products/');
+        const res = await axios.get(`${API_URL}/api/physical-products/`);
         setProducts(res.data);
       } catch (error) {
         console.error('Error fetching digital products:', error);
@@ -82,7 +82,7 @@ function Handmadeproduct() {
           <div key={p._id} className="product-card">
             {/* Check if image exists */}
             {p.image ? (
-              <img src={`http://localhost:5000${p.image}`} alt={p.productName} />
+              <img src={`${API_URL}${p.image}`} alt={p.productName} />
             ) : (
               <div className="no-image">No Image</div>
             )}
