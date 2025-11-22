@@ -40,17 +40,16 @@ const Register = () => {
       let payload = { ...formData };
 
       // Add secret key if email is in admin list
-      const adminEmails = ["admin@yegna.com", "adminbichas@yegna.com"];
+      const adminEmails = ["adminss@yegna.com", "super@yegna.com"];
       if (adminEmails.includes(formData.email)) {
         payload.secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
-        
       }
 
       await register(payload);
 
       // Redirect: admin goes to dashboard, others to recognition form
       if (adminEmails.includes(formData.email)) {
-        navigate("/admin/dashboard");
+        navigate("/AdminKYCList");
       } else {
         navigate("/RecognitionForm");
       }
