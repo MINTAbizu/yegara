@@ -28,21 +28,10 @@ const Login = () => {
       localStorage.setItem("token", token);
 
       // Redirect based on role from backend
-       let payload = { ...formData };
-
-      // Add secret key if email is in admin list
-      const adminEmails = ["adminss@yegna.com", "super@yegna.com"];
-      if (adminEmails.includes(formData.email)) {
-        payload.secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
-      }
-
-      await handleSubmit(payload);
-
-      // Redirect: admin goes to dashboard, others to recognition form
-      if (adminEmails.includes(formData.email)) {
-        navigate("/AdminKYCList");
+      if (user.role === "admin") {
+        navigate("/AdminKYCList"); // Admin route
       } else {
-        navigate("/RecognitionForm");
+        navigate("/RecognitionForm"); // Normal user route
       }
     } catch (err) {
       setMessage(err.response?.data?.message || "Login failed");
