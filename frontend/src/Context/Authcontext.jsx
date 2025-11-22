@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
   let payload = { ...data };
 
   // Auto-detect admin emails
-  const adminEmails = ["admin@yegara.com", "owner@yegara.com"];
+  const adminEmails = ["admins@yegara.com", "owner@yegara.com"];
 
   if (adminEmails.includes(data.email)) {
     payload.secret = "MY_SUPER_SECRET_KEY_2025"; // Must match backend .env

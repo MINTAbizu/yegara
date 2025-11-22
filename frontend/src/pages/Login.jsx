@@ -23,8 +23,8 @@ const Login = () => {
         const { token, user } = res.data;  // get user role
         localStorage.setItem("token", token);
 
-        if (user.email === "owner@yegara.com" || user.email === "Admin@yegara.com") {
-            Navigate("/Adminkcylist");   // ADMIN ROUTE
+        if (user.role === "admin") {
+            Navigate("/admin/dashboard");   // ADMIN ROUTE
         } else {
             Navigate("/RecognitionForm");   // NORMAL USER ROUTE
         }
