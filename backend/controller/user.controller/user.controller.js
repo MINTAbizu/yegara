@@ -258,7 +258,6 @@ export const loginUser = async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ message: "Email and password required" });
 
-    // Strong password validation for login too
     const strongPasswordRegex =
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -279,14 +278,21 @@ export const loginUser = async (req, res) => {
 
     res.status(200).json({
       message: "Login successful",
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,       // <<< FIX HERE
+      },
       token,
     });
+
   } catch (err) {
     console.error("loginUser error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 
