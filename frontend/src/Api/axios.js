@@ -15,7 +15,7 @@ const api = axios.create({
 });
 
 // Add JWT token to headers
-API.interceptors.request.use((req) => {
+api.interceptors.request.use((req) => {
   const token = localStorage.getItem("adminToken");
   if (token) req.headers.Authorization = `Bearer ${token}`;
   return req;

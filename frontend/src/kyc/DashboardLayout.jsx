@@ -17,10 +17,10 @@ const DashboardLayout = ({ children }) => {
     { name: "Home", path: "/", icon: <FaHome /> },
     { name: "Dashboard", path: "/dashboard", icon: <FaTachometerAlt /> },
     { name: "Create Pro Account", path: "/create-pro", icon: <FaUserPlus /> },
-    { name: "View Page", path: "/view-page", icon: <FaEye /> },
-    { name: "Shope", path: "/orders", icon: <FaEye /> },
-    { name: "Setting", path: "/UserProfile", icon: <FaCog /> },
-    { name: "Bank", path: "/bank", icon: <FaUniversity /> },
+    { name: "View Page", path: "/Viewpage", icon: <FaEye /> },
+    { name: "Shope(ሱቅ ክፈት)", path: "/orders", icon: <FaEye /> },
+    { name: "Setting", path: "/Settings", icon: <FaCog /> },
+    { name: "Bank", path: "/Bank", icon: <FaUniversity /> },
     { name: "Payments", path: "/payments", icon: <FaMoneyCheckAlt /> },
     { name: "Help", path: "/help", icon: <FaQuestionCircle /> },
   ];
@@ -96,9 +96,11 @@ const DashboardLayout = ({ children }) => {
             <FaBars />
           </button>
           <span className="fw-bold">Dashboard</span>
-          <div className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle" style={{ width: "35px", height: "35px" }}>
-            {user?.name?.charAt(0)?.toUpperCase()}
+           <Link to='/userprofile'>
+          <div className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle" style={{ width: "35px", height: "35px",cursor:'pointer' }}>
+           <Link to='/userprofile'>  {user?.name?.charAt(0)?.toUpperCase()}</Link>
           </div>
+          </Link>
         </div>
 
         {/* Desktop Header */}

@@ -82,6 +82,7 @@ const FullMultiStepKYC = () => {
               {step === 1 && (
                 <>
                   <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name*" className="form-control mb-2" />
+                  <label htmlFor="dob">Birth of Date</label>
                   <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-control mb-2" placeholder="Birthdate"/>
                   <select name="gender" value={formData.gender} onChange={handleChange} className="form-select mb-2">
                     <option value="">Select Gender</option>
@@ -100,6 +101,7 @@ const FullMultiStepKYC = () => {
               )}
               {step === 2 && (
                 <>
+                <label htmlFor="faceid" name='faceid'>Selfephot 4X3</label>
                   <input type="file" name="faceId" accept="image/*" onChange={handleChange} className="form-control mb-2" placeholder="facephoto/selfe-photo"/>
                   <select name="idType" value={formData.idType} onChange={handleChange} className="form-select mb-2">
                     <option value="">Select ID Type</option>
@@ -108,9 +110,15 @@ const FullMultiStepKYC = () => {
                     <option value="National ID">National ID</option>
                   </select>
                   <input type="text" name="idNumber" value={formData.idNumber} onChange={handleChange} placeholder="ID Number*" className="form-control mb-2"  />
+                  <label htmlFor="">idfront</label>
                   <input type="file" name="idFront" accept="image/*,application/pdf" onChange={handleChange} className="form-control mb-2" placeholder="idfront"/>
+                                    <label htmlFor="">idback</label>
+
                   <input type="file" name="idBack" accept="image/*,application/pdf" onChange={handleChange} className="form-control mb-2" placeholder="idback" />
+                  <label htmlFor="">issuedate</label>
                   <input type="date" name="issueDate" value={formData.issueDate} onChange={handleChange} className="form-control mb-2" placeholder="issuedate" />
+                                    <label htmlFor="">expiredate</label>
+
                   <input type="date" name="expireDate" value={formData.expireDate} onChange={handleChange} className="form-control mb-2"  placeholder="expiredate"/>
                 </>
               )}

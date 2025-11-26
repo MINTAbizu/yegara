@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import axios  from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 const AddBook = () => {
   const [formData, setFormData] = useState({
     bookName: "",
@@ -19,10 +20,43 @@ const AddBook = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Book Data:", formData);
-    alert("Book added successfully!");
+     const data = new FormData();
+    for (const key in formData) {
+      data.append(key, formData[key]);
+    }
+    try {
+       const token = localStorage.getItem("token"); // JWT from login
+      if (!token) {
+        alert("You must be logged in to add a product");
+        return;
+      }
+       const res = await axios.post(
+        `${API_URL}/api/Books/create`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+       alert("Book Product Added Successfully!");
+      setFormData({
+         bookName: "",
+    price: "",
+    description: "",
+    image: null,
+    bookFile: null,
+      });
+      
+    } catch (error) {
+       console.error(error);
+      alert(error.response?.data?.message || "Error adding Book!");
+      
+    }
+
   };
 
   return (

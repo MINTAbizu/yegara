@@ -55,6 +55,9 @@ if (!fs.existsSync(digitalProductUploadPath)) fs.mkdirSync(digitalProductUploadP
 const physhicalProductUploadPath = path.join(process.cwd(), "uploads/physicalProducts");
 if (!fs.existsSync(physhicalProductUploadPath)) fs.mkdirSync(physhicalProductUploadPath, { recursive: true });
 
+const booksProductUploadPath = path.join(process.cwd(), "uploads/digitalProducts");
+if (!fs.existsSync(booksProductUploadPath)) fs.mkdirSync(booksProductUploadPath, { recursive: true });
+
 
 
 
@@ -63,6 +66,7 @@ if (!fs.existsSync(physhicalProductUploadPath)) fs.mkdirSync(physhicalProductUpl
 // Serve uploaded images
 app.use("/uploads/digitalProducts", express.static(digitalProductUploadPath));
 app.use("/uploads/physicalproduct", express.static(physhicalProductUploadPath));
+app.use("/uploads/bookProducts", express.static(booksProductUploadPath));
 
 // Routes
 app.use("/api/digital-products", digitalProductRoutes);

@@ -37,9 +37,10 @@ const Header = () => {
           <li onClick={toggleShop} className="shop-parent">
             Shop
             <ul className={`shop-submenu ${shopOpen ? "active" : ""}`}>
-              <li>💰 Earn</li>
+              {/* <li>💰 Earn</li> */}
               <li>📦 Physical Products</li>
               <li>💻 Digital Products</li>
+              <li>💻 Social Media Account</li>
               <li>🧑‍ Freelancer</li>
               <li>🤝 Affiliate</li>
             </ul>

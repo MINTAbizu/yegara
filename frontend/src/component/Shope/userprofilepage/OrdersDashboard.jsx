@@ -10,11 +10,10 @@ const OrdersDashboard = () => {
         <h2 className="mb-4">to create post shop click on listing</h2>
         {/* Tabs Navigation */}
         <div className="orders-tabs">
-          <Link to="/shop" className="orders-tab-btn">Shop</Link>
-          <Link to="/orders" className="orders-tab-btn active">Orders</Link>
-          <Link to="/listings" className="orders-tab-btn">Listings</Link>
-          <Link to="/affiliate" className="orders-tab-btn">Affiliate</Link>
-          <Link to="/claims" className="orders-tab-btn">Claims</Link>
+        <Link to="/shop" className="orders-tab-btn">Shop <br />ሱቅ</Link>
+                 <Link to="/orders" className="orders-tab-btn active">Orders <br />ትእዛዝ</Link>
+                 <Link to="/listings" className="orders-tab-btn">የኔ-ሱቅ</Link>
+                 <Link to="/affiliate" className="orders-tab-btn">ሽያጭ</Link>
         </div>
 
         {/* Stats Cards */}

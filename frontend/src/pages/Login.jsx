@@ -21,7 +21,13 @@ const Login = () => {
     setMessage("");
 
     try {
-      const res = await axios.post(`${API_URL}/api/users/login`, formData);
+       const adminEmails = ["aminteadmin@yegna.com", "superadminss@yegna.com"];
+       if (adminEmails.includes(formData.email)) {
+        payload.secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
+      }
+      // const res = await axios.post(`${API_URL}/api/users/login`, formData);
+                  const res = await axios.post('http://localhost:5000/api/users/login', formData);
+
       const { token, user } = res.data;
 console.log("LOGIN RESPONSE:", res.data);
 
@@ -31,7 +37,7 @@ console.log("LOGIN RESPONSE:", res.data);
 console.log("LOGIN RESPONSE:", res.data);
 
       // Redirect based on role
-      if (user.role === "admin") {
+       if (adminEmails.includes(formData.email)) {
         navigate("/AdminKYCList");
       } else {
         navigate("/RecognitionForm");

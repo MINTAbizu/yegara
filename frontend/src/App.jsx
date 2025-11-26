@@ -33,6 +33,9 @@ import AdminProfileList from './Admin/AdminUsersTable/AdminProfileList';
 import AdminDigitalProductsTable from './Admin/products/AdminDigitalProductsTable';
 import AdminPhysicalproducts from './Admin/products/AdminPhysicalproducts';
 import ProductDetails from './ProductDetails/ProductDetails';
+import Viewpage from './kyc/Viewpage';
+import Settings from './kyc/Settings';
+import Bank from './kyc/Bank';
 
 
 function App() {
@@ -76,15 +79,48 @@ function App() {
           />
 
           <Route
-            path="/UserProfile"
+            path="/userprofile"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <DashboardLayout>
                   <UserProfileFormFixed />
                 </DashboardLayout>
-              </ProtectedRoute>
-            }
+              // </ProtectedRoute>
+            }   
           />  
+
+           <Route
+            path="/Viewpage"
+            element={
+              // <ProtectedRoute>
+                <DashboardLayout>
+                  <Viewpage />
+                </DashboardLayout>
+              // </ProtectedRoute>
+            }   
+          /> 
+          
+          <Route
+            path="/Settings"
+            element={
+              // <ProtectedRoute>
+                <DashboardLayout>
+                  <Settings />
+                </DashboardLayout>
+              // </ProtectedRoute>
+            }   
+          />   
+            <Route
+            path="/Bank"
+            element={
+              // <ProtectedRoute>
+                <DashboardLayout>
+                  <Bank />
+                </DashboardLayout>
+              // </ProtectedRoute>
+            }   
+          />
+
                <Route
             path="/RecognitionForm"
             element={
@@ -210,11 +246,11 @@ function App() {
           <Route
             path="/addbook"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <DashboardLayout>
                   <AddBook />
                 </DashboardLayout>
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
 
