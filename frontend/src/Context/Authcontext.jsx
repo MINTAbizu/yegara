@@ -42,8 +42,8 @@ export const AuthProvider = ({ children }) => {
     payload.secret = "MY_SUPER_SECRET_KEY_2025"; // Must match backend .env
   }
 
-  // const res = await axios.post(`${API_URL}/api/users/register`, payload);
-  const res = await axios.post(  "http://localhost:5000/api/users/register", payload);
+  const res = await axios.post(`${API_URL}/api/users/register`, payload);
+  // const res = await axios.post(  "http://localhost:5000/api/users/register", payload);
 
   localStorage.setItem("token", res.data.token);
   setUser(res.data.user);
@@ -55,8 +55,8 @@ export const AuthProvider = ({ children }) => {
   // Login
   const login = async (data) => {
     const res = await axios.post(
-    //  ` ${API_URL}/api/users/login`,
-    "http://localhost:5000/api/users/login",
+     ` ${API_URL}/api/users/login`,
+    // "http://localhost:5000/api/users/login",
       data
     );
 
@@ -93,8 +93,8 @@ const refreshUser = async () => {
     if (!token) return;
 
     const res = await axios.get(
-      // `${API_URL}/api/users/me`,
-      "http://localhost:5000/api/users/me",
+      `${API_URL}/api/users/me`,
+      // "http://localhost:5000/api/users/me",
        {
       headers: { Authorization: `Bearer ${token}` },
     });
