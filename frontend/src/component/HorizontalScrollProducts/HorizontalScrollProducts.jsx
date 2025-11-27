@@ -15,6 +15,28 @@ function HorizontalProductList() {
       .catch(err => console.log(err));
   }, []);
 
+  useEffect(() => {
+      const handleScroll = () => {
+        const currentScroll = window.scrollY;
+  
+        if (!listRef.current) return;
+  
+        if (currentScroll > lastScroll) {
+          // USER SCROLLING DOWN → MOVE RIGHT → LEFT
+          listRef.current.scrollLeft -= 15;
+        } else {
+          // USER SCROLLING UP → MOVE LEFT → RIGHT
+          listRef.current.scrollLeft += 15;
+        }
+  
+        lastScroll = currentScroll;
+      };
+  
+      window.addEventListener('scroll', handleScroll);
+  
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
   return (
     <div className="horizontal-product-container">
       <h2 className='digitalproducttitle'>Digital Products</h2>
