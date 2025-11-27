@@ -15,7 +15,6 @@ export const addphyshicalProduct = async (req, res) => {
       description,
       image,
       telegram,
-      seller: req.user._id,
       drive,
       dropbox,
       productLink,
