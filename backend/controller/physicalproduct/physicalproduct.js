@@ -16,6 +16,7 @@ export const addphyshicalProduct = async (req, res) => {
       image,
       telegram,
       drive,
+       seller: req.user._id, // get seller ID from auth
       dropbox,
       productLink,
     });
