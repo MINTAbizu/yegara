@@ -7,7 +7,7 @@ export const addphyshicalProduct = async (req, res) => {
     if (!req.file) return res.status(400).json({ message: "Product image is required" });
 
     
-    const image = `/uploads/physicalProducts/${req.file.filename}`; // store relative path
+    const image = `/uploads/digitalProducts/${req.file.filename}`; // store relative path
 
     const newProduct = new physicalProduct({
       productName,

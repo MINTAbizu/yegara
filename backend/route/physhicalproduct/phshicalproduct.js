@@ -1,7 +1,7 @@
 import express from "express";
 import upload from "../../middleware/physhicalproduct/physicalproduct.middleare.js";
 import { addphyshicalProduct,toggleStatus, getSingleProduct,getAllProductsAdmin,getApprovedProducts,getphysicalProductById,getproductProductWithSellerStats } from "../../controller/physicalproduct/physicalproduct.js";
-import { protect } from "../../middleware/authMiddleware.js";
+import { protect } from "../../middleware/";
 const router = express.Router();
 
 // Add a new digital product
