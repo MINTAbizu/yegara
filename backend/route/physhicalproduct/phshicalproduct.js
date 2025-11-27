@@ -1,11 +1,11 @@
 import express from "express";
 import upload from "../../middleware/physhicalproduct/physicalproduct.middleare.js";
 import { addphyshicalProduct,toggleStatus, getSingleProduct,getAllProductsAdmin,getApprovedProducts,getphysicalProductById,getproductProductWithSellerStats } from "../../controller/physicalproduct/physicalproduct.js";
-
+import { protect } from "../../middleware/authMiddleware.js";
 const router = express.Router();
 
 // Add a new digital product
-router.post("/create", upload.single("image"), addphyshicalProduct);
+router.post("/create", protect, upload.single("image"), addphyshicalProduct);
 
 // Get all digital products
 // Public: Only approved products
