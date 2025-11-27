@@ -39,7 +39,7 @@ function HorizontalProductList() {
 
   return (
     <div className="horizontal-product-container">
-      <h2 className='digitalproducttitle'>Digital Products</h2>
+      <h2 className='digitalproducttitle'>Physical Products</h2>
 
       <div className="horizontal-product-list" ref={listRef}>
         {products.map((p) => (
