@@ -17,6 +17,7 @@ import AdminDashboard from '../Admin/AdminDashboard'
 import AdminKYCList from '../Admin/AdminUsersTable/AdminKYCList'
 import AdminProfileList from '../Admin/AdminUsersTable/AdminProfileList'
 import OurCustomers from './User/OurCustomers '
+import StepsAnimated from './StepsAnimated/StepsAnimated'
 
 function Landingpage() {
   return (
@@ -29,7 +30,8 @@ function Landingpage() {
                     <Handmadeproduct/>
                     <UserExample/>
                     <RewardsList/>
-                    
+                    <StepsAnimated/>
+
                     <PromotionCarousel/>
                     <ProAccount/>
                     <ServicesSection/>
