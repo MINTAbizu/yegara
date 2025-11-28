@@ -3,11 +3,12 @@ import React, { useState, useEffect } from "react";
 import "./StepsAnimated.css";
 
 // images - update the import paths to your actual assets
-import step1 from "../../../assets/telegeram/promot.jpg";
-import step2 from "../../../assets/telegeram/on.jpg";
-import step3 from "../../../assets/telegeram/transfers.jpg";
-import step4 from "../../../assets/telegeram/changeowner.jpg";
-import step6 from "../../../assets/telegeram/2stp.jpg";
+import step1 from "../../assets/image/telegeram/promot.jpg";
+import step2 from "../../assets/image/telegeram/on.jpg";
+import step3 from "../../assets/image/telegeram/transfers.jpg";
+import step4 from "../../assets/image/telegeram/changeowner.jpg";
+import step6 from "../../assets/image/telegeram/2stp.jpg";
+// import step48 from '../../assets/image/'
 import { Link } from "react-router-dom";
 
 const STEPS = [
