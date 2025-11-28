@@ -10,7 +10,7 @@ import step4 from "../../assets/image/telegeram/changeowner.jpg";
 import step6 from "../../assets/image/telegeram/2stp.jpg";
 // import step48 from '../../assets/image/'
 import { Link } from "react-router-dom";
-
+// 
 const STEPS = [
   { id: 1, label: "Open Member Options", text: "Click the member and choose the first option.", img: step1 },
   { id: 2, label: "Turn On Buttons", text: "Scroll to the bottom and turn ON the two red buttons.", img: step2 },

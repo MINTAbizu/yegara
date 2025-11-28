@@ -45,3 +45,8 @@
     font-size: 1rem;
   }
 }
+.display-4{
+  font-weight: 700;
+  font-size: 18px;
+  font-style: oblique;
+}
