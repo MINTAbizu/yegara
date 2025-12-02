@@ -9,7 +9,7 @@ import fs from "fs";
 import path from "path";
 
 import digitalProductRoutes from "./route/digitalProduct.route/digitalProduct.route.js";
-import physicalProductRoutes from "./route/physhicalproduct/phshicalproduct.js";
+// import physicalProductRoutes from "./route/physhicalproduct/phshicalproduct.js";
 import userregister from "./route/user.route/user.route.js";
 import chapapayment from "./route/payments/payment.route.js";
 // kyc
@@ -17,7 +17,10 @@ import chapapayment from "./route/payments/payment.route.js";
 import kycRoutes from './route/kyc/kyc.route.js'
 // profileRoutes
 import profileRoutes from './route/profile.route/profile.route.js'
-// import productdetail from './route/digitalProduct.route/ProductDetails.route.js'
+
+
+import telegeram from './route/telegram.routes.js'
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -70,14 +73,15 @@ app.use("/uploads/bookProducts", express.static(booksProductUploadPath));
 
 // Routes
 app.use("/api/digital-products", digitalProductRoutes);
-app.use("/api/physical-products", physicalProductRoutes);
+// app.use("/api/physical-products", physicalProductRoutes);
 app.use("/api/users", userregister);
-// app.use('/api/',productdetail)
+// app.use('/api',socialmedia)
 // kyc
 app.use("/api/kyc", kycRoutes)
 // // Profile routes
 app.use("/api/profile", profileRoutes);
 app.use("/api/payment", chapapayment);
+app.use("/telegram", telegeram);
 
 // Error handler (return JSON for API errors)
 app.use((err, req, res, next) => {
