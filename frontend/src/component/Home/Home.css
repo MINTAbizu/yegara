@@ -6,13 +6,13 @@
   margin-top: 150px;
 
 }
-.home-container{
+/* .home-container{
   background-image: url('../../../src//assets/image/home.jpg.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   height: 580px;
-}
+} */
 
 .home-container p {
   font-size: 1.2rem;
