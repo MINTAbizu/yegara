@@ -1,0 +1,136 @@
+/* StepsAnimated.css
+   - unique class names to avoid Bootstrap card/shadow interference
+   - uses bootstrap grid only for layout
+*/
+
+/* container max width tweak (optional) */
+.steps-anim-wrapper { max-width: 1140px; }
+
+/* TIMELINE (left) */
+.timeline-col { border-right: 1px solid #e9ecef; }
+
+.timeline-header h5 { font-weight: 700; font-size: 1rem; }
+
+.timeline-list { padding-top: 2px; }
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: transform .18s ease, background .18s ease, color .18s ease;
+  background: transparent; /* ensure no bootstrap background */
+  cursor: pointer;
+  user-select: none;
+  color: #222;
+}
+
+.timeline-item:hover {
+  transform: translateX(6px);
+  background: rgba(0,0,0,0.03);
+}
+
+/* left bullet */
+.timeline-left { width: 44px; flex-shrink: 0; display:flex; align-items:center; justify-content:center; }
+.timeline-bullet {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #f1f3f5; display:flex; align-items:center; justify-content:center;
+  font-weight: 700; color: #333;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+/* main text */
+.timeline-main { flex: 1; min-width: 0; }
+.timeline-title { font-weight: 600; font-size: 0.98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.timeline-sub { font-size: 0.82rem; color: #6c757d; }
+
+/* arrow icon at the right of each item */
+.timeline-arrow { width: 28px; flex-shrink: 0; display:flex; align-items:center; justify-content:center; color: #adb5bd; }
+
+/* active state */
+.timeline-item.is-active {
+  background: transparent;
+  color: #0d6efd;
+}
+.timeline-item.is-active .timeline-bullet {
+  background: #0d6efd;
+  color: white;
+  transform: scale(1.05);
+}
+.timeline-item.is-active .timeline-arrow { color: #0d6efd; }
+
+/* CONTENT (right) */
+.content-col { padding-top: 6px; }
+
+.content-panel {
+  background: transparent;
+  padding: 6px 2px;
+  border-radius: 6px;
+}
+
+/* animated transition class (slide + fade) */
+.animate-slide-fade {
+  animation: slideFade .36s ease both;
+}
+
+@keyframes slideFade {
+  from { opacity: 0; transform: translateY(10px) scale(.995); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.content-step-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.content-step-text {
+  color: #495057;
+  margin-bottom: 12px;
+}
+
+/* IMAGE FRAME: responsive & consistent sizing */
+.image-frame {
+  width: 100%;
+  /* maintain a reasonable visual height on large screens */
+  max-height: 56vh; /* viewport-based clamp for responsiveness */
+  display: block;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #f8f9fa;
+  padding: 8px;
+}
+
+/* Responsive image rules:
+   - full width
+   - keep aspect ratio
+   - object-fit: contain so it won't crop important content
+   - use max-height to avoid huge images on large screens
+*/
+.responsive-step-img {
+  width: 100%;
+  height: auto;
+  max-height: calc(56vh - 16px); /* account for padding */
+  object-fit: contain;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 6px;
+  box-shadow: none !important; /* force no shadows */
+  border: none !important;
+}
+
+/* smaller screens: reduce the image height (mobile-friendly) */
+@media (max-width: 767.98px) {
+  .image-frame { max-height: 42vh; }
+  .responsive-step-img { max-height: calc(42vh - 16px); }
+}
+
+/* optional: subtle focus outline for keyboard accessibility */
+.timeline-item:focus, .timeline-item:active { outline: none; box-shadow: none; }
+
+/* ensure any global .card or .shadow classes don't bleed in here */
+.steps-anim-wrapper .card,
+.steps-anim-wrapper .shadow,
+.steps-anim-wrapper .card-body { box-shadow: none !important; background: transparent !important; border: none !important; }
