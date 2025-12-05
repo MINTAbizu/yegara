@@ -30,7 +30,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",      // Vite local
-      "https://yegara.netlify.app"  // Netlify production
+      "https://yegara.netlify.app",  // Netlify production
+      "https://twiness.netlify.app"
     ],
     credentials: true,
   })
