@@ -31,6 +31,7 @@ function HomePage() {
       </button></Link>
       </div>
     </div>
+    <h1>Price ....................</h1>
     < TelegramPrice/>
    </>
    
