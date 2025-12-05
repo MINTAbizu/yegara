@@ -1,8 +1,10 @@
 import React from "react";
 import tradeTgImage from "../assets/image/telegeram.jpg";
 import { Link } from "react-router-dom";
+import TelegramPrice from "./TelegramPrice ";
 function HomePage() {
   return (
+   <>
     <div className="container text-center py-5">
       {/* Title */}
       <h1 className="fw-bold mb-3">WELCOME TO Trade-TG</h1>
@@ -29,6 +31,9 @@ function HomePage() {
       </button></Link>
       </div>
     </div>
+    < TelegramPrice/>
+   </>
+   
   );
 }
 
