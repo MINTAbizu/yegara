@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './productlist.css';
-import product1 from '../../assets/image/test.jpg';
+import product1 from '../../assets/image/home.jpg.png';
 import product2 from '../../assets/image/test5.png';
+import product3 from '../../assets/image/test5.png';
 import product3 from '../../assets/image/test5.png';
 
 const products = [
