@@ -37,6 +37,7 @@ import Viewpage from './kyc/Viewpage';
 import Settings from './kyc/Settings';
 import Bank from './kyc/Bank';
 import TelegeramLanding from './telegeram/TelegeramLanding';
+import Telegram from './telegeram/Telegram';
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/TelegeramLanding" element={<TelegeramLanding />} />
+          <Route path="/Telegram" element={<Telegram />} />
 
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />
           <Route

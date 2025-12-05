@@ -19,7 +19,7 @@ function HomePage() {
 
       {/* Sell Telegram Group Button */}
       <div className="d-flex  justify-content-center gap-3">
-        <Link to={"/Te"}>  <button className="btn btn-success px-4 py-2 fw-semibold rounded-3">
+        <Link to={"/Telegram"}>  <button className="btn btn-success px-4 py-2 fw-semibold rounded-3">
         Sell Telegram Group
       </button>
       </Link>
