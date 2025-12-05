@@ -36,6 +36,7 @@ import ProductDetails from './ProductDetails/ProductDetails';
 import Viewpage from './kyc/Viewpage';
 import Settings from './kyc/Settings';
 import Bank from './kyc/Bank';
+import TelegeramLanding from './telegeram/TelegeramLanding';
 
 
 function App() {
@@ -46,6 +47,8 @@ function App() {
           <Route path="/" element={<Landingpage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/TelegeramLanding" element={<TelegeramLanding />} />
+
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />
           <Route
             path="/orders"
