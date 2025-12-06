@@ -29,7 +29,7 @@ const Telegram = () => {
 
   const verifyOwner = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/telegram/verify-owner", {
+      const res = await axios.post(`${API_URL}/telegram/verify-owner`, {
         inviteLink,
         sellerTelegramUsername: telegramUsername,
         chatId, // user must provide chatId
