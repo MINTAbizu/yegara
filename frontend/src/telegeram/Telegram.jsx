@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-
+const API_URL = import.meta.env.VITE_API_URL;
 const Telegram = () => {
   const [telegramUsername, setTelegramUsername] = useState("");
   const [inviteLink, setInviteLink] = useState("");
@@ -14,7 +14,8 @@ const Telegram = () => {
   const sendCode = async () => {
     try {
       const code = generateCode();
-      const res = await axios.post("http://localhost:5000/telegram/send-code", {
+      const res = await axios.post(`${API_URL}/telegram/send-code`, {
+      // const res = await axios.post("http://localhost:5000/telegram/send-code", {
         telegramUsername,
         code,
       });
