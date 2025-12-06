@@ -77,24 +77,7 @@ function Handmadeproduct() {
             </h2> 
        <p className='digitaldescrption'>Buy or Sell any product you can think of. Pick from a catalog of millions of products from ye-buna suppliers.
 </p>
-       <div className="horizontal-product-list" ref={listRef}>
-        {products.map((p) => (
-          <div key={p._id} className="product-card">
-            {/* Check if image exists */}
-            {p.image ? (
-              <img src={`${API_URL}${p.image}`} alt={p.productName} />
-            ) : (
-              <div className="no-image">No Image</div>
-            )}
-            <h5>{p.productName}</h5>
-            <p className="price">{p.price} ETB</p>
-            {/* <p className="seller">Seller: {p.seller?.name}</p> */}
-             <Link to={`/ProductDetails/${p._id}?type=physical`}>
-              <button>View</button>
-            </Link>
-          </div>
-        ))}
-      </div>
+      
     </div>
   );
 }

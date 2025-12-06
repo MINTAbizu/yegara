@@ -42,7 +42,7 @@ function HorizontalProductList() {
       <h2 className='digitalproducttitle'>Physical Products</h2>
 
       <div className="horizontal-product-list" ref={listRef}>
-        {products.map((p) => (
+        {/* {products.map((p) => (
           <div key={p._id} className="product-card">
             <img src={`${API_URL}${p.image}`} alt="" />
 
@@ -55,7 +55,7 @@ function HorizontalProductList() {
               <button>View</button>
             </Link>
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );

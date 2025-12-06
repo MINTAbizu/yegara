@@ -14,8 +14,8 @@ const Telegram = () => {
   const sendCode = async () => {
     try {
       const code = generateCode();
-      const res = await axios.post(`${API_URL}/telegram/send-code`, {
-      // const res = await axios.post("http://localhost:5000/telegram/send-code", {
+      // const res = await axios.post(`${API_URL}/telegram/send-code`, {
+      const res = await axios.post("http://localhost:5000/telegram/send-code", {
         telegramUsername,
         code,
       });
