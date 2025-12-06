@@ -1,6 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./telegramPrice.css";
+// import "./telegramPrice.css
 
 const telegramData = [
   { year: "2015", price: 7.0 },
