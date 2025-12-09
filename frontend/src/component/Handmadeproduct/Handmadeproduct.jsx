@@ -1,85 +1,64 @@
-
-import React, { useEffect, useRef } from 'react';
-import '../HorizontalScrollProducts/HorizontalScrollProducts.css';
-import product1 from '../../assets/image/test.jpg';
-import product2 from '../../assets/image/test2.jpg';
-// import product3 from '../../assets/image/product3.jpg';
-// import product4 from '../../assets/image/product4.jpg';
-import  './Handmadeproduct.css'
-import { useState } from 'react';
+// HorizontalProductList.jsx
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import './HorizontalScrollProducts.css';
 const API_URL = import.meta.env.VITE_API_URL;
-// const products = [
-//   { id: 1, name: 'Product 1', image: product1 },
-//   { id: 2, name: 'Product 2', image: product2 },
-//   { id: 3, name: 'Product 3', image: 'product3' },
-//   { id: 4, name: 'Product 4', image: 'product4' },
-//   { id: 5, name: 'Product 5', image: 'product1' },
-//   { id: 1, name: 'Product 1', image: 'product1' },
-//   { id: 2, name: 'Product 2', image: 'product2' },
-//   { id: 3, name: 'Product 3', image: 'product3' },
-//   { id: 4, name: 'Product 4', image: 'product4' },
-//   { id: 5, name: 'Product 5', image: 'product1' },
-//   { id: 1, name: 'Product 1', image: 'product1' },
-//   { id: 2, name: 'Product 2', image: 'product2' },
-//   { id: 3, name: 'Product 3', image: 'product3' },
-//   { id: 4, name: 'Product 4', image: 'product4' },
-//   { id: 5, name: 'Product 5', image: 'product1' },
-// ];
 
-function Handmadeproduct() {
- const listRef = useRef(null);
-   const [products, setProducts] = useState([]);
-  let lastScroll = 0;
+function HorizontalProductList() {
+  const [products, setProducts] = useState([]);
+  const listRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-
-      if (!listRef.current) return;
-
-      if (currentScroll > lastScroll) {
-        // USER SCROLLING DOWN → MOVE RIGHT → LEFT
-        listRef.current.scrollLeft -= 15;
-      } else {
-        // USER SCROLLING UP → MOVE LEFT → RIGHT
-        listRef.current.scrollLeft += 15;
-      }
-
-      lastScroll = currentScroll;
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => window.removeEventListener('scroll', handleScroll);
+    axios.get(`${API_URL}/api/digital-products/`)
+      .then(res => setProducts(res.data))
+      .catch(err => console.log(err));
   }, []);
 
-  // 
-   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/physical-products/`);
-        setProducts(res.data);
-      } catch (error) {
-        console.error('Error fetching digital products:', error);
-      }
-    };
-    fetchProducts();
-  }, []);
- if (!products.length) {
-    return <div className="text-center py-5">No digital products available.</div>;
-  }
+ //  useEffect(() => {
+   //   const handleScroll = () => {
+     //   const currentScroll = window.scrollY;
+  
+     //   if (!listRef.current) return;
+  
+    //    if (currentScroll > lastScroll) {
+           // USER SCROLLING DOWN → MOVE RIGHT → LEFT
+   //      listRef.current.scrollLeft -= 15;
+  //     } else {
+  //         // USER SCROLLING UP → MOVE LEFT → RIGHT
+  //         listRef.current.scrollLeft += 15;
+  //       }
+  
+  //       lastScroll = currentScroll;
+  //     };
+  
+  //     window.addEventListener('scroll', handleScroll);
+  
+  //     return () => window.removeEventListener('scroll', handleScroll);
+  //   }, []);
+
   return (
-    <div className="horizontal-products">
-                  <h2 className='digitalproducttitle'>Digital product
-            Get your product now!  <br />
-            </h2> 
-       <p className='digitaldescrption'>Buy or Sell any product you can think of. Pick from a catalog of millions of products from ye-buna suppliers.
-</p>
-      
+    <div className="horizontal-product-container">
+      <h2 className='digitalproducttitle'>digital and human made Products</h2>
+
+      <div className="horizontal-product-list" ref={listRef}>
+         {products.map((p) => (
+          <div key={p._id} className="product-card">
+            <img src={`${API_URL}${p.image}`} alt="" />
+
+            <h5>{p.productName}</h5>
+            <p className="price">{p.price} ETB</p>
+
+            <p className="seller">Seller: {p.seller?.name}</p>
+
+            <Link to={`/ProductDetails/${p._id}?type=digital`}>
+              <button>View</button>
+            </Link>
+          </div>
+        ))} 
+      </div>
     </div>
   );
 }
 
-export default Handmadeproduct
+export default HorizontalProductList;
