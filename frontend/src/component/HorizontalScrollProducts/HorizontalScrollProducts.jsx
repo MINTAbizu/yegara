@@ -15,16 +15,16 @@ function HorizontalProductList() {
       .catch(err => console.log(err));
   }, []);
 
-  // useEffect(() => {
-  //     const handleScroll = () => {
-  //       const currentScroll = window.scrollY;
+ //  useEffect(() => {
+   //   const handleScroll = () => {
+     //   const currentScroll = window.scrollY;
   
-  //       if (!listRef.current) return;
+     //   if (!listRef.current) return;
   
-  //       if (currentScroll > lastScroll) {
-  //         // USER SCROLLING DOWN → MOVE RIGHT → LEFT
-  //         listRef.current.scrollLeft -= 15;
-  //       } else {
+    //    if (currentScroll > lastScroll) {
+           // USER SCROLLING DOWN → MOVE RIGHT → LEFT
+   //      listRef.current.scrollLeft -= 15;
+  //     } else {
   //         // USER SCROLLING UP → MOVE LEFT → RIGHT
   //         listRef.current.scrollLeft += 15;
   //       }
@@ -42,7 +42,7 @@ function HorizontalProductList() {
       <h2 className='digitalproducttitle'>Physical Products</h2>
 
       <div className="horizontal-product-list" ref={listRef}>
-        {/* {products.map((p) => (
+         {products.map((p) => (
           <div key={p._id} className="product-card">
             <img src={`${API_URL}${p.image}`} alt="" />
 
@@ -55,7 +55,7 @@ function HorizontalProductList() {
               <button>View</button>
             </Link>
           </div>
-        ))} */}
+        ))} 
       </div>
     </div>
   );
