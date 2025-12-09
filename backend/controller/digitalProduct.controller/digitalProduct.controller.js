@@ -32,6 +32,52 @@ export const addDigitalProduct = async (req, res) => {
   }
 };
 
+
+export const toggleStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await DigitalProduct.findById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    if (product.status === "pending" || product.status === "rejected") {
+      product.status = "approved";
+    } else if (product.status === "approved") {
+      product.status = "rejected";
+    }
+
+    await product.save();
+
+    res.json({ message: "Status updated", product });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // List all approved digital products
 export const getApprovedProducts = async (req, res) => {
   try {
