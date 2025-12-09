@@ -3,48 +3,32 @@ import PhysicalProduct from "../../model/physicalproduct/physicalprosuct.model.j
 import User from "../../model/user.model/user.model.js";
 
 // Add a new digital product
+import DigitalProduct from "../../model/digitalproducts/digital products.js";
 
 export const addDigitalProduct = async (req, res) => {
   try {
     const { productName, description, price } = req.body;
 
+    const BASE_URL = https://yegara-4.onrender.com;
+
+    const imageUrl = req.file
+      ? 
+      : null;
+
     const newProduct = new DigitalProduct({
       productName,
       description,
       price,
-      seller: req.user._id, // get seller ID from auth
-      image: req.file ? "/uploads/digitalProducts/" + req.file.filename : null,
+      seller: req.user._id,
+      image: imageUrl,
     });
 
     const saved = await newProduct.save();
     res.status(201).json(saved);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
-  }
-};
-
-
-
-// Toggle product status (pending <-> approved <-> rejected)
-export const toggleStatus = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const product = await DigitalProduct.findById(id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
-
-    // Simple toggle: pending → approved, approved → rejected, rejected → approved
-    if (product.status === "pending" || product.status === "rejected") {
-      product.status = "approved";
-    } else if (product.status === "approved") {
-      product.status = "rejected";
-    }
-
-    await product.save();
-    res.status(200).json({ message: "Status updated successfully", product });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error", error });
   }
 };
 
