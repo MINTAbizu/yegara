@@ -3,46 +3,37 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './HorizontalScrollProducts.css';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 function HorizontalProductList() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false); // ✅ added
   const listRef = useRef(null);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/digital-products/`)
-      .then(res => setProducts(res.data))
-      .catch(err => console.log(err));
-  }, []);
+    setLoading(true); // ✅ start loading
 
- //  useEffect(() => {
-   //   const handleScroll = () => {
-     //   const currentScroll = window.scrollY;
-  
-     //   if (!listRef.current) return;
-  
-    //    if (currentScroll > lastScroll) {
-           // USER SCROLLING DOWN → MOVE RIGHT → LEFT
-   //      listRef.current.scrollLeft -= 15;
-  //     } else {
-  //         // USER SCROLLING UP → MOVE LEFT → RIGHT
-  //         listRef.current.scrollLeft += 15;
-  //       }
-  
-  //       lastScroll = currentScroll;
-  //     };
-  
-  //     window.addEventListener('scroll', handleScroll);
-  
-  //     return () => window.removeEventListener('scroll', handleScroll);
-  //   }, []);
+    axios.get(`${API_URL}/api/digital-products/`)
+      .then(res => {
+        setProducts(res.data);
+        setLoading(false); // ✅ stop loading
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false); // ✅ stop loading even on error
+      });
+  }, []);
 
   return (
     <div className="horizontal-product-container">
       <h2 className='digitalproducttitle'>Physical Products</h2>
 
+      {/* ✅ loading */}
+      {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
+
       <div className="horizontal-product-list" ref={listRef}>
-         {products.map((p) => (
+        {products.map((p) => (
           <div key={p._id} className="product-card">
             <img src={`${API_URL}${p.image}`} alt="" />
 
@@ -55,10 +46,12 @@ function HorizontalProductList() {
               <button>View</button>
             </Link>
           </div>
-        ))} 
+        ))}
       </div>
     </div>
   );
 }
+
+export default HorizontalProductList;
 
 export default HorizontalProductList;
