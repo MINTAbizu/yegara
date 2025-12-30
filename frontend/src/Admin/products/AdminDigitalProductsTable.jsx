@@ -6,7 +6,7 @@ const AdminDigitalProductsTable = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all digital products from backend
+  // Fetch all digital prod
 
 
 const fetchProducts = async () => {
@@ -17,11 +17,12 @@ const fetchProducts = async () => {
       {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       }
-    );
+    )
+    
 
     const productsArray = Array.isArray(res.data) ? res.data : [];
 
-    // Sort newest first
+  
     productsArray.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     setProducts(productsArray);
