@@ -1,8 +1,8 @@
-# Yegara
+# Yegara  https://yegara.netlify.app/
 
 Yegara is a trusted, easy-to-use marketplace built to help individuals, small businesses, and startups sell products and services online — even when they don't have a website. Yegara supports physical goods, digital downloads, handmade items, services, and even verified social media accounts. Our mission is to make online selling accessible, secure, and scam-resistant for everyone.
 
-## TL;DR
+## TL DR
 If you want a safe, simple place to sell or buy real products and services without building a website, Yegara provides a trusted marketplace experience with seller verification, buyer protection, and tools to list, manage, and ship your offerings.
 
 ## Problem
