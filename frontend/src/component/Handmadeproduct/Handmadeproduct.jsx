@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import './HorizontalScrollProducts.css';
+// import '..//HorizontalScrollProducts/HorizontalScrollProducts.css';
 const API_URL = import.meta.env.VITE_API_URL;
 
 function HorizontalProductList() {

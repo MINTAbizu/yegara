@@ -35,7 +35,9 @@ function HorizontalProductList() {
       <div className="horizontal-product-list" ref={listRef}>
         {products.map((p) => (
           <div key={p._id} className="product-card">
-            <img src={`${API_URL}${p.image}`} alt="" />
+            {/* <img src={`${API_URL}${p.image}`} alt="" /> */}
+            <img src={p.image} />
+
 
             <h5>{p.productName}</h5>
             <p className="price">{p.price} ETB</p>
@@ -43,7 +45,7 @@ function HorizontalProductList() {
             <p className="seller">Seller: {p.seller?.name}</p>
 
             <Link to={`/ProductDetails/${p._id}?type=digital`}>
-              <button>View</button>
+              <button className='btn btn-primary mt-2'>View</button>
             </Link>
           </div>
         ))}
@@ -54,4 +56,4 @@ function HorizontalProductList() {
 
 export default HorizontalProductList;
 
-export default HorizontalProductList;
+// export default HorizontalProductList;

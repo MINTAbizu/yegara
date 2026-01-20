@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './productlist.css';
-import product1 from '../../assets/image/home.jpg.png';
-import product2 from '../../assets/image/test5.png';
-import product4 from '../../assets/image/test5.png';
+import product1 from '../../assets/image/officetabel.jpg';
+import product2 from '../../assets/image/Promoting Handmade Crafts Online.png';
+import product4 from '../../assets/image/test.jpg';
 import product5 from '../../assets/image/test5.png';
 
 const products = [
-  { id: 1, name: 'Digital Product 1', image: product1 },
-  { id: 2, name: 'Digital Product 2', image: product2},
-  { id: 3, name: 'Digital Product 3', image: product4 },
-  { id: 3, name: 'Digital Product 3', image: product5 },
+  { id: 1, name: 'Office Table', image: product1 },
+  { id: 2, name: ' Handmade Crafts', image: product2},
+  { id: 3, name: 'Home Craft Products ', image: product4 },
+  { id: 3, name: 'Digital Product ', image: product5 },
   // { id: 4, name: 'Digital Product 4', image: "" },
   // { id: 5, name: 'Digital Product 5', image:"" },
 ];

@@ -1,34 +1,4 @@
-// import express from "express";
-// import upload from "../../middleware/digitalproduct/upload.js";
-// import {
-//   addDigitalProduct,
-//   toggleStatus,
-//   getApprovedProducts,
-//   digitalProductDetail,
-//   getAllProductsAdmin,
-//   getAllPhysicalProducts,
-//   physicalProductDetail
-// } from "../../controller/digitalProduct.controller/digitalProduct.controller.js";
 
-// const router = express.Router();
-
-// // Add a new digital product
-// router.post("/create", upload.single("image"), addDigitalProduct);
-
-// // Admin routes
-// router.get("/admin", getAllProductsAdmin);
-// router.patch("/toggle-status/:id", toggleStatus);
-
-// // Public routes
-// router.get("/", getApprovedProducts); // list all approved digital products
-// router.get("/physical", getAllPhysicalProducts); // list all approved physical products
-
-// // Product details by ID
-// router.get("/:id", digitalProductDetail); // digital product details
-// router.get("/physical/:id", physicalProductDetail); // physical product details
-
-// export default router;
-// routes/digitalProduct.routes.js
 import express from "express";
 import upload from "../../middleware/digitalproduct/upload.js";
 import {

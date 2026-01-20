@@ -5,15 +5,35 @@ import User from "../../model/user.model/user.model.js";
 // Add a new digital product
 import DigitalProduct from "../../model/digitalproducts/digital products.js";
 
+// export const addDigitalProduct = async (req, res) => {
+//   try {
+//     const { productName, description, price } = req.body;
+
+//     const imageUrl = req.file ? req.file.path : null; // Cloudinary URL
+
+//     const newProduct = new DigitalProduct({
+//       productName,
+//       description,
+//       price,
+//       seller: req.user._id,
+//       image: imageUrl,
+//     });
+
+//     const saved = await newProduct.save();
+//     res.status(201).json(saved);
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+
 export const addDigitalProduct = async (req, res) => {
   try {
     const { productName, description, price } = req.body;
 
-    const BASE_URL = https://yegara-4.onrender.com;
-
-    const imageUrl = req.file
-      ? 
-      : null;
+    const imageUrl = req.file ? req.file.path : null; // Cloudinary URL
 
     const newProduct = new DigitalProduct({
       productName,
@@ -31,6 +51,7 @@ export const addDigitalProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 export const toggleStatus = async (req, res) => {
