@@ -49,7 +49,7 @@ function HorizontalProductList() {
               <img
                 src={`${API_URL}${p.image}`}
                 alt={p.productName}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                
               />              <h5>{p.productName}</h5>
               <p className="price">{p.price} ETB</p>
               <p className="seller">Seller: {p.seller?.name}</p>
