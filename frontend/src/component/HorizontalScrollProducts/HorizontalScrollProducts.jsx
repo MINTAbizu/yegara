@@ -46,11 +46,8 @@ function HorizontalProductList() {
         <div className="horizontal-product-list" ref={listRef}>
           {products.map((p) => (
             <div key={p._id} className="product-card">
-              <img
-                src={`${API_URL}${p.image}`}
-                alt={p.productName}
-                
-              />              <h5>{p.productName}</h5>
+              <img src={p.image} alt={p.productName} />
+              <h5>{p.productName}</h5>
               <p className="price">{p.price} ETB</p>
               <p className="seller">Seller: {p.seller?.name}</p>
 
