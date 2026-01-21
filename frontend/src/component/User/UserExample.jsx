@@ -1,42 +1,47 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import UserCard from "./UserCard";
-import "./UserCard.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const UserExample = () => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (pageNum) => {
     try {
       const token = localStorage.getItem("adminToken");
 
-      const res = await axios.get(`${API_URL}/api/users/ouruser`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        `${API_URL}/api/users?page=${pageNum}&limit=${limit}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      setUsers(res.data);
-      setLoading(false);
+      setUsers((prev) => [...prev, ...res.data.users]);
+      setTotalPages(res.data.totalPages);
     } catch (err) {
       console.error("Fetch users error:", err);
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers(page);
+  }, [page]);
 
-    // 🔥 Auto-refresh every 1 second
-    const interval = setInterval(fetchUsers, 1000);
+  // 🔁 Auto-load next 10 users every 1 second
+  useEffect(() => {
+    if (page >= totalPages) return;
+
+    const interval = setInterval(() => {
+      setPage((prev) => prev + 1);
+    }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
-
-  if (loading) return <p>Loading users...</p>;
+  }, [page, totalPages]);
 
   return (
     <>
@@ -49,7 +54,6 @@ const UserExample = () => {
           flexWrap: "wrap",
           gap: "20px",
           justifyContent: "center",
-          marginTop: "18px",
         }}
       >
         {users.map((u) => (

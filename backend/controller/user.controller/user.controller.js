@@ -379,13 +379,42 @@ export const getUsers = async (req, res) => {
 
 export const ouruser = async (req, res) => {
   try {
-    const users = await User.find().select("-password");
-    res.json(users);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const users = await User.find()
+      .select("-password")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalUsers = await User.countDocuments();
+
+    res.json({
+      users,
+      totalUsers,
+      currentPage: page,
+      totalPages: Math.ceil(totalUsers / limit),
+    });
   } catch (err) {
     console.error("getUsers error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 export const getUserById = async (req, res) => {
