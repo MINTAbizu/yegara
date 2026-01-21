@@ -39,9 +39,9 @@ const AddDigitalProduct = () => {
       }
 
       const res = await axios.post(
-        'http://localhost:5000/api/digital-products/create',
+        // 'http://localhost:5000/api/digital-products/create',
         
-        // `${API_URL}/api/digital-products/create`,
+        `${API_URL}/api/digital-products/create`,
         data,
         {
           headers: {
