@@ -83,7 +83,7 @@ const fetchProducts = async () => {
                 <td>
                   {p.image && (
                     <img
-                      src={`${API_URL}${p.image}`}
+                      src={p.image}
                       alt={p.productName}
                       style={{
                         width: "50px",
