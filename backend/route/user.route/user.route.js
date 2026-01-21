@@ -106,7 +106,7 @@ router.get("/me", protect, getMe);
 
 // Admin (example)
 router.get("/", protect, adminOnly, getUsers);
-router.get("/ouruser", protect, adminOnly, ouruser);
+router.get("/ouruser", ouruser);
 router.get("/:id", protect, adminOnly, getUserById);
 router.put("/:id", protect, adminOnly, updateUser);
 router.delete("/:id", protect, adminOnly, deleteUser);
