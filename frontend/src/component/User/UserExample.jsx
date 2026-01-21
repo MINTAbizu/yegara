@@ -21,27 +21,27 @@ const UserExample = () => {
         }
       );
 
-      setUsers((prev) => [...prev, ...res.data.users]);
+      // ✅ REPLACE users (not append)
+      setUsers(res.data.users);
       setTotalPages(res.data.totalPages);
     } catch (err) {
       console.error("Fetch users error:", err);
     }
   };
 
+  // Fetch users whenever page changes
   useEffect(() => {
     fetchUsers(page);
   }, [page]);
 
-  // 🔁 Auto-load next 10 users every 1 second
+  // ⏱️ Auto change page every 1 second
   useEffect(() => {
-    if (page >= totalPages) return;
-
     const interval = setInterval(() => {
-      setPage((prev) => prev + 1);
+      setPage((prev) => (prev >= totalPages ? 1 : prev + 1));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [page, totalPages]);
+  }, [totalPages]);
 
   return (
     <>
