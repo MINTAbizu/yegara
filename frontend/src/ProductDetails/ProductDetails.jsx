@@ -71,8 +71,8 @@ const DigitalProductDetail = () => {
             {/* Image container */}
             <div style={{ width: "100%", height: "300px", overflow: "hidden" }}>
               <img
-                src={`${API_URL}${product.image}`}
-                alt={product.productName}
+               src={product.image} alt={product.productName}
+                // alt={product.productName}
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             </div>
