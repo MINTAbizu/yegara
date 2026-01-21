@@ -45,10 +45,10 @@ function HorizontalProductList() {
       ) : (
         <div className="horizontal-product-list" ref={listRef}>
           {products.map((p) => (
-            
+            console.log("IMAGE URL:", p.image),
 
             <div key={p._id} className="product-card">
-              console.log("IMAGE URL:", p.image);
+              
 
               <img src={p.image} alt={p.productName} />
               {/* <img src={products.image} alt={products.productName} /> */}
