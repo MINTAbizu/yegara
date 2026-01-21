@@ -33,7 +33,8 @@ export const addDigitalProduct = async (req, res) => {
   try {
     const { productName, description, price } = req.body;
 
-    const imageUrl = req.file ? req.file.path : null; // Cloudinary URL
+    const imageUrl = req.file?.secure_url;
+console.log(req.file);
 
     const newProduct = new DigitalProduct({
       productName,
@@ -51,6 +52,9 @@ export const addDigitalProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+console.log(req.file);
+
 
 
 
