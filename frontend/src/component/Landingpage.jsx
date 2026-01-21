@@ -30,7 +30,7 @@ function Landingpage() {
                     <RewardsList/>
                     {/* <Handmadeproduct/> */}
                     <UserExample/>
-                    <RewardsList/>
+                    {/* <RewardsList/> */}
                     <StepsAnimated/>
 
                     <PromotionCarousel/>

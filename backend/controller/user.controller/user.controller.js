@@ -376,6 +376,7 @@ export const getUsers = async (req, res) => {
   }
 };
 
+
 export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
@@ -386,6 +387,8 @@ export const getUserById = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
 
 export const updateUser = async (req, res) => {
   try {
