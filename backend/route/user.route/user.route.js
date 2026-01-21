@@ -89,7 +89,8 @@ import {
   getUserById,
   updateUser,
   deleteUser,
-  getMe
+  getMe,
+  ouruser
 } from "../../controller/user.controller/user.controller.js";
 import { protect, adminOnly } from "../../middleware/authMiddleware.js";
 
@@ -104,7 +105,8 @@ router.post("/google", googleLogin);
 router.get("/me", protect, getMe);
 
 // Admin (example)
-router.get("/", getUsers);
+router.get("/", protect, adminOnly, getUsers);
+router.get("/ouruser", protect, adminOnly, ouruser);
 router.get("/:id", protect, adminOnly, getUserById);
 router.put("/:id", protect, adminOnly, updateUser);
 router.delete("/:id", protect, adminOnly, deleteUser);

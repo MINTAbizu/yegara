@@ -13,7 +13,7 @@ const UserExample = () => {
     try {
       const token = localStorage.getItem("adminToken");
 
-      const res = await axios.get(`${API_URL}/api/users`, {
+      const res = await axios.get(`${API_URL}/api/users/ouruser`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

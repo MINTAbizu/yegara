@@ -377,6 +377,17 @@ export const getUsers = async (req, res) => {
 };
 
 
+export const ouruser = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (err) {
+    console.error("getUsers error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
