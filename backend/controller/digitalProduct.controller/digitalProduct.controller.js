@@ -3,7 +3,7 @@ import PhysicalProduct from "../../model/physicalproduct/physicalprosuct.model.j
 import User from "../../model/user.model/user.model.js";
 
 // Add a new digital product
-import DigitalProduct from "../../model/digitalproducts/digital products.js";
+// import DigitalProduct from "../../model/digitalproducts/digital products.js";
 
 // export const addDigitalProduct = async (req, res) => {
 //   try {
@@ -28,13 +28,15 @@ import DigitalProduct from "../../model/digitalproducts/digital products.js";
 //   }
 // };
 
-
 export const addDigitalProduct = async (req, res) => {
+  console.log("=== NEW PRODUCT UPLOAD ===");
+  console.log("REQ BODY:", req.body);
+  console.log("REQ FILE:", req.file);  // ✅ add here
+
   try {
     const { productName, description, price } = req.body;
 
     const imageUrl = req.file?.secure_url;
-console.log(req.file);
 
     const newProduct = new DigitalProduct({
       productName,
@@ -48,12 +50,13 @@ console.log(req.file);
     res.status(201).json(saved);
 
   } catch (error) {
-    console.error(error);
+    console.error("ERROR:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-console.log(req.file);
+
+
 
 
 

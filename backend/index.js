@@ -19,7 +19,7 @@ import kycRoutes from './route/kyc/kyc.route.js'
 import profileRoutes from './route/profile.route/profile.route.js'
 
 
-import telegeram from './route/telegram.routes.js'
+// import telegeram from './route/telegram.routes.js'
 
 
 const app = express();
@@ -82,7 +82,7 @@ app.use("/api/kyc", kycRoutes)
 // // Profile routes
 app.use("/api/profile", profileRoutes);
 app.use("/api/payment", chapapayment);
-app.use("/telegram", telegeram);
+// app.use("/telegram", telegeram);
 
 // Error handler (return JSON for API errors)
 app.use((err, req, res, next) => {
