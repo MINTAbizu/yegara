@@ -28,15 +28,40 @@ import User from "../../model/user.model/user.model.js";
 //   }
 // };
 
+// export const addDigitalProduct = async (req, res) => {
+//   console.log("=== NEW PRODUCT UPLOAD ===");
+//   console.log("REQ BODY:", req.body);
+//   console.log("REQ FILE:", req.file);  // ✅ add here
+
+//   try {
+//     const { productName, description, price } = req.body;
+
+//     const imageUrl = req.file?.secure_url;
+
+//     const newProduct = new DigitalProduct({
+//       productName,
+//       description,
+//       price,
+//       seller: req.user._id,
+//       image: imageUrl,
+//     });
+
+//     const saved = await newProduct.save();
+//     res.status(201).json(saved);
+
+//   } catch (error) {
+//     console.error("ERROR:", error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 export const addDigitalProduct = async (req, res) => {
-  console.log("=== NEW PRODUCT UPLOAD ===");
+  console.log("REQ FILE:", req.file);
   console.log("REQ BODY:", req.body);
-  console.log("REQ FILE:", req.file);  // ✅ add here
 
   try {
     const { productName, description, price } = req.body;
 
-    const imageUrl = req.file?.secure_url;
+    const imageUrl = req.file?.path;   // <-- important
 
     const newProduct = new DigitalProduct({
       productName,
@@ -48,9 +73,8 @@ export const addDigitalProduct = async (req, res) => {
 
     const saved = await newProduct.save();
     res.status(201).json(saved);
-
   } catch (error) {
-    console.error("ERROR:", error);
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
