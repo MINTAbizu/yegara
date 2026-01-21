@@ -62,7 +62,7 @@ const UserExample = () => {
             user={{
               name: u.name,
               image: "https://via.placeholder.com/200",
-              description: u.email,
+              // description: u.email,
             }}
           />
         ))}
