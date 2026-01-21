@@ -38,7 +38,7 @@ const UserExample = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setPage((prev) => (prev >= totalPages ? 1 : prev + 1));
-    }, 1000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [totalPages]);
