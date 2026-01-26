@@ -106,8 +106,15 @@ const UserProfileFormFixed = () => {
         {/* Avatar */}
         <div className="d-flex flex-column align-items-center mb-4">
           <img
-            src={avatar ? URL.createObjectURL(avatar) : "https://via.placeholder.com/100"}
-            alt="User Avatar"
+
+         
+  
+
+            src={
+avatar
+    ? URL.createObjectURL(avatar)
+    : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23ddd'/%3E%3Ctext x='50' y='55' font-size='14' text-anchor='middle' fill='%23777'%3EAvatar%3C/text%3E%3C/svg%3E"
+}            alt="User Avatar"
             className="rounded-circle border border-3 border-primary mb-2"
             style={{ width: "100px", height: "100px", objectFit: "cover" }}
           />
