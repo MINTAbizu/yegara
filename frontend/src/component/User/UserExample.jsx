@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import UserCard from "./UserCard";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -21,7 +20,6 @@ const UserExample = () => {
         }
       );
 
-      // ✅ REPLACE users (not append)
       setUsers(res.data.users);
       setTotalPages(res.data.totalPages);
     } catch (err) {
@@ -29,12 +27,10 @@ const UserExample = () => {
     }
   };
 
-  // Fetch users whenever page changes
   useEffect(() => {
     fetchUsers(page);
   }, [page]);
 
-  // ⏱️ Auto change page every 1 second
   useEffect(() => {
     const interval = setInterval(() => {
       setPage((prev) => (prev >= totalPages ? 1 : prev + 1));
@@ -57,14 +53,51 @@ const UserExample = () => {
         }}
       >
         {users.map((u) => (
-          <UserCard
+          <div
             key={u._id}
-            user={{
-              name: u.name,
-              image: "https://via.placeholder.com/200",
-              // description: u.email,
+            style={{
+              width: "280px",
+              borderRadius: "10px",
+              overflow: "hidden",
+              boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+              textAlign: "center",
             }}
-          />
+          >
+            {/* Background Image */}
+            <div style={{ height: "120px", width: "100%" }}>
+              <img
+                src={u.backgroundImage || "https://via.placeholder.com/400x200"}
+                alt="background"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            </div>
+
+            {/* Avatar */}
+            <div style={{ marginTop: "-50px" }}>
+              <img
+                src={u.avatar || "https://via.placeholder.com/200"}
+                alt={u.name}
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: "5px solid white",
+                }}
+              />
+            </div>
+
+            {/* User Info */}
+            <div style={{ padding: "10px" }}>
+              <h3>{u.name}</h3>
+              <p><strong>Region:</strong> {u.region || "N/A"}</p>
+              <p><strong>Field:</strong> {u.field || "N/A"}</p>
+              <p><strong>Telegram:</strong> {u.telegram || "N/A"}</p>
+              <p style={{ fontSize: "14px", color: "#555" }}>
+                {u.about ? u.about.slice(0, 120) + "..." : "No bio yet."}
+              </p>
+            </div>
+          </div>
         ))}
       </div>
     </>
