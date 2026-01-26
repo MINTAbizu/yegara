@@ -20,7 +20,7 @@ const UserExample = () => {
       const token = localStorage.getItem("adminToken");
 
       const res = await axios.get(
-        `${API_URL}/api/users/ourusers?page=${pageNum}&limit=${limit}`,
+        `${API_URL}/api/users/ouruser?page=${pageNum}&limit=${limit}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
