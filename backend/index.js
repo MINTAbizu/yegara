@@ -18,6 +18,8 @@ import kycRoutes from './route/kyc/kyc.route.js'
 // profileRoutes
 import profileRoutes from './route/profile.route/profile.route.js'
 
+import chatRoutes from "./route/Ai/chat.js";
+
 
 // import telegeram from './route/telegram.routes.js'
 
@@ -84,6 +86,10 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/payment", chapapayment);
 // app.use("/telegram", telegeram);
 
+// AI chat route
+app.use("/api/chat", chatRoutes);
+
+
 // Error handler (return JSON for API errors)
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
@@ -91,5 +97,9 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ message: err.message || 'Server error' });
 });
 
+
+app.get("/", (req, res) => {
+  res.send("Ye-Gara Shop AI is running");
+});
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
