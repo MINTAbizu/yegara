@@ -20,12 +20,12 @@ const UserExample = () => {
       const token = localStorage.getItem("adminToken");
 
       const res = await axios.get(
-        `${API_URL}/api/users/ouruser?page=${pageNum}&limit=${limit}`,
+        `${API_URL}/api/profile/ourusers?page=${pageNum}&limit=${limit}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-// console.log("IMAGE URL:", .image),
+
       setUsers(res.data.users);
       setTotalPages(res.data.totalPages);
     } catch (err) {
@@ -82,7 +82,7 @@ const UserExample = () => {
             <div style={{ marginTop: "-50px" }}>
               <img
                 src={u.avatar || avatarPlaceholder}
-                alt={u.user?.name || "User"}
+                alt={u.name}
                 style={{
                   width: "100px",
                   height: "100px",
@@ -95,8 +95,10 @@ const UserExample = () => {
 
             {/* User Info */}
             <div style={{ padding: "10px" }}>
-              <h3>{u.user?.name || "Unknown"}</h3>
+              <h3>{u.name}</h3>
+              {/* <p><strong>Region:</strong> {u.region || "N/A"}</p> */}
               <p><strong>Field:</strong> {u.field || "N/A"}</p>
+              {/* <p><strong>Telegram:</strong> {u.telegram || "N/A"}</p> */}
               <p style={{ fontSize: "14px", color: "#555" }}>
                 {u.about ? u.about.slice(0, 120) + "..." : "No bio yet."}
               </p>
