@@ -1,9 +1,12 @@
 import Profile from "../../model/UserProfile/UserProfile.js";
-
+// import cloudinary from "../../config/cloudinary.js";
 // User submits profile
 
 
 // User submits profile
+import Profile from "../../model/UserProfile/UserProfile.js";
+import { uploadToCloudinary } from "../../utils/cloudinaryUpload.js";
+
 export const createProfile = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
@@ -29,8 +32,17 @@ export const createProfile = async (req, res) => {
       field,
     });
 
-    if (req.files?.avatar) profile.avatar = req.files.avatar[0].path;
-    if (req.files?.backgroundImage) profile.backgroundImage = req.files.backgroundImage[0].path;
+    // Upload avatar to Cloudinary
+    if (req.files?.avatar) {
+      const avatarResult = await uploadToCloudinary(req.files.avatar[0].buffer, "yegara/avatar");
+      profile.avatar = avatarResult.secure_url;
+    }
+
+    // Upload background image to Cloudinary
+    if (req.files?.backgroundImage) {
+      const bgResult = await uploadToCloudinary(req.files.backgroundImage[0].buffer, "yegara/background");
+      profile.backgroundImage = bgResult.secure_url;
+    }
 
     await profile.save();
     res.status(201).json({
@@ -44,8 +56,6 @@ export const createProfile = async (req, res) => {
   }
 };
 
-
-
 // Public: Get all approved profiles
 export const getApprovedProfiles = async (req, res) => {
   try {
@@ -56,6 +66,50 @@ export const getApprovedProfiles = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Update profile status
+export const updateProfileStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const profile = await Profile.findById(req.params.id);
+
+    if (!profile) return res.status(404).json({ message: "Profile not found" });
+
+    profile.status = status;
+    await profile.save();
+
+    res.status(200).json({ message: "Profile status updated", profile });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// GET all profiles
+// export const getAllProfiles = async (req, res) => {
+//   try {
+//     const profiles = await Profile.find().populate("user", "name email");
+//     res.status(200).json(profiles);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// };
+
+
+
+
+
+// Public: Get all approved profiles
+// export const getApprovedProfiles = async (req, res) => {
+//   try {
+//     const profiles = await Profile.find({ status: "approved" }).populate("user", "name");
+//     res.status(200).json(profiles);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 // profile.controller.js
 
 
@@ -85,23 +139,23 @@ export const getApprovedProfiles = async (req, res) => {
 
 
 
-// PATCH /api/profile/:id/status
-export const updateProfileStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
-    const profile = await Profile.findById(req.params.id);
+// // PATCH /api/profile/:id/status
+// export const updateProfileStatus = async (req, res) => {
+//   try {
+//     const { status } = req.body;
+//     const profile = await Profile.findById(req.params.id);
 
-    if (!profile) return res.status(404).json({ message: "Profile not found" });
+//     if (!profile) return res.status(404).json({ message: "Profile not found" });
 
-    profile.status = status; // approved or rejected
-    await profile.save();
+//     profile.status = status; // approved or rejected
+//     await profile.save();
 
-    res.status(200).json({ message: "Profile status updated", profile });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+//     res.status(200).json({ message: "Profile status updated", profile });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// };
 
 // GET all profiles
 export const getAllProfiles = async (req, res) => {
@@ -113,4 +167,6 @@ export const getAllProfiles = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+
 

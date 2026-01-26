@@ -8,6 +8,7 @@ const profileSchema = new mongoose.Schema({
   telegram: { type: String },
   field: { type: String },
   avatar: { type: String },
+  
   backgroundImage: { type: String },
   status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
 }, { timestamps: true });
