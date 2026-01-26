@@ -21,7 +21,7 @@ const UserExample = () => {
       );
 
       const profileRes = await axios.get(
-        `${API_URL}/api/profile/ourusers`,
+        `${API_URL}/api/profile//ourusers`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
