@@ -3,6 +3,12 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+const avatarPlaceholder =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%23ddd'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%23777'%3EAvatar%3C/text%3E%3C/svg%3E";
+
+const bgPlaceholder =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='400' height='200' fill='%23ddd'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%23777'%3EBackground%3C/text%3E%3C/svg%3E";
+
 const UserExample = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
@@ -66,7 +72,7 @@ const UserExample = () => {
             {/* Background Image */}
             <div style={{ height: "120px", width: "100%" }}>
               <img
-                src={u.backgroundImage || "https://via.placeholder.com/400x200"}
+                src={u.backgroundImage || bgPlaceholder}
                 alt="background"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
@@ -75,7 +81,7 @@ const UserExample = () => {
             {/* Avatar */}
             <div style={{ marginTop: "-50px" }}>
               <img
-                src={u.avatar || "https://via.placeholder.com/200"}
+                src={u.avatar || avatarPlaceholder}
                 alt={u.name}
                 style={{
                   width: "100px",
