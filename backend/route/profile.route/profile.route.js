@@ -1,5 +1,5 @@
 import express from "express";
-import { createProfile, getAllProfiles, updateProfileStatus, getApprovedProfiles } from "../../controller/profilecontroller/profile.controller.js";
+import { createProfile,ouruser, getAllProfiles, updateProfileStatus, getApprovedProfiles } from "../../controller/profilecontroller/profile.controller.js";
 import { protect } from "../../middleware/authMiddleware.js";
 import multer from "multer";
 
@@ -20,7 +20,7 @@ router.get("/", protect, getAllProfiles);
 
 // Admin: approve/reject profile
 router.patch("/:id/status", protect, updateProfileStatus);
-
+router.get("/ourusers", ouruser);
 // Public: get all approved profiles
 router.get("/approved", getApprovedProfiles);
 
