@@ -82,7 +82,7 @@ const UserExample = () => {
             <div style={{ marginTop: "-50px" }}>
               <img
                 src={u.avatar || avatarPlaceholder}
-                alt={u.name}
+                alt={u.user?.name || "User"}
                 style={{
                   width: "100px",
                   height: "100px",
@@ -95,10 +95,8 @@ const UserExample = () => {
 
             {/* User Info */}
             <div style={{ padding: "10px" }}>
-              <h3>{u.name}</h3>
-              {/* <p><strong>Region:</strong> {u.region || "N/A"}</p> */}
+              <h3>{u.user?.name || "Unknown"}</h3>
               <p><strong>Field:</strong> {u.field || "N/A"}</p>
-              {/* <p><strong>Telegram:</strong> {u.telegram || "N/A"}</p> */}
               <p style={{ fontSize: "14px", color: "#555" }}>
                 {u.about ? u.about.slice(0, 120) + "..." : "No bio yet."}
               </p>
