@@ -27,7 +27,8 @@ const UserExample = () => {
 
       const users = usersRes.data.users;
       const profiles = profileRes.data.profiles;
-
+     console.log("Fetched users:", users);
+      console.log("Fetched profiles:", profiles);
       const merged = users.map((u) => {
         const profile = profiles.find((p) => String(p.user._id) === String(u._id));
         return {
