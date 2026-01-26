@@ -173,19 +173,21 @@ export const getAllProfiles = async (req, res) => {
 
 
 
+import Profile from "../../model/UserProfile/UserProfile.js";
+
 export const ouruser = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const users = await User.find()
-      .select("-password")
+    const users = await Profile.find({ status: "approved" })
+      .populate("user", "name")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await Profile.countDocuments({ status: "approved" });
 
     res.json({
       users,
