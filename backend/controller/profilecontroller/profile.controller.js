@@ -7,11 +7,11 @@ import Profile from "../../model/UserProfile/UserProfile.js";
 import Profile from "../../model/UserProfile/UserProfile.js";
 import { uploadToCloudinary } from "../../utils/cloudinaryUpload.js";
 
+
 export const createProfile = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
-    // Check if the user already has a profile
     const existingProfile = await Profile.findOne({ user: req.user._id });
     if (existingProfile) {
       return res.status(400).json({
@@ -32,29 +32,32 @@ export const createProfile = async (req, res) => {
       field,
     });
 
-    // Upload avatar to Cloudinary
     if (req.files?.avatar) {
       const avatarResult = await uploadToCloudinary(req.files.avatar[0].buffer, "yegara/avatar");
-      profile.avatar = avatarResult.secure_url;
+      profile.avatar = avatarResult.secure_url; // <-- MUST be secure_url
+      profile.avatarPublicId = avatarResult.public_id;
     }
 
-    // Upload background image to Cloudinary
     if (req.files?.backgroundImage) {
       const bgResult = await uploadToCloudinary(req.files.backgroundImage[0].buffer, "yegara/background");
-      profile.backgroundImage = bgResult.secure_url;
+      profile.backgroundImage = bgResult.secure_url; // <-- MUST be secure_url
+      profile.backgroundPublicId = bgResult.public_id;
     }
 
     await profile.save();
+
     res.status(201).json({
       success: true,
       message: "Profile created successfully!",
       profile
     });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 // Public: Get all approved profiles
 export const getApprovedProfiles = async (req, res) => {
