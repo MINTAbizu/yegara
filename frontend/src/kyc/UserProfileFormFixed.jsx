@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../Context/Authcontext";
 import { useNavigate } from 'react-router-dom';
-
+const API_URL = import.meta.env.VITE_API_URL;
 const ETHIOPIA_REGIONS = [
   "Addis Ababa", "Afar", "Amhara", "Benishangul-Gumuz", "Dire Dawa",
   "Gambela", "Harari", "Oromia", "Sidama", "Somali",
@@ -59,7 +59,7 @@ const UserProfileFormFixed = () => {
         return;
       }
 
-      const res = await fetch("http://localhost:5000/api/profile/create", {
+      const res = await fetch(`${API_URL}/api/profile/create`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: profileData,
