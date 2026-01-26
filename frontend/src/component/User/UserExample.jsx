@@ -4,61 +4,64 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const avatarPlaceholder =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%23ddd'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%23777'%3EAvatar%3C/text%3E%3C/svg%3E";
-
+  "https://via.placeholder.com/100";
 const bgPlaceholder =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='400' height='200' fill='%23ddd'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%23777'%3EBackground%3C/text%3E%3C/svg%3E";
+  "https://via.placeholder.com/400x120";
 
 const UserExample = () => {
-  const [users, setUsers] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const limit = 10;
+  const [data, setData] = useState([]);
 
-  const fetchUsers = async (pageNum) => {
+  const fetchData = async () => {
     try {
       const token = localStorage.getItem("adminToken");
 
-      const res = await axios.get(
-        `${API_URL}/api/users/ouruser?page=${pageNum}&limit=${limit}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const usersRes = await axios.get(
+        `${API_URL}/api/users/ouruser`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUsers(res.data.users);
-      setTotalPages(res.data.totalPages);
+      const profileRes = await axios.get(
+        `${API_URL}/api/profile/ourusers`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const users = usersRes.data.users;
+      const profiles = profileRes.data.profiles;
+
+      const merged = users.map((u) => {
+        const profile = profiles.find((p) => String(p.user._id) === String(u._id));
+        return {
+          ...u,
+          avatar: profile?.avatar,
+          backgroundImage: profile?.backgroundImage,
+          field: profile?.field,
+          about: profile?.about,
+        };
+      });
+
+      setData(merged);
     } catch (err) {
-      console.error("Fetch users error:", err);
+      console.error("Fetch data error:", err);
     }
   };
 
   useEffect(() => {
-    fetchUsers(page);
-  }, [page]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPage((prev) => (prev >= totalPages ? 1 : prev + 1));
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [totalPages]);
+    fetchData();
+  }, []);
 
   return (
-    <>
+    <div style={{ padding: "20px" }}>
       <h1 style={{ textAlign: "center" }}>Our Users</h1>
 
       <div
         style={{
-          padding: "20px",
           display: "flex",
           flexWrap: "wrap",
           gap: "20px",
           justifyContent: "center",
         }}
       >
-        {users.map((u) => (
+        {data.map((u) => (
           <div
             key={u._id}
             style={{
@@ -69,7 +72,7 @@ const UserExample = () => {
               textAlign: "center",
             }}
           >
-            {/* Background Image */}
+            {/* Background */}
             <div style={{ height: "120px", width: "100%" }}>
               <img
                 src={u.backgroundImage || bgPlaceholder}
@@ -82,7 +85,7 @@ const UserExample = () => {
             <div style={{ marginTop: "-50px" }}>
               <img
                 src={u.avatar || avatarPlaceholder}
-                alt={u.user?.name || "User"}
+                alt={u.name}
                 style={{
                   width: "100px",
                   height: "100px",
@@ -93,9 +96,8 @@ const UserExample = () => {
               />
             </div>
 
-            {/* User Info */}
             <div style={{ padding: "10px" }}>
-              <h3>{u.user?.name || "Unknown"}</h3>
+              <h3>{u.name}</h3>
               <p><strong>Field:</strong> {u.field || "N/A"}</p>
               <p style={{ fontSize: "14px", color: "#555" }}>
                 {u.about ? u.about.slice(0, 120) + "..." : "No bio yet."}
@@ -104,7 +106,7 @@ const UserExample = () => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 
