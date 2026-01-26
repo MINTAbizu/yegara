@@ -1,12 +1,5 @@
 import Profile from "../../model/UserProfile/UserProfile.js";
-// import cloudinary from "../../config/cloudinary.js";
-// User submits profile
-
-
-// User submits profile
-import Profile from "../../model/UserProfile/UserProfile.js";
 import { uploadToCloudinary } from "../../utils/cloudinaryUpload.js";
-
 
 export const createProfile = async (req, res) => {
   try {
@@ -32,15 +25,17 @@ export const createProfile = async (req, res) => {
       field,
     });
 
+    // Upload avatar
     if (req.files?.avatar) {
       const avatarResult = await uploadToCloudinary(req.files.avatar[0].buffer, "yegara/avatar");
-      profile.avatar = avatarResult.secure_url; // <-- MUST be secure_url
+      profile.avatar = avatarResult.secure_url;
       profile.avatarPublicId = avatarResult.public_id;
     }
 
+    // Upload background
     if (req.files?.backgroundImage) {
       const bgResult = await uploadToCloudinary(req.files.backgroundImage[0].buffer, "yegara/background");
-      profile.backgroundImage = bgResult.secure_url; // <-- MUST be secure_url
+      profile.backgroundImage = bgResult.secure_url;
       profile.backgroundPublicId = bgResult.public_id;
     }
 
@@ -59,18 +54,32 @@ export const createProfile = async (req, res) => {
 };
 
 
-// Public: Get all approved profiles
-export const getApprovedProfiles = async (req, res) => {
+export const ouruser = async (req, res) => {
   try {
-    const profiles = await Profile.find({ status: "approved" }).populate("user", "name");
-    res.status(200).json(profiles);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const profiles = await Profile.find({ status: "approved" })
+      .populate("user", "name")
+      .skip(skip)
+      .limit(limit);
+
+    const totalProfiles = await Profile.countDocuments({ status: "approved" });
+
+    res.json({
+      users: profiles,
+      totalUsers: totalProfiles,
+      currentPage: page,
+      totalPages: Math.ceil(totalProfiles / limit),
+    });
   } catch (err) {
-    console.error(err);
+    console.error("getUsers error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Update profile status
+
 export const updateProfileStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -88,79 +97,6 @@ export const updateProfileStatus = async (req, res) => {
   }
 };
 
-// GET all profiles
-// export const getAllProfiles = async (req, res) => {
-//   try {
-//     const profiles = await Profile.find().populate("user", "name email");
-//     res.status(200).json(profiles);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// };
-
-
-
-
-
-// Public: Get all approved profiles
-// export const getApprovedProfiles = async (req, res) => {
-//   try {
-//     const profiles = await Profile.find({ status: "approved" }).populate("user", "name");
-//     res.status(200).json(profiles);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
-// profile.controller.js
-
-
-// Approve or Reject Profile
-// export const updateProfileStatus = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { status } = req.body; // "Approved" or "Rejected"
-
-//     if (!["Approved", "Rejected"].includes(status)) {
-//       return res.status(400).json({ message: "Invalid status" });
-//     }
-
-//     const profile = await Profile.findByIdAndUpdate(
-//       id,
-//       { status },
-//       { new: true }
-//     ).populate("user", "name email");
-
-//     if (!profile) return res.status(404).json({ message: "Profile not found" });
-
-//     res.status(200).json({ message: `Profile ${status.toLowerCase()} successfully`, profile });
-//   } catch (error) {
-//     res.status(500).json({ message: "Server Error", error });
-//   }
-// };
-
-
-
-// // PATCH /api/profile/:id/status
-// export const updateProfileStatus = async (req, res) => {
-//   try {
-//     const { status } = req.body;
-//     const profile = await Profile.findById(req.params.id);
-
-//     if (!profile) return res.status(404).json({ message: "Profile not found" });
-
-//     profile.status = status; // approved or rejected
-//     await profile.save();
-
-//     res.status(200).json({ message: "Profile status updated", profile });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// };
-
-// GET all profiles
 export const getAllProfiles = async (req, res) => {
   try {
     const profiles = await Profile.find().populate("user", "name email");
@@ -171,32 +107,12 @@ export const getAllProfiles = async (req, res) => {
   }
 };
 
-
-
-import Profile from "../../model/UserProfile/UserProfile.js";
-
-export const ouruser = async (req, res) => {
+export const getApprovedProfiles = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    const users = await Profile.find({ status: "approved" })
-      .populate("user", "name")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const totalUsers = await Profile.countDocuments({ status: "approved" });
-
-    res.json({
-      users,
-      totalUsers,
-      currentPage: page,
-      totalPages: Math.ceil(totalUsers / limit),
-    });
+    const profiles = await Profile.find({ status: "approved" }).populate("user", "name");
+    res.status(200).json(profiles);
   } catch (err) {
-    console.error("getUsers error:", err);
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
