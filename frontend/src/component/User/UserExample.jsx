@@ -26,7 +26,7 @@ const UserExample = () => {
         }
       );
 
-      console.log("API DATA:", res.data);
+      console.log("API DATA:", `${API_URL}/api/users/ourusers`);
 
       setUsers(res.data.users || []);
       setTotalPages(res.data.totalPages || 1);
