@@ -20,7 +20,7 @@ const UserExample = () => {
       const token = localStorage.getItem("adminToken");
 
       const res = await axios.get(
-        `${API_URL}/api/profile/ourusers?page=${pageNum}&limit=${limit}`,
+        `${API_URL}/api/users/ouruser?page=${pageNum}&limit=${limit}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -98,7 +98,7 @@ const UserExample = () => {
               <h3>{u.name}</h3>
               {/* <p><strong>Region:</strong> {u.region || "N/A"}</p> */}
               <p><strong>Field:</strong> {u.field || "N/A"}</p>
-              {/* <p><strong>Telegram:</strong> {u.telegram || "N/A"}</p> */}
+              <p><strong>Telegram:</strong> {u.telegram || "N/A"}</p>
               <p style={{ fontSize: "14px", color: "#555" }}>
                 {u.about ? u.about.slice(0, 120) + "..." : "No bio yet."}
               </p>
