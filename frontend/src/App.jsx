@@ -38,6 +38,7 @@ import Settings from './kyc/Settings';
 import Bank from './kyc/Bank';
 import TelegeramLanding from './telegeram/TelegeramLanding';
 import Telegram from './telegeram/Telegram';
+import SupportChat from './Ai/SupportChat';
 
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/TelegeramLanding" element={<TelegeramLanding />} />
           <Route path="/Telegram" element={<Telegram />} />
+          <Route path="/SupportChat" element={<SupportChat />} />
 
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />
           <Route

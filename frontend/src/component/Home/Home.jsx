@@ -35,6 +35,12 @@ Digital & Physical products from trusted sellers        </h1>
           >
             Sell TG Group
           </Link>
+          <Link
+            to="/SupportChat"
+            className="btn btn-success btn-lg px-4 py-2 fw-semibold w-100 w-md-auto"
+          >
+           SupportChat
+          </Link>
         </div>
       </div>
     </div>
