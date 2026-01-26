@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useAuth } from "../Context/Authcontext";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+
 const API_URL = import.meta.env.VITE_API_URL;
+
 const ETHIOPIA_REGIONS = [
   "Addis Ababa", "Afar", "Amhara", "Benishangul-Gumuz", "Dire Dawa",
   "Gambela", "Harari", "Oromia", "Sidama", "Somali",
@@ -20,66 +21,61 @@ const PROFESSIONAL_FIELDS = [
 ];
 
 const UserProfileFormFixed = () => {
-  const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
+
   const [about, setAbout] = useState("");
   const [region, setRegion] = useState("");
   const [shopLocation, setShopLocation] = useState("");
   const [telegram, setTelegram] = useState("");
   const [field, setField] = useState("");
+
   const [avatar, setAvatar] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState(null);
+
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null); // <-- For status messages
+  const [message, setMessage] = useState(null);
 
   const handleAvatarChange = (e) => setAvatar(e.target.files[0]);
   const handleBackgroundChange = (e) => setBackgroundImage(e.target.files[0]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) return setMessage({ type: "error", text: "User not logged in" });
-
     setLoading(true);
     setMessage(null);
 
-    const profileData = new FormData();
-    profileData.append("about", about);
-    profileData.append("region", region);
-    profileData.append("shopLocation", shopLocation);
-    profileData.append("telegram", telegram);
-    profileData.append("field", field);
-    if (avatar) profileData.append("avatar", avatar);
-    if (backgroundImage) profileData.append("backgroundImage", backgroundImage);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setMessage({ type: "error", text: "Please login first." });
+      navigate("/login");
+      return;
+    }
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setMessage({ type: "error", text: "Not authenticated — please log in." });
-        navigate('/login');
-        return;
-      }
+      const profileData = new FormData();
+      profileData.append("about", about);
+      profileData.append("region", region);
+      profileData.append("shopLocation", shopLocation);
+      profileData.append("telegram", telegram);
+      profileData.append("field", field);
+
+      if (avatar) profileData.append("avatar", avatar);
+      if (backgroundImage) profileData.append("backgroundImage", backgroundImage);
 
       const res = await fetch(`${API_URL}/api/profile/create`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: profileData,
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: profileData
       });
 
       const result = await res.json();
 
       if (!res.ok) {
-        // Display friendly message if profile already exists
-        setMessage({ type: "error", text: result.message || "Failed to create profile" });
+        setMessage({ type: "error", text: result.message || "Failed to create profile." });
       } else {
-          setMessage({ type: "success", text: result.message || "Profile created successfully!" });
-          // Refresh user and redirect to shop if KYC already submitted
-          if (typeof refreshUser === 'function') {
-            const updated = await refreshUser();
-            console.debug('after profile refresh user:', updated);
-            if (updated?.kycSubmitted) {
-              navigate('/orders');
-            }
-          }
+        setMessage({ type: "success", text: "Profile created successfully!" });
+        navigate("/"); // redirect
       }
     } catch (error) {
       console.error(error);
@@ -92,13 +88,10 @@ const UserProfileFormFixed = () => {
   return (
     <div className="card mx-auto shadow" style={{ maxWidth: "600px" }}>
       <div className="card-body">
-        <h2 className="card-title text-center mb-4">User Profile</h2>
+        <h2 className="card-title text-center mb-4">Create Profile</h2>
 
         {message && (
-          <div
-            className={`alert ${message.type === "error" ? "alert-danger" : "alert-success"}`}
-            role="alert"
-          >
+          <div className={`alert ${message.type === "error" ? "alert-danger" : "alert-success"}`}>
             {message.text}
           </div>
         )}
@@ -106,15 +99,8 @@ const UserProfileFormFixed = () => {
         {/* Avatar */}
         <div className="d-flex flex-column align-items-center mb-4">
           <img
-
-         
-  
-
-            src={
-avatar
-    ? URL.createObjectURL(avatar)
-    : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23ddd'/%3E%3Ctext x='50' y='55' font-size='14' text-anchor='middle' fill='%23777'%3EAvatar%3C/text%3E%3C/svg%3E"
-}            alt="User Avatar"
+            src={avatar ? URL.createObjectURL(avatar) : "https://via.placeholder.com/100"}
+            alt="User Avatar"
             className="rounded-circle border border-3 border-primary mb-2"
             style={{ width: "100px", height: "100px", objectFit: "cover" }}
           />
