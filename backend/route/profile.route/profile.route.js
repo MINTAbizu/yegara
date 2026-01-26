@@ -4,7 +4,7 @@ import {
   ouruser,
   getAllProfiles,
   updateProfileStatus,
-  getApprovedProfiles
+  // getApprovedProfiles
 } from "../../controller/profilecontroller/profile.controller.js";
 import { protect } from "../../middleware/authMiddleware.js";
 import multer from "multer";
@@ -27,6 +27,6 @@ router.post(
 router.get("/", protect, getAllProfiles);
 router.patch("/:id/status", protect, updateProfileStatus);
 router.get("/ourusers", ouruser);
-router.get("/approved", getApprovedProfiles);
+// router.get("/approved", getApprovedProfiles);
 
 export default router;
