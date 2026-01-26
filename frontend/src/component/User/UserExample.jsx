@@ -25,14 +25,11 @@ const UserExample = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      console.log("API DATA:", `${API_URL}/api/users/ourusers`);
-
-      setUsers(res.data.users || []);
-      setTotalPages(res.data.totalPages || 1);
+// console.log("IMAGE URL:", .image),
+      setUsers(res.data.users);
+      setTotalPages(res.data.totalPages);
     } catch (err) {
       console.error("Fetch users error:", err);
-      setUsers([]); // prevent crash
     }
   };
 
@@ -99,9 +96,7 @@ const UserExample = () => {
             {/* User Info */}
             <div style={{ padding: "10px" }}>
               <h3>{u.user?.name || "Unknown"}</h3>
-              <p>
-                <strong>Field:</strong> {u.field || "N/A"}
-              </p>
+              <p><strong>Field:</strong> {u.field || "N/A"}</p>
               <p style={{ fontSize: "14px", color: "#555" }}>
                 {u.about ? u.about.slice(0, 120) + "..." : "No bio yet."}
               </p>
