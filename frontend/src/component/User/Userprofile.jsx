@@ -4,122 +4,136 @@ import { ClipLoader } from "react-spinners";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const Userprofile = () => {
+const CombinedUsers = () => {
+  const [users, setUsers] = useState([]);
   const [profiles, setProfiles] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [mergedData, setMergedData] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const limit = 10;
 
-  const fetchProfiles = async (pageNum) => {
+  const fetchData = async () => {
     setLoading(true);
-
     try {
       const token = localStorage.getItem("adminToken");
 
-      const res = await axios.get(
-        `${API_URL}/api/profile/ourusers?page=${pageNum}&limit=${limit}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      // 1️⃣ fetch users
+      const usersRes = await axios.get(
+        `${API_URL}/api/users/ouruser?page=1&limit=${limit}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log("Fetched profiles:", res.data);
 
-      setProfiles(res.data.users);
-      setTotalPages(res.data.totalPages);
+      // 2️⃣ fetch profiles
+      const profilesRes = await axios.get(
+        `${API_URL}/api/profile/ourusers?page=1&limit=${limit}`
+      );
+
+      setUsers(usersRes.data.users);
+      setProfiles(profilesRes.data.users);
     } catch (err) {
-      console.error("Fetch profiles error:", err);
+      console.error("Fetch error:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔗 Merge users + profiles
   useEffect(() => {
-    fetchProfiles(page);
-  }, [page]);
+    if (users.length && profiles.length) {
+      const merged = users.map((u) => {
+        const profile = profiles.find(
+          (p) => p.user?._id === u._id
+        );
+        return {
+          ...u,
+          profile,
+        };
+      });
+
+      setMergedData(merged);
+    }
+  }, [users, profiles]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPage((prev) => (prev >= totalPages ? 1 : prev + 1));
-    }, 5000);
+    fetchData();
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [totalPages]);
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", height: 200 }}>
+        <ClipLoader size={60} />
+      </div>
+    );
+  }
 
   return (
     <>
       <h1 style={{ textAlign: "center" }}>Our Users</h1>
 
-      {loading ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "200px",
-          }}
-        >
-          <ClipLoader loading={loading} size={60} />
-        </div>
-      ) : (
-        <div
-          style={{
-            padding: "20px",
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "20px",
-            justifyContent: "center",
-          }}
-        >
-          {profiles.map((p) => (
-            <div
-              key={p._id}
+      <div
+        style={{
+          padding: 20,
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 20,
+          justifyContent: "center",
+        }}
+      >
+        {mergedData.map((u) => (
+          <div
+            key={u._id}
+            style={{
+              width: 280,
+              borderRadius: 10,
+              overflow: "hidden",
+              boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+              textAlign: "center",
+            }}
+          >
+            {/* Background */}
+            <img
+              src={
+                u.profile?.backgroundImage ||
+                "https://via.placeholder.com/400x200"
+              }
+              alt="background"
+              style={{ width: "100%", height: 120, objectFit: "cover" }}
+            />
+
+            {/* Avatar */}
+            <img
+              src={
+                u.profile?.avatar ||
+                "https://via.placeholder.com/200"
+              }
+              alt={u.name}
               style={{
-                width: "280px",
-                borderRadius: "10px",
-                overflow: "hidden",
-                boxShadow: "0 0 10px rgba(0,0,0,0.2)",
-                textAlign: "center",
+                width: 100,
+                height: 100,
+                borderRadius: "50%",
+                marginTop: -50,
+                border: "5px solid white",
+                objectFit: "cover",
               }}
-            >
-              {/* Background */}
-              <div style={{ height: "120px", width: "100%" }}>
-                <img
-                  src={p.backgroundImage || "https://via.placeholder.com/400x200"}
-                  alt="background"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </div>
+            />
 
-              {/* Avatar */}
-              <div style={{ marginTop: "-50px" }}>
-                <img
-                  src={p.avatar || "https://via.placeholder.com/200"}
-                  alt={p.user?.name || "User"}
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    border: "5px solid white",
-                  }}
-                />
-              </div>
+            <div style={{ padding: 10 }}>
+              <h3>{u.name}</h3>
 
-              {/* Profile Info */}
-              <div style={{ padding: "10px" }}>
-                {/* <h3>{p.user?.name || "Unknown"}</h3> */}
-                <p><strong>Field:</strong> {p.field || "N/A"}</p>
-                <p style={{ fontSize: "14px", color: "#555" }}>
-                  {p.about ? p.about.slice(0, 120) + "..." : "No bio yet."}
-                </p>
-              </div>
+              <p>
+                <strong>Field:</strong>{" "}
+                {u.profile?.field || "N/A"}
+              </p>
+
+              <p style={{ fontSize: 14, color: "#555" }}>
+                {u.profile?.about || "No bio yet."}
+              </p>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </>
   );
 };
 
-export default Userprofile;
+export default CombinedUsers;
