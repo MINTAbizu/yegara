@@ -72,7 +72,9 @@ const FullMultiStepKYC = () => {
 
   return (
     <DashboardLayout>
+      <sm  className='danger'  style={{color:'red'}}> Please Provide All Required information  to access ur Dashboard otherwise u can't get it  <br />  fill All steps And Accurate information  </sm> 
       <div className="d-flex justify-content-center py-5">
+
         <div className="card shadow p-3" style={{ maxWidth: 500, width: "100%" }}>
           <div className="card-body">
             <h2 className="text-center mb-4">

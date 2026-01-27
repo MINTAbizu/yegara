@@ -41,6 +41,7 @@ import Telegram from './telegeram/Telegram';
 import SupportChat from './Ai/SupportChat';
 import UserExample from './component/User/UserExample';
 import Userprofile from './component/User/Userprofile';
+import Addgiftproduct from './component/Shope/userprofilepage/Addgiftproduct';
 
 
 function App() {
@@ -201,6 +202,16 @@ function App() {
               // </ProtectedRoute>
             }
           />  
+              <Route
+            path="/Giftproduct"
+            element={
+              // <ProtectedRoute>
+                <DashboardLayout>
+                  <Addgiftproduct />
+                </DashboardLayout>
+              // </ProtectedRoute>
+            }
+          />
             <Route
             path="/ADDphysicalproducts"
             element={
