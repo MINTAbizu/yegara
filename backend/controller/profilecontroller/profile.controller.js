@@ -61,7 +61,7 @@ export const ouruser = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const profiles = await Profile.find()
-      .populate("user", "name")
+      .populate("user", "_id")
       .skip(skip)
       .limit(limit);
 
