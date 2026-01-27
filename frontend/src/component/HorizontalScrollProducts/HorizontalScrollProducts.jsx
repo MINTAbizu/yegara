@@ -46,6 +46,7 @@ function HorizontalProductList() {
         <div className="horizontal-product-list" ref={listRef}>
           {products.map((p) => (
             console.log("IMAGE URL:", p.image),
+            console.log("IMAGE URL:"),
 
             <div key={p._id} className="product-card">
               
