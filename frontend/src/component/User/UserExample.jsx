@@ -106,13 +106,13 @@ const UserExample = () => {
               <div style={{ padding: "10px" }}>
                 <h3>{u.name}</h3>
                 <p>
-                  <strong>Region:</strong> {u.region || "N/A"}
+                  {/* <strong>Region:</strong> {u.region || "N/A"} */}
                 </p>
                 <p>
                   <strong>Field:</strong> {u.field || "N/A"}
                 </p>
                 <p>
-                  <strong>Telegram:</strong> {u.telegram || "N/A"}
+                  {/* <strong>Telegram:</strong> {u.telegram || "N/A"} */}
                 </p>
                 <p style={{ fontSize: "14px", color: "#555" }}>
                   {u.about ? u.about.slice(0, 120) + "..." : "No bio yet."}
