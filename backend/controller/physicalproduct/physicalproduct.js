@@ -3,17 +3,17 @@ import physicalProduct from "../../model/physicalproduct/physicalprosuct.model.j
 export const addphyshicalProduct = async (req, res) => {
   try {
     const { productName, price, description, telegram, drive, dropbox, productLink } = req.body;
-
+ const imageUrl = req.file?.path; 
     if (!req.file) return res.status(400).json({ message: "Product image is required" });
 
     
-    const image = `/uploads/digitalProducts/${req.file.filename}`; // store relative path
+    // const image = `/uploads/digitalProducts/${req.file.filename}`; // store relative path
 
     const newProduct = new physicalProduct({
       productName,
       price,
       description,
-      image,
+      image:imageUrl,
       telegram,
       drive,
        seller: req.user._id, // get seller ID from auth
@@ -21,9 +21,12 @@ export const addphyshicalProduct = async (req, res) => {
       productLink,
     });
 
-    await newProduct.save();
+    // await newProduct.save();
 
-    res.status(201).json({ message: "Digital product added successfully", product: newProduct });
+    const saved = await newProduct.save();
+    res.status(201).json(saved);
+
+    res.status(201).json({ message: "physical product added successfully", product: saved });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error", error });
@@ -32,13 +35,15 @@ export const addphyshicalProduct = async (req, res) => {
 
 export const getApprovedProducts = async (req, res) => {
   try {
-    const products = await physicalProduct.find({ status: "approved" }).sort({ createdAt: -1 });
+    const products = await physicalProduct.find({ status: "approved" }).populate("seller", "name email");
     res.status(200).json(products);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error", error });
   }
 };
+
+
 export const toggleStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -63,13 +68,25 @@ export const toggleStatus = async (req, res) => {
 
 export const getAllProductsAdmin = async (req, res) => {
   try {
-    const products = await physicalProduct.find().sort({ createdAt: -1 });
+    const products = await physicalProduct.find().populate("seller", "name email");
     res.status(200).json(products);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error", error });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const getSingleProduct = async (req, res) => {
   try {
@@ -81,6 +98,8 @@ export const getSingleProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 export const getphysicalProductById = async (req, res) => {
   try {
     const product = await physicalProduct.findById(req.params.id)
@@ -92,6 +111,16 @@ export const getphysicalProductById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+
+
+
+
+
+
+
+
 
 // controllers/digitalProduct.controller/digitalProductDetail.controller.js
 

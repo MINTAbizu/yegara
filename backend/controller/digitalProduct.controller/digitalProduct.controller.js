@@ -3,30 +3,7 @@ import PhysicalProduct from "../../model/physicalproduct/physicalprosuct.model.j
 import User from "../../model/user.model/user.model.js";
 
 // Add a new digital product
-// import DigitalProduct from "../../model/digitalproducts/digital products.js";
 
-// export const addDigitalProduct = async (req, res) => {
-//   try {
-//     const { productName, description, price } = req.body;
-
-//     const imageUrl = req.file ? req.file.path : null; // Cloudinary URL
-
-//     const newProduct = new DigitalProduct({
-//       productName,
-//       description,
-//       price,
-//       seller: req.user._id,
-//       image: imageUrl,
-//     });
-
-//     const saved = await newProduct.save();
-//     res.status(201).json(saved);
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 // export const addDigitalProduct = async (req, res) => {
 //   console.log("=== NEW PRODUCT UPLOAD ===");
@@ -79,12 +56,6 @@ export const addDigitalProduct = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
 export const toggleStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -107,27 +78,6 @@ export const toggleStatus = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // List all approved digital products
@@ -198,9 +148,6 @@ export const getSingleProduct = async (req, res) => {
 };
 // detal
 
-
-
-
 export const getDigitalProductById = async (req, res) => {
   try {
     const product = await DigitalProduct.findById(req.params.id)
@@ -212,6 +159,7 @@ export const getDigitalProductById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 // controllers/digitalProduct.controller/digitalProductDetail.controller.js
 

@@ -1,5 +1,5 @@
 import express from "express";
-import upload from "../../middleware/physhicalproduct/physicalproduct.middleare.js";
+import upload from "../../middleware/physhicalproduct/physicalproductmiddleare.js";
 import { addphyshicalProduct,toggleStatus, getSingleProduct,getAllProductsAdmin,getApprovedProducts,getphysicalProductById,getproductProductWithSellerStats } from "../../controller/physicalproduct/physicalproduct.js";
 import { protect } from "../../middleware/";
 const router = express.Router();
