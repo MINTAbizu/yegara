@@ -75,7 +75,7 @@ const UserProfileFormFixed = () => {
         setMessage({ type: "error", text: result.message || "Failed to create profile." });
       } else {
         setMessage({ type: "success", text: "Profile created successfully!" });
-        navigate("/"); // redirect
+        navigate("/orders"); // redirect
       }
     } catch (error) {
       console.error(error);
