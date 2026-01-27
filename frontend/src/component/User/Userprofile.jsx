@@ -121,7 +121,7 @@ const CombinedUsers = () => {
               <h3>{u.name}</h3>
 
               <p>
-                <strong>Field:</strong>{" "}
+                <strong></strong>{" "}
                 {u.profile?.field || "N/A"}
               </p>
 
