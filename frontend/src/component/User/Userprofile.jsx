@@ -23,6 +23,7 @@ const Userprofile = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      console.log("Fetched profiles:", res.data);
 
       setProfiles(res.data.users);
       setTotalPages(res.data.totalPages);
@@ -107,7 +108,7 @@ const Userprofile = () => {
 
               {/* Profile Info */}
               <div style={{ padding: "10px" }}>
-                <h3>{p.user?.name || "Unknown"}</h3>
+                {/* <h3>{p.user?.name || "Unknown"}</h3> */}
                 <p><strong>Field:</strong> {p.field || "N/A"}</p>
                 <p style={{ fontSize: "14px", color: "#555" }}>
                   {p.about ? p.about.slice(0, 120) + "..." : "No bio yet."}
