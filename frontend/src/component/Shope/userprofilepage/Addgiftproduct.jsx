@@ -41,7 +41,7 @@ const Addgiftproduct = () => {
       const res = await axios.post(
         // 'http://localhost:5000/api/digital-products/create',
         
-        `${API_URL}/api/digital-products/create`,
+        `${API_URL}/api/giftproduct/create`,
         data,
         {
           headers: {
