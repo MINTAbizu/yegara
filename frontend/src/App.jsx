@@ -55,7 +55,7 @@ function App() {
           <Route path="/Telegram" element={<Telegram />} />
           <Route path="/SupportChat" element={<SupportChat />} />
           <Route path="/UserExample" element={<UserExample />} />
-          <Route path="/Userprofile" element={<Userprofile />} />
+          <Route path="/Userprofiless" element={<Userprofile />} />
 
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />
           <Route
