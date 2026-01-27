@@ -60,7 +60,7 @@ export const ouruser = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const profiles = await Profile.find()
+    const profiles = await Profile.find({ status: "approved" })
       .populate("user", "name")
       .skip(skip)
       .limit(limit);
