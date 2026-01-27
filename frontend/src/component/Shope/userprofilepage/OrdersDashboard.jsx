@@ -10,7 +10,7 @@ const OrdersDashboard = () => {
         <h2 className="mb-4">to create post shop click on ሱቅ</h2>
         {/* Tabs Navigation */}
         <div className="orders-tabs">
-        <Link to="/shop" className="orders-tab-btn">Shop <br />ሱቅ</Link>
+        <Link to="/shop" className="orders-tab-btn">Shop <br />ሱቅ kefet</Link>
                  <Link to="/orders" className="orders-tab-btn active">Orders <br />ትእዛዝ</Link>
                  <Link to="/listings" className="orders-tab-btn">የኔ-ሱቅ</Link>
                  <Link to="/affiliate" className="orders-tab-btn">ሽያጭ</Link>

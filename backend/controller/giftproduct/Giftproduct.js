@@ -63,7 +63,7 @@ export const toggleStatus = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const product = await DigitalProduct.findById(id);
+    const product = await Giftproduct.findById(id);
     if (!product) return res.status(404).json({ message: "Product not found" });
 
     if (product.status === "pending" || product.status === "rejected") {
@@ -86,7 +86,7 @@ export const toggleStatus = async (req, res) => {
 // List all approved digital products
 export const getApprovedProducts = async (req, res) => {
   try {
-    const products = await DigitalProduct.find({ status: "approved" }).populate("seller", "name email");
+    const products = await Giftproduct.find({ status: "approved" }).populate("seller", "name email");
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -96,7 +96,7 @@ export const getApprovedProducts = async (req, res) => {
 // Admin: list all products
 export const getAllProductsAdmin = async (req, res) => {
   try {
-    const products = await DigitalProduct.find().populate("seller", "name email");
+    const products = await Giftproduct.find().populate("seller", "name email");
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -107,7 +107,7 @@ export const getAllProductsAdmin = async (req, res) => {
 // Get digital product details by ID (with seller info)
 export const digitalProductDetail = async (req, res) => {
   try {
-    const product = await DigitalProduct.findById(req.params.id)
+    const product = await Giftproduct.findById(req.params.id)
       .populate("sellerId", "name email"); // populate seller info
     if (!product) return res.status(404).json({ message: "Product not found" });
     res.json(product);
@@ -153,7 +153,7 @@ export const getSingleProduct = async (req, res) => {
 
 export const getDigitalProductById = async (req, res) => {
   try {
-    const product = await DigitalProduct.findById(req.params.id)
+    const product = await Giftproduct.findById(req.params.id)
       .populate("seller", "name email"); // populate seller info
 
     if (!product) return res.status(404).json({ message: "Product not found" });
@@ -169,15 +169,15 @@ export const getDigitalProductById = async (req, res) => {
 // Get single digital product with seller stats
 export const getDigitalProductWithSellerStats = async (req, res) => {
   try {
-    const product = await DigitalProduct.findById(req.params.id).populate("seller", "name email");
+    const product = await Giftproduct.findById(req.params.id).populate("seller", "name email");
 
     if (!product) return res.status(404).json({ message: "Product not found" });
 
     // Count total products uploaded by seller
-    const totalProducts = await DigitalProduct.countDocuments({ seller: product.seller._id, status: "approved" });
+    const totalProducts = await Giftproduct.countDocuments({ seller: product.seller._id, status: "approved" });
 
     // Count sold products (adjust according to your schema)
-    const soldProducts = await DigitalProduct.countDocuments({ seller: product.seller._id, status: "sold" }); 
+    const soldProducts = await Giftproduct.countDocuments({ seller: product.seller._id, status: "sold" }); 
 
     res.json({ product, sellerStats: { totalProducts, soldProducts } });
   } catch (err) {

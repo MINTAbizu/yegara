@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 const API_URL = import.meta.env.VITE_API_URL;
-const AddDigitalProduct = () => {
+const Addgiftproduct = () => {
   const [formData, setFormData] = useState({
     productName: "",
     price: "",
@@ -88,4 +88,4 @@ const AddDigitalProduct = () => {
   );
 };
 
-export default AddDigitalProduct;
+export default Addgiftproduct;
