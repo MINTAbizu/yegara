@@ -17,6 +17,7 @@ import chapapayment from "./route/payments/payment.route.js";
 import kycRoutes from './route/kyc/kyc.route.js'
 // profileRoutes
 import profileRoutes from './route/profile.route/profile.route.js'
+import giftproduct from ".//route/giftproduct-route/giftproductroute.js";
 
 
 // import telegeram from './route/telegram.routes.js'
@@ -84,6 +85,12 @@ app.use("/api/kyc", kycRoutes)
 app.use("/api/profile", profileRoutes);
 app.use("/api/payment", chapapayment);
 // app.use("/telegram", telegeram);
+
+// giftproduct
+   app.use("/api/giftproduct", giftproduct); 
+
+
+
 
 // AI chat route
 // app.use("/api/chat", chatRoutes);

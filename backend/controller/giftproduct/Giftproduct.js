@@ -59,128 +59,128 @@ export const addgiftproduct = async (req, res) => {
 };
 
 
-// export const toggleStatus = async (req, res) => {
-//   try {
-//     const { id } = req.params;
+export const toggleStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-//     const product = await DigitalProduct.findById(id);
-//     if (!product) return res.status(404).json({ message: "Product not found" });
+    const product = await DigitalProduct.findById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
-//     if (product.status === "pending" || product.status === "rejected") {
-//       product.status = "approved";
-//     } else if (product.status === "approved") {
-//       product.status = "rejected";
-//     }
+    if (product.status === "pending" || product.status === "rejected") {
+      product.status = "approved";
+    } else if (product.status === "approved") {
+      product.status = "rejected";
+    }
 
-//     await product.save();
+    await product.save();
 
-//     res.json({ message: "Status updated", product });
+    res.json({ message: "Status updated", product });
 
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// };
-
-
-// // List all approved digital products
-// export const getApprovedProducts = async (req, res) => {
-//   try {
-//     const products = await DigitalProduct.find({ status: "approved" }).populate("seller", "name email");
-//     res.json(products);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// // Admin: list all products
-// export const getAllProductsAdmin = async (req, res) => {
-//   try {
-//     const products = await DigitalProduct.find().populate("seller", "name email");
-//     res.json(products);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
 
-// // Get digital product details by ID (with seller info)
-// export const digitalProductDetail = async (req, res) => {
-//   try {
-//     const product = await DigitalProduct.findById(req.params.id)
-//       .populate("sellerId", "name email"); // populate seller info
-//     if (!product) return res.status(404).json({ message: "Product not found" });
-//     res.json(product);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Server Error", error });
-//   }
-// };
+// List all approved digital products
+export const getApprovedProducts = async (req, res) => {
+  try {
+    const products = await DigitalProduct.find({ status: "approved" }).populate("seller", "name email");
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-// // Physical products
-// export const getAllPhysicalProducts = async (req, res) => {
-//   try {
-//     const products = await PhysicalProduct.find({ status: "approved" }).sort({ createdAt: -1 });
-//     res.json(products);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Server Error", error });
-//   }
-// };
-
-// export const physicalProductDetail = async (req, res) => {
-//   try {
-//     const product = await PhysicalProduct.findById(req.params.id)
-//       .populate("sellerId", "name email");
-//     if (!product) return res.status(404).json({ message: "Product not found" });
-//     res.json(product);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Server Error", error });
-//   }
-// };
-// export const getSingleProduct = async (req, res) => {
-//   try {
-//     const product = await DigitalProduct.findById(req.params.id)
-//       .populate("seller", "name email");
-
-//     res.json(product);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-// // detal
-
-// export const getDigitalProductById = async (req, res) => {
-//   try {
-//     const product = await DigitalProduct.findById(req.params.id)
-//       .populate("seller", "name email"); // populate seller info
-
-//     if (!product) return res.status(404).json({ message: "Product not found" });
-//     res.json(product);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
+// Admin: list all products
+export const getAllProductsAdmin = async (req, res) => {
+  try {
+    const products = await DigitalProduct.find().populate("seller", "name email");
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 
-// // controllers/digitalProduct.controller/digitalProductDetail.controller.js
+// Get digital product details by ID (with seller info)
+export const digitalProductDetail = async (req, res) => {
+  try {
+    const product = await DigitalProduct.findById(req.params.id)
+      .populate("sellerId", "name email"); // populate seller info
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
 
-// // Get single digital product with seller stats
-// export const getDigitalProductWithSellerStats = async (req, res) => {
-//   try {
-//     const product = await DigitalProduct.findById(req.params.id).populate("seller", "name email");
+// Physical products
+export const getAllPhysicalProducts = async (req, res) => {
+  try {
+    const products = await PhysicalProduct.find({ status: "approved" }).sort({ createdAt: -1 });
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
 
-//     if (!product) return res.status(404).json({ message: "Product not found" });
+export const physicalProductDetail = async (req, res) => {
+  try {
+    const product = await PhysicalProduct.findById(req.params.id)
+      .populate("sellerId", "name email");
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
+export const getSingleProduct = async (req, res) => {
+  try {
+    const product = await DigitalProduct.findById(req.params.id)
+      .populate("seller", "name email");
 
-//     // Count total products uploaded by seller
-//     const totalProducts = await DigitalProduct.countDocuments({ seller: product.seller._id, status: "approved" });
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// detal
 
-//     // Count sold products (adjust according to your schema)
-//     const soldProducts = await DigitalProduct.countDocuments({ seller: product.seller._id, status: "sold" }); 
+export const getDigitalProductById = async (req, res) => {
+  try {
+    const product = await DigitalProduct.findById(req.params.id)
+      .populate("seller", "name email"); // populate seller info
 
-//     res.json({ product, sellerStats: { totalProducts, soldProducts } });
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+// controllers/digitalProduct.controller/digitalProductDetail.controller.js
+
+// Get single digital product with seller stats
+export const getDigitalProductWithSellerStats = async (req, res) => {
+  try {
+    const product = await DigitalProduct.findById(req.params.id).populate("seller", "name email");
+
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // Count total products uploaded by seller
+    const totalProducts = await DigitalProduct.countDocuments({ seller: product.seller._id, status: "approved" });
+
+    // Count sold products (adjust according to your schema)
+    const soldProducts = await DigitalProduct.countDocuments({ seller: product.seller._id, status: "sold" }); 
+
+    res.json({ product, sellerStats: { totalProducts, soldProducts } });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
