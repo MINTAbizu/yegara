@@ -18,7 +18,7 @@ import AdminKYCList from '../Admin/AdminUsersTable/AdminKYCList'
 import AdminProfileList from '../Admin/AdminUsersTable/AdminProfileList'
 import OurCustomers from './User/OurCustomers '
 import StepsAnimated from './StepsAnimated/StepsAnimated'
-
+ import Userprofile from '../component/User/Userprofile'
 function Landingpage() {
   return (
     <div>
@@ -29,7 +29,7 @@ function Landingpage() {
                     <Productlist/>
                     <RewardsList/>
                     {/* <Handmadeproduct/> */}
-                    <UserExample/>
+                    <Userprofile/>
                     {/* <RewardsList/> */}
                     <StepsAnimated/>
 
