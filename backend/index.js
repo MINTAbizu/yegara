@@ -31,7 +31,8 @@ app.use(
     origin: [
       "http://localhost:5173",      // Vite local
       "https://yegara.netlify.app",  // Netlify production
-      "https://twiness.netlify.app"
+      "https://twiness.netlify.app",
+      "http://localhost:5174"
     ],
     credentials: true,
   })
