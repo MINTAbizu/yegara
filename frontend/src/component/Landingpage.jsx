@@ -29,7 +29,7 @@ function Landingpage() {
                     <HorizontalProductList/>
                     <Productlist/>
                     <Giftproducts/>
-                    <RewardsList/>
+                    {/* <RewardsList/> */}
                     {/* <Handmadeproduct/> */}
                     <Userprofile/>
                     {/* <RewardsList/> */}
