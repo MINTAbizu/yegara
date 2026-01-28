@@ -7,7 +7,7 @@ const PlansPage = () => {
     {
       name: "Free",
       price: "Always",
-      description: "Start exploring Ye-Buna features.",
+      description: "Start exploring Ye-Gara-Shop features.",
       features: [
         "Get tips from your community",
         "List limited digital products",
