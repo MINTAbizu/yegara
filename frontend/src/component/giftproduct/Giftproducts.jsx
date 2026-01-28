@@ -25,7 +25,7 @@ function HorizontalProductList() {
 
   return (
     <div className="horizontal-product-container">
-      <h2 className="digitalproducttitle">Digital Products</h2>
+      <h2 className="digitalproducttitle">Gift Products</h2>
 
       {/* 🔥 Spinner */}
       {loading ? (
