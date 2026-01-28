@@ -12,7 +12,7 @@ function Giftproducts() {
   const listRef = useRef(null);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/digital-products/`)
+    axios.get(`${API_URL}/api/giftproduct/`)
       .then(res => {
         setProducts(res.data);
         setLoading(false);
