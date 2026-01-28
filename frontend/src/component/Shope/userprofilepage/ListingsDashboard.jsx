@@ -16,7 +16,7 @@ const ListingsDashboard = () => {
 
   return (
     <div className="container-fluid min-vh-100 bg-light p-4">
-      <h1 className="mb-4">Listings</h1>
+      <h1 className="mb-4">Services..........</h1>
 
       {/* Category Cards */}
       <div className="d-flex flex-wrap gap-3 mb-4">

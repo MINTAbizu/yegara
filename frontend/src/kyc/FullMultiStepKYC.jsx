@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/Authcontext";
 import DashboardLayout from "./DashboardLayout";
+// import serviceimage from '../../src/assets/image/officetabel.jpg';
 const API_URL = import.meta.env.VITE_API_URL;
 const FullMultiStepKYC = () => {
   const { refreshUser } = useAuth();
@@ -140,6 +141,9 @@ const FullMultiStepKYC = () => {
           </div>
         </div>
       </div>
+      {/* <div className=""  style={{width:'50% , height:"50px"'}}>
+        <img  className="" src={serviceimage} alt="" />
+      </div> */}
     </DashboardLayout>
   );
 };
