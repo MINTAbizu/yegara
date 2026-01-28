@@ -42,6 +42,7 @@ import SupportChat from './Ai/SupportChat';
 import UserExample from './component/User/UserExample';
 import Userprofile from './component/User/Userprofile';
 import Addgiftproduct from './component/Shope/userprofilepage/Addgiftproduct';
+import Admingiftproduct from './Admin/products/Admingiftproduct';
 
 
 function App() {
@@ -259,6 +260,14 @@ function App() {
                   element={
                     <AdminDashboard>
                       <AdminPhysicalproducts />
+                    </AdminDashboard>
+                  }
+                />
+                 <Route
+                  path="/Admingiftproduct"
+                  element={
+                    <AdminDashboard>
+                      <Admingiftproduct />
                     </AdminDashboard>
                   }
                 />

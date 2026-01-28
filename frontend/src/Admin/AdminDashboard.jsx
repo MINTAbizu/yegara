@@ -24,6 +24,7 @@ const AdminDashboard = ({ children }) => {
           <Link to={'/AdminUsersTable'}><li>AdminUsersTable</li></Link>
           <Link to={'/AdminDigitalProductsTable'}><li>AdminDigitalProductsTable</li></Link>
           <Link to={'/AdminPhysicalproducts'}><li>AdminPhysicalproducts</li></Link>
+          <Link to={'/Admingiftproduct'}><li>Admingiftproduct</li></Link>
           
           
         </ul>
