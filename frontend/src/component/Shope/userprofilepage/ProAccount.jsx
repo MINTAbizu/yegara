@@ -25,7 +25,7 @@ const PlansPage = () => {
       description: "Premium experience with maximum exposure.",
       features: [
         "Verified badge on profile & products",
-        "Promote products on Ye-Buna",
+        "Promote products on Ye-GaraShop",
         "List unlimited digital & physical products",
         "Launch crowdfunding campaigns",
         "Manage subscriptions & recurring revenue",
