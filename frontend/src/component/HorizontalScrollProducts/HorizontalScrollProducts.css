@@ -52,3 +52,10 @@
 .product-card:hover {
   transform: scale(1.05); /* slight zoom on hover */
 }
+
+
+
+.gift-product-section{
+  background-color:orange;
+  color: black;
+}

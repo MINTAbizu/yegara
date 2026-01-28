@@ -24,7 +24,7 @@ function Giftproducts() {
   }, []);
 
   return (
-    <div className="horizontal-product-container">
+    <div className="horizontal-product-container  gift-product-section">
       <h2 className="digitalproducttitle">Gift Products</h2>
 
       {/* 🔥 Spinner */}
