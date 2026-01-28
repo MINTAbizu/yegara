@@ -32,7 +32,7 @@ const CombinedUsers = () => {
       );
 
       setUsers(usersRes.data.users || []);
-      setProfiles(profilesRes.data.users || []);
+      setProfiles(profilesRes.data || []);
       console.log("Fetched users:", usersRes.data.users);
       console.log("Fetched profiles:", profilesRes.data.users);
     } catch (err) {
