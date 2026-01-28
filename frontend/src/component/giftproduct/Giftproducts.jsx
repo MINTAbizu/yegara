@@ -6,7 +6,7 @@ import './HorizontalScrollProducts.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function HorizontalProductList() {
+function Giftproducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const listRef = useRef(null);
@@ -70,4 +70,4 @@ function HorizontalProductList() {
   );
 }
 
-export default HorizontalProductList;
+export default Giftproducts;
