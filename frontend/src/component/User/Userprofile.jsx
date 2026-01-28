@@ -22,7 +22,7 @@ const CombinedUsers = () => {
 
       // 1️⃣ Fetch users
       const usersRes = await axios.get(
-        `${API_URL}/api/users/ouruser?page=1&limit=${limit}`,
+        `${API_URL}/api/users//approved?page=1&limit=${limit}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
