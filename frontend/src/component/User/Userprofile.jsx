@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import { FaThumbsUp, FaThumbsDown, FaEnvelope, FaEye } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,6 +12,7 @@ const CombinedUsers = () => {
   const [mergedData, setMergedData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
   const limit = 10;
 
   const fetchData = async () => {
@@ -17,19 +20,19 @@ const CombinedUsers = () => {
     try {
       const token = localStorage.getItem("adminToken");
 
-      // 1️⃣ fetch users
+      // 1️⃣ Fetch users
       const usersRes = await axios.get(
         `${API_URL}/api/users/ouruser?page=1&limit=${limit}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // 2️⃣ fetch profiles
+      // 2️⃣ Fetch profiles
       const profilesRes = await axios.get(
         `${API_URL}/api/profile/ourusers?page=1&limit=${limit}`
       );
 
-      setUsers(usersRes.data.users);
-      setProfiles(profilesRes.data.users);
+      setUsers(usersRes.data.users || []);
+      setProfiles(profilesRes.data.users || []);
     } catch (err) {
       console.error("Fetch error:", err);
     } finally {
@@ -44,10 +47,7 @@ const CombinedUsers = () => {
         const profile = profiles.find(
           (p) => p.user?._id === u._id
         );
-        return {
-          ...u,
-          profile,
-        };
+        return { ...u, profile };
       });
 
       setMergedData(merged);
@@ -68,7 +68,7 @@ const CombinedUsers = () => {
 
   return (
     <>
-      <h1 style={{ textAlign: "center" }}>Our Users</h1>
+      <h1 style={{ textAlign: "center", marginBottom: 20 }}>Our Users</h1>
 
       <div
         style={{
@@ -84,10 +84,11 @@ const CombinedUsers = () => {
             key={u._id}
             style={{
               width: 280,
-              borderRadius: 10,
+              borderRadius: 12,
               overflow: "hidden",
-              boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+              boxShadow: "0 0 10px rgba(0,0,0,0.15)",
               textAlign: "center",
+              background: "#fff",
             }}
           >
             {/* Background */}
@@ -117,17 +118,58 @@ const CombinedUsers = () => {
               }}
             />
 
-            <div style={{ padding: 10 }}>
-              <h3>{u.name}</h3>
+            <div style={{ padding: 12 }}>
+              <h3 style={{ marginBottom: 5 }}>{u.name}</h3>
 
-              <p>
-                <strong></strong>{" "}
+              <p style={{ fontWeight: "bold", marginBottom: 5 }}>
                 {u.profile?.field || "N/A"}
               </p>
 
               <p style={{ fontSize: 14, color: "#555" }}>
                 {u.profile?.about || "No bio yet."}
               </p>
+
+              {/* 🔽 ACTION ICONS */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-around",
+                  paddingTop: 10,
+                  borderTop: "1px solid #eee",
+                }}
+              >
+                <FaThumbsUp
+                  title="Like"
+                  size={20}
+                  color="#4CAF50"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => console.log("Liked:", u._id)}
+                />
+
+                <FaThumbsDown
+                  title="Dislike"
+                  size={20}
+                  color="#F44336"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => console.log("Disliked:", u._id)}
+                />
+
+                <FaEnvelope
+                  title="Contact"
+                  size={20}
+                  color="#2196F3"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => alert(`Contact ${u.name}`)}
+                />
+
+                <FaEye
+                  title="View Profile"
+                  size={20}
+                  color="#555"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/user/${u._id}`)}
+                />
+              </div>
             </div>
           </div>
         ))}
