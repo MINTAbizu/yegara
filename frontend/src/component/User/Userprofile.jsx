@@ -33,6 +33,8 @@ const CombinedUsers = () => {
 
       setUsers(usersRes.data.users || []);
       setProfiles(profilesRes.data.users || []);
+      console.log("Fetched users:", usersRes.data.users);
+      console.log("Fetched profiles:", profilesRes.data.users);
     } catch (err) {
       console.error("Fetch error:", err);
     } finally {
