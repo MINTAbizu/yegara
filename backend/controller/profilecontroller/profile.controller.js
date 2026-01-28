@@ -109,7 +109,7 @@ export const getAllProfiles = async (req, res) => {
 
 export const getApprovedProfiles = async (req, res) => {
   try {
-    const profiles = await Profile.find({ status: "approved" }).populate("seller", "name email");
+    const profiles = await Profile.find({ status: "approved" }).populate("user", "name email");
     res.json(profiles);
   } catch (err) {
     console.error(err);
