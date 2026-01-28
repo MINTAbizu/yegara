@@ -30,3 +30,4 @@ router.get("/ourusers", ouruser);
 router.get("/approved", getApprovedProfiles);
 
 export default router;
+ 

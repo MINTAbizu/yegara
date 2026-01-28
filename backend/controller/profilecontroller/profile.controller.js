@@ -109,10 +109,13 @@ export const getAllProfiles = async (req, res) => {
 
 export const getApprovedProfiles = async (req, res) => {
   try {
-    const profiles = await Profile.find({ status: "approved" }).populate("user", "name");
-    res.status(200).json(profiles);
+    const profiles = await Profile.find({ status: "approved" }).populate("seller", "name email");
+    res.json(profiles);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
