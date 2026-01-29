@@ -106,7 +106,7 @@ router.post("/google", googleLogin);
 router.get("/me", protect, getMe);
 
 // Admin (example)
-router.get("/", protect,  getUsers);
+router.get("/",   getUsers);
 // router.get("/", protect, adminOnly, getUsers);
 router.get("/ouruser", ouruser);
 
