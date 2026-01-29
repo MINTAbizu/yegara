@@ -500,3 +500,21 @@ export const assignBadge = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// DELETE /api/users/:id/badges
+export const removeBadge = async (req, res) => {
+  try {
+    const { badgeName } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.badges = user.badges.filter((b) => b.name !== badgeName);
+    await user.save();
+
+    res.json({ message: "Badge removed", badges: user.badges });
+  } catch (err) {
+    console.error("removeBadge error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

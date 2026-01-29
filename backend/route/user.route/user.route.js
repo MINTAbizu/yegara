@@ -90,7 +90,8 @@ import {
   updateUser,
   deleteUser,
   getMe,
-  ouruser
+  ouruser,
+  removeBadge
 } from "../../controller/user.controller/user.controller.js";
 import { protect, adminOnly } from "../../middleware/authMiddleware.js";
 import { assignBadge } from "../../controller/profilecontroller/profile.controller.js";
@@ -115,6 +116,13 @@ router.post(
   protect,
   // adminOnly,
   assignBadge
+);
+
+router.delete(
+  "/:id/badges",
+  protect,
+  adminOnly,
+  removeBadge
 );
 
 
