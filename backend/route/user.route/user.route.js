@@ -112,10 +112,10 @@ router.get("/",   getUsers);
 // router.get("/", protect, adminOnly, getUsers);
 router.get("/ouruser", ouruser);
 
-router.post("/:id/badges",  assignBadge);
+// router.post("/:id/badges",  assignBadge);
 router.delete("/:id/badges", removeBadge);
 
-// router.post("/:id/badges", protect, adminOnly, assignBadge);
+router.post("/:id/badges", protect, assignBadge);
 // router.delete("/:id/badges", protect, adminOnly, removeBadge);
 
 
