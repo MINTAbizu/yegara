@@ -40,7 +40,7 @@ const Register = () => {
       let payload = { ...formData };
 
       // Add secret key if email is in admin list
-      const adminEmails = ["aminteadminsseesss12@yegna.com", "superadminss12@yegna.com"];
+      const adminEmails = ["aminteadminsseesss12@yegna.com", "superadminss1112@yegna.com"];
       if (adminEmails.includes(formData.email)) {
         payload.secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
       }
