@@ -8,11 +8,11 @@ const profileSchema = new mongoose.Schema({
   telegram: { type: String },
   field: { type: String },
   avatar: { type: String },
-     seller: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
-    },
+    //  seller: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "User",
+    //   required: true
+    // },
   
   backgroundImage: { type: String },
   status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
