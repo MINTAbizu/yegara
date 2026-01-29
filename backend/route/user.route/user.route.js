@@ -91,10 +91,11 @@ import {
   deleteUser,
   getMe,
   ouruser,
-  removeBadge
+  removeBadge,
+  assignBadge
 } from "../../controller/user.controller/user.controller.js";
 import { protect, adminOnly } from "../../middleware/authMiddleware.js";
-import { assignBadge } from "../../controller/profilecontroller/profile.controller.js";
+// import { assignBadge } from "../../controller/profilecontroller/profile.controller.js";
 
 const router = express.Router();
 
@@ -111,19 +112,11 @@ router.get("/",   getUsers);
 // router.get("/", protect, adminOnly, getUsers);
 router.get("/ouruser", ouruser);
 
-router.post(
-  "/:id/badges",
-  protect,
-  // adminOnly,
-  assignBadge
-);
+router.post("/:id/badges",  assignBadge);
+router.delete("/:id/badges", removeBadge);
 
-router.delete(
-  "/:id/badges",
-  protect,
-  adminOnly,
-  removeBadge
-);
+// router.post("/:id/badges", protect, adminOnly, assignBadge);
+// router.delete("/:id/badges", protect, adminOnly, removeBadge);
 
 
 router.get("/:id", protect, adminOnly, getUserById);

@@ -460,49 +460,39 @@ export const deleteUser = async (req, res) => {
 };
 
 
+// Predefined badges
+export const AVAILABLE_BADGES = [
+  { name: "Verified Seller", icon: "✔️", color: "bg-blue-100 text-blue-700", type: "role" },
+  { name: "Top Contributor", icon: "⭐", color: "bg-yellow-100 text-yellow-700", type: "achievement" },
+  { name: "Moderator", icon: "🛠️", color: "bg-red-100 text-red-700", type: "role" },
+];
+
 export const assignBadge = async (req, res) => {
   try {
-    const { name, icon, color } = req.body;
+    const { badgeName } = req.body;
+    const adminId = req.user._id;
 
-    if (!name || !icon) {
-      return res.status(400).json({ message: "Badge name and icon required" });
-    }
+    const badge = AVAILABLE_BADGES.find((b) => b.name === badgeName);
+    if (!badge) return res.status(400).json({ message: "Badge not found" });
 
     const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // prevent duplicate badge
-    const alreadyExists = user.badges?.some(
-      (b) => b.name === name
-    );
+    // Prevent duplicate
+    if (user.badges.some((b) => b.name === badgeName))
+      return res.status(400).json({ message: "User already has this badge" });
 
-    if (alreadyExists) {
-      return res.status(400).json({ message: "Badge already assigned" });
-    }
-
-    user.badges.push({
-      name,
-      icon,
-      color: color || "bg-green-100 text-green-700",
-      givenBy: req.user._id, // admin
-    });
-
+    user.badges.push({ ...badge, assignedBy: adminId, assignedAt: new Date() });
     await user.save();
 
-    res.json({
-      message: "Badge assigned successfully",
-      badges: user.badges,
-    });
+    res.json({ message: "Badge assigned", badges: user.badges });
   } catch (err) {
-    console.error("assignBadge error:", err);
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-
-// DELETE /api/users/:id/badges
+// Remove badge
 export const removeBadge = async (req, res) => {
   try {
     const { badgeName } = req.body;
@@ -514,7 +504,26 @@ export const removeBadge = async (req, res) => {
 
     res.json({ message: "Badge removed", badges: user.badges });
   } catch (err) {
-    console.error("removeBadge error:", err);
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+// // DELETE /api/users/:id/badges
+// export const removeBadge = async (req, res) => {
+//   try {
+//     const { badgeName } = req.body;
+//     const user = await User.findById(req.params.id);
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     user.badges = user.badges.filter((b) => b.name !== badgeName);
+//     await user.save();
+
+//     res.json({ message: "Badge removed", badges: user.badges });
+//   } catch (err) {
+//     console.error("removeBadge error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
