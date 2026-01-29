@@ -93,6 +93,7 @@ import {
   ouruser
 } from "../../controller/user.controller/user.controller.js";
 import { protect, adminOnly } from "../../middleware/authMiddleware.js";
+import { assignBadge } from "../../controller/profilecontroller/profile.controller.js";
 
 const router = express.Router();
 
@@ -107,6 +108,15 @@ router.get("/me", protect, getMe);
 // Admin (example)
 router.get("/", protect, adminOnly, getUsers);
 router.get("/ouruser", ouruser);
+
+router.post(
+  "/:id/badges",
+  protect,
+  // adminOnly,
+  assignBadge
+);
+
+
 router.get("/:id", protect, adminOnly, getUserById);
 router.put("/:id", protect, adminOnly, updateUser);
 router.delete("/:id", protect, adminOnly, deleteUser);

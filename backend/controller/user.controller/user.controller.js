@@ -352,6 +352,7 @@ export const getMe = async (req, res) => {
       _id: userDoc._id,
       name: userDoc.name,
       email: userDoc.email,
+      badges: userDoc.badges || [],
       role: userDoc.role || "user",
       kycSubmitted: Boolean(kyc),
       profileSubmitted: Boolean(profileAny),
@@ -454,6 +455,48 @@ export const deleteUser = async (req, res) => {
   } catch (err) {
     console.error("deleteUser error:", err);
     
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+export const assignBadge = async (req, res) => {
+  try {
+    const { name, icon, color } = req.body;
+
+    if (!name || !icon) {
+      return res.status(400).json({ message: "Badge name and icon required" });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // prevent duplicate badge
+    const alreadyExists = user.badges?.some(
+      (b) => b.name === name
+    );
+
+    if (alreadyExists) {
+      return res.status(400).json({ message: "Badge already assigned" });
+    }
+
+    user.badges.push({
+      name,
+      icon,
+      color: color || "bg-green-100 text-green-700",
+      givenBy: req.user._id, // admin
+    });
+
+    await user.save();
+
+    res.json({
+      message: "Badge assigned successfully",
+      badges: user.badges,
+    });
+  } catch (err) {
+    console.error("assignBadge error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
