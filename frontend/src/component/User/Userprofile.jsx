@@ -26,13 +26,11 @@ const CombinedUsers = () => {
     try {
       const token = localStorage.getItem("adminToken");
 
-      // 1️⃣ Fetch users
       const usersRes = await axios.get(
         `${API_URL}/api/users/ouruser?page=1&limit=${limit}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // 2️⃣ Fetch approved profiles
       const profilesRes = await axios.get(
         `${API_URL}/api/profile/approved?page=1&limit=${limit}`
       );
@@ -46,18 +44,15 @@ const CombinedUsers = () => {
     }
   };
 
-  // 🔗 Merge users + profiles (only approved)
+  // 🔗 Merge users + profiles
   useEffect(() => {
-    if (users.length && profiles.length) {
-      const merged = users
-        .map((u) => {
-          const profile = profiles.find(
-            (p) => p.user?._id === u._id
-          );
-          return { ...u, profile };
-        })
-        // Filter out users without approved profile
-        .filter((u) => u.profile);
+    if (users.length) {
+      const merged = users.map((u) => {
+        const profile = profiles.find(
+          (p) => p.user?._id === u._id
+        );
+        return { ...u, profile };
+      });
       setMergedData(merged);
     }
   }, [users, profiles]);
@@ -105,7 +100,7 @@ const CombinedUsers = () => {
             <img
               src={
                 u.profile?.backgroundImage ||
-                "/images/default-background.png"
+                "https://via.placeholder.com/400x200"
               }
               alt="background"
               style={{ width: "100%", height: 120, objectFit: "cover" }}
@@ -114,7 +109,8 @@ const CombinedUsers = () => {
             {/* Avatar */}
             <img
               src={
-                u.profile?.avatar || "/images/default-avatar.png"
+                u.profile?.avatar ||
+                "https://via.placeholder.com/200"
               }
               alt={u.name}
               style={{
@@ -128,7 +124,6 @@ const CombinedUsers = () => {
             />
 
             <div style={{ padding: 12 }}>
-              {/* ✅ Use name from users API */}
               <h3 style={{ marginBottom: 4 }}>{u.name}</h3>
 
               {/* 🏷️ USER BADGES */}
