@@ -113,7 +113,7 @@
 }
 
 /* Rating badge */
-.rating-badge {
+/* .rating-badge {
   position: absolute;
   bottom: 8px;
   left: 8px;
@@ -126,7 +126,7 @@
   align-items: center;
   gap: 4px;
   cursor: pointer;
-}
+} */
 
 /* Favorite */
 .favorite-icon {
