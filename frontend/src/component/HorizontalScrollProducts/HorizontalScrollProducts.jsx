@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { FaHeart, FaStar } from "react-icons/fa";
 import "./HorizontalScrollProducts.css";
@@ -11,59 +11,92 @@ function HorizontalProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
-
-  // ⭐ Rating modal states
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
 
+  const navigate = useNavigate();
   const listRef = useRef(null);
 
+  // Fetch products
   useEffect(() => {
-    axios.get(`${API_URL}/api/digital-products/`)
-      .then(res => {
+    axios
+      .get(`${API_URL}/api/digital-products/`)
+      .then((res) => {
         setProducts(res.data);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         setLoading(false);
       });
   }, []);
 
+  // Toggle favorite locally
   const toggleFavorite = (productId) => {
-    setFavorites(prev =>
+    setFavorites((prev) =>
       prev.includes(productId)
-        ? prev.filter(id => id !== productId)
+        ? prev.filter((id) => id !== productId)
         : [...prev, productId]
     );
   };
 
-  // ⭐ Open rating modal
+  // Open rating modal (with login check)
   const openRatingModal = (product) => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      alert("⚠ You must be logged in to rate this product.");
+      navigate("/login");
+      return;
+    }
+
     setSelectedProduct(product);
     setRating(0);
     setHoverRating(0);
     setShowModal(true);
   };
 
-  // ⭐ Submit rating
+  // Submit rating
   const submitRating = async () => {
-    try {
-      const token = localStorage.getItem("userToken");
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      alert("⚠ You must be logged in to submit a rating.");
+      setShowModal(false);
+      return;
+    }
 
-      await axios.post(
+    try {
+      const res = await axios.post(
         `${API_URL}/api/digital-products/${selectedProduct._id}/rate`,
         { rating },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       alert("⭐ Rating submitted!");
+
+      // Update product average rating locally
+      setProducts((prev) =>
+        prev.map((p) =>
+          p._id === selectedProduct._id
+            ? {
+                ...p,
+                averageRating: res.data.averageRating,
+                ratings: [...(p.ratings || []), { user: "you", value: rating }],
+              }
+            : p
+        )
+      );
+
       setShowModal(false);
     } catch (err) {
       console.error(err);
-      alert("Failed to submit rating");
+      alert(err.response?.data?.message || "Failed to submit rating");
     }
   };
 
@@ -79,21 +112,19 @@ function HorizontalProductList() {
         <div className="horizontal-product-list" ref={listRef}>
           {products.map((p) => (
             <div key={p._id} className="product-card">
-
-              {/* IMAGE + ICONS */}
               <div className="image-wrapper">
-                <img src={p.image} alt={p.productName} />
+                <img
+                  src={p.image || "https://dummyimage.com/400x200/cccccc/000000.png&text=No+Image"}
+                  alt={p.productName}
+                />
 
-                {/* ⭐ Rating badge */}
-                <div
-                  className="rating-badge"
-                  onClick={() => openRatingModal(p)}
-                >
-                  <FaStar />
-                  <span>{p.rating || 0}</span>
+                {/* ⭐ Rating badge bottom-left */}
+                <div className="rating-badge" onClick={() => openRatingModal(p)}>
+                  <FaStar color="#ffc107" />
+                  <span>{p.averageRating?.toFixed(1) || 0}</span>
                 </div>
 
-                {/* ❤️ Favorite */}
+                {/* ❤️ Favorite icon bottom-right */}
                 <FaHeart
                   className="favorite-icon"
                   color={favorites.includes(p._id) ? "red" : "#fff"}
@@ -113,7 +144,7 @@ function HorizontalProductList() {
         </div>
       )}
 
-      {/* ⭐⭐⭐⭐⭐ RATING MODAL */}
+      {/* ⭐ Rating Modal */}
       {showModal && (
         <div className="rating-modal-overlay">
           <div className="rating-modal">
@@ -124,11 +155,7 @@ function HorizontalProductList() {
                 <FaStar
                   key={star}
                   size={30}
-                  color={
-                    hoverRating >= star || rating >= star
-                      ? "#facc15"
-                      : "#d1d5db"
-                  }
+                  color={hoverRating >= star || rating >= star ? "#facc15" : "#d1d5db"}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
                   onClick={() => setRating(star)}
@@ -139,10 +166,7 @@ function HorizontalProductList() {
 
             <div className="modal-actions">
               <button onClick={() => setShowModal(false)}>Cancel</button>
-              <button
-                disabled={rating === 0}
-                onClick={submitRating}
-              >
+              <button disabled={rating === 0} onClick={submitRating}>
                 Submit
               </button>
             </div>
