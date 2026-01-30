@@ -73,7 +73,7 @@ const CombinedUsers = () => {
   return (
     <>
       <h1 style={{ textAlign: "center", marginBottom: 20 }}>
-        Our Users
+        Verified Users
       </h1>
 
       <div
