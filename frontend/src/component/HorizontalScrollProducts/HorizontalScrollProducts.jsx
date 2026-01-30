@@ -10,7 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 function HorizontalProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState([]); // ❤️ local favorites
+  const [favorites, setFavorites] = useState([]);
   const listRef = useRef(null);
 
   useEffect(() => {
@@ -55,21 +55,23 @@ function HorizontalProductList() {
           {products.map((p) => (
             <div key={p._id} className="product-card">
               
-              {/* ❤️ Favorite Icon */}
-              <FaHeart
-                className="favorite-icon"
-                color={favorites.includes(p._id) ? "red" : "#ccc"}
-                onClick={() => toggleFavorite(p._id)}
-              />
+              {/* 🖼️ IMAGE + ICON OVERLAY */}
+              <div className="image-wrapper">
+                <img src={p.image} alt={p.productName} />
 
-              {/* ⭐ Rating */}
-              <div className="rating-badge">
-                <FaStar color="#facc15" />
-                <span>{p.rating || 0}</span>
+                {/* ⭐ Rating (bottom-left) */}
+                <div className="rating-badge">
+                  <FaStar />
+                  <span>{p.rating || 0}</span>
+                </div>
+
+                {/* ❤️ Favorite (bottom-right) */}
+                <FaHeart
+                  className="favorite-icon"
+                  color={favorites.includes(p._id) ? "red" : "#fff"}
+                  onClick={() => toggleFavorite(p._id)}
+                />
               </div>
-
-              {/* 🖼️ Image */}
-              <img src={p.image} alt={p.productName} />
 
               <h5>{p.productName}</h5>
               <p className="price">{p.price} ETB</p>
