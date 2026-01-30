@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../Context/Authcontext";
 
 const Register = () => {
@@ -12,6 +12,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { register } = useAuth();
 
   const handleChange = (e) => {
@@ -26,7 +27,6 @@ const Register = () => {
     setLoading(true);
     setMessage("");
 
-    // ✅ Strong password check
     if (!strongPasswordRegex.test(formData.password)) {
       setLoading(false);
       setMessage(
@@ -36,10 +36,8 @@ const Register = () => {
     }
 
     try {
-      // Prepare payload
       let payload = { ...formData };
 
-      // Add secret key if email is in admin list
       const adminEmails = ["aminteadminsseesss12@yegna.com", "superadminss1112@yegna.com"];
       if (adminEmails.includes(formData.email)) {
         payload.secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
@@ -47,11 +45,23 @@ const Register = () => {
 
       await register(payload);
 
-      // Redirect: admin goes to dashboard, others to recognition form
-      if (adminEmails.includes(formData.email)) {
-        navigate("/AdminKYCList");
+      // ⭐ Check for redirect query param
+      const searchParams = new URLSearchParams(location.search);
+      const redirectTo = searchParams.get("redirect");
+      const rateProductId = searchParams.get("rate"); // optional: open rating modal
+
+      if (redirectTo) {
+        // Redirect back to the product page after registration
+        let url = redirectTo;
+        if (rateProductId) url += `?rate=${rateProductId}`;
+        navigate(url, { replace: true });
       } else {
-        navigate("/RecognitionForm");
+        // Normal behavior
+        if (adminEmails.includes(formData.email)) {
+          navigate("/AdminKYCList");
+        } else {
+          navigate("/RecognitionForm");
+        }
       }
     } catch (err) {
       setMessage(err.response?.data?.message || "Registration failed!");
