@@ -6,7 +6,7 @@ import {
   FaThumbsDown,
   FaEnvelope,
   FaEye,
-  FaTelegramPlane, // ✅ Telegram icon
+  FaCheckCircle, // ✅ Telegram-style verified badge
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -26,13 +26,11 @@ const CombinedUsers = () => {
     try {
       const token = localStorage.getItem("adminToken");
 
-      // 1️⃣ Fetch users
       const usersRes = await axios.get(
         `${API_URL}/api/users/ouruser?page=1&limit=${limit}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // 2️⃣ Fetch approved profiles
       const profilesRes = await axios.get(
         `${API_URL}/api/profile/approved?page=1&limit=${limit}`
       );
@@ -161,10 +159,10 @@ const CombinedUsers = () => {
                         fontWeight: 600,
                       }}
                     >
-                      {/* ✅ ONLY Verified Seller icon changed */}
+                      {/* ✅ Telegram VERIFIED BADGE ICON */}
                       <span>
                         {badge.name === "Verified Seller" ? (
-                          <FaTelegramPlane />
+                          <FaCheckCircle color="#229ED9" />
                         ) : (
                           badge.icon
                         )}
@@ -192,29 +190,10 @@ const CombinedUsers = () => {
                   borderTop: "1px solid #eee",
                 }}
               >
-                <FaThumbsUp
-                  title="Like"
-                  size={20}
-                  color="#4CAF50"
-                  style={{ cursor: "pointer" }}
-                />
-
-                <FaThumbsDown
-                  title="Dislike"
-                  size={20}
-                  color="#F44336"
-                  style={{ cursor: "pointer" }}
-                />
-
-                <FaEnvelope
-                  title="Contact"
-                  size={20}
-                  color="#2196F3"
-                  style={{ cursor: "pointer" }}
-                />
-
+                <FaThumbsUp size={20} color="#4CAF50" />
+                <FaThumbsDown size={20} color="#F44336" />
+                <FaEnvelope size={20} color="#2196F3" />
                 <FaEye
-                  title="View Profile"
                   size={20}
                   color="#555"
                   style={{ cursor: "pointer" }}
