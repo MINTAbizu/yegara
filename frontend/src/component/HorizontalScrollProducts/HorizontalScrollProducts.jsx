@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { FaHeart, FaStar } from "react-icons/fa";
 import "./HorizontalScrollProducts.css";
@@ -18,13 +18,31 @@ function HorizontalProductList() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const listRef = useRef(null);
 
   // Check login status
   useEffect(() => {
     const token = localStorage.getItem("userToken");
     setIsLoggedIn(!!token);
-  }, []);
+
+    // ⭐ Check if redirected from login with product to rate
+    const searchParams = new URLSearchParams(location.search);
+    const rateProductId = searchParams.get("rate");
+    if (rateProductId && token) {
+      // Find product in list (wait until products load)
+      const interval = setInterval(() => {
+        const product = products.find((p) => p._id === rateProductId);
+        if (product) {
+          openRatingModal(product);
+          clearInterval(interval);
+          // Remove `rate` param after opening modal
+          searchParams.delete("rate");
+          navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
+        }
+      }, 200);
+    }
+  }, [location.search, products]);
 
   // Fetch products
   useEffect(() => {
@@ -48,11 +66,12 @@ function HorizontalProductList() {
     );
   };
 
-  // Open rating modal (for logged-in users)
+  // Open rating modal
   const openRatingModal = (product) => {
-    if (!isLoggedIn) {
-      alert("⚠ You must log in to rate this product.");
-      navigate("/login");
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      // Redirect to login with current page + product to rate
+      navigate(`/login?redirect=${encodeURIComponent(location.pathname)}&rate=${product._id}`);
       return;
     }
 
@@ -129,11 +148,7 @@ function HorizontalProductList() {
                 {/* ⭐ Rating badge */}
                 <div
                   className="rating-badge"
-                  title={
-                    isLoggedIn
-                      ? "Click to rate"
-                      : "Log in to rate this product"
-                  }
+                  title={isLoggedIn ? "Click to rate" : "Log in to rate this product"}
                   onClick={() => openRatingModal(p)}
                 >
                   <FaStar color="#ffc107" />
