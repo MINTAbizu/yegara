@@ -181,3 +181,55 @@ export const getDigitalProductWithSellerStats = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+
+
+
+import DigitalProduct from "../../model/digitalproducts/digital products.js";
+
+export const rateDigitalProduct = async (req, res) => {
+  try {
+    const { rating } = req.body;
+    const productId = req.params.id;
+    const userId = req.user._id;
+
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Rating must be between 1 and 5" });
+    }
+
+    const product = await DigitalProduct.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // ❌ Prevent duplicate rating
+    const alreadyRated = product.ratings.find(
+      (r) => r.user.toString() === userId.toString()
+    );
+
+    if (alreadyRated) {
+      return res.status(400).json({ message: "You already rated this product" });
+    }
+
+    // ✅ Add rating
+    product.ratings.push({ user: userId, value: rating });
+
+    // ✅ Calculate average
+    const total = product.ratings.reduce((sum, r) => sum + r.value, 0);
+    product.averageRating = total / product.ratings.length;
+
+    await product.save();
+
+    res.status(200).json({
+      message: "Rating submitted",
+      averageRating: product.averageRating,
+      totalRatings: product.ratings.length
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
