@@ -17,32 +17,15 @@ function HorizontalProductList() {
   const [hoverRating, setHoverRating] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const listRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const listRef = useRef(null);
 
   // Check login status
   useEffect(() => {
     const token = localStorage.getItem("userToken");
     setIsLoggedIn(!!token);
-
-    // ⭐ Check if redirected from login with product to rate
-    const searchParams = new URLSearchParams(location.search);
-    const rateProductId = searchParams.get("rate");
-    if (rateProductId && token) {
-      // Find product in list (wait until products load)
-      const interval = setInterval(() => {
-        const product = products.find((p) => p._id === rateProductId);
-        if (product) {
-          openRatingModal(product);
-          clearInterval(interval);
-          // Remove `rate` param after opening modal
-          searchParams.delete("rate");
-          navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
-        }
-      }, 200);
-    }
-  }, [location.search, products]);
+  }, []);
 
   // Fetch products
   useEffect(() => {
@@ -58,6 +41,26 @@ function HorizontalProductList() {
       });
   }, []);
 
+  // ⭐ Handle redirect after login/registration to auto-open rating
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const rateProductId = searchParams.get("rate");
+
+    if (rateProductId && isLoggedIn && products.length > 0) {
+      const product = products.find((p) => p._id === rateProductId);
+      if (product) {
+        openRatingModal(product);
+
+        // Remove rate query param after opening modal
+        searchParams.delete("rate");
+        navigate(
+          { pathname: location.pathname, search: searchParams.toString() },
+          { replace: true }
+        );
+      }
+    }
+  }, [location.search, isLoggedIn, products]);
+
   const toggleFavorite = (productId) => {
     setFavorites((prev) =>
       prev.includes(productId)
@@ -66,12 +69,13 @@ function HorizontalProductList() {
     );
   };
 
-  // Open rating modal
   const openRatingModal = (product) => {
     const token = localStorage.getItem("userToken");
     if (!token) {
-      // Redirect to login with current page + product to rate
-      navigate(`/register?redirect=${encodeURIComponent(location.pathname)}&rate=${product._id}`);
+      // Redirect to login if not logged in
+      navigate(
+        `/login?redirect=${encodeURIComponent(location.pathname)}&rate=${product._id}`
+      );
       return;
     }
 
@@ -81,7 +85,6 @@ function HorizontalProductList() {
     setShowModal(true);
   };
 
-  // Submit rating
   const submitRating = async () => {
     const token = localStorage.getItem("userToken");
     if (!token) {
@@ -104,7 +107,7 @@ function HorizontalProductList() {
 
       alert("⭐ Rating submitted!");
 
-      // Update product average rating locally
+      // Update average rating locally
       setProducts((prev) =>
         prev.map((p) =>
           p._id === selectedProduct._id
@@ -148,7 +151,7 @@ function HorizontalProductList() {
                 {/* ⭐ Rating badge */}
                 <div
                   className="rating-badge"
-                  title={isLoggedIn ? "Click to rate" : "Log in to rate this product"}
+                  title={isLoggedIn ? "Click to rate" : "Log in to rate"}
                   onClick={() => openRatingModal(p)}
                 >
                   <FaStar color="#ffc107" />
@@ -186,11 +189,7 @@ function HorizontalProductList() {
                 <FaStar
                   key={star}
                   size={30}
-                  color={
-                    hoverRating >= star || rating >= star
-                      ? "#facc15"
-                      : "#d1d5db"
-                  }
+                  color={hoverRating >= star || rating >= star ? "#facc15" : "#d1d5db"}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
                   onClick={() => setRating(star)}
