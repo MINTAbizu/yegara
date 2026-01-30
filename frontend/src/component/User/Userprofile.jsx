@@ -6,7 +6,7 @@ import {
   FaThumbsDown,
   FaEnvelope,
   FaEye,
-  FaCheckCircle, // ✅ Telegram-style verified badge
+  FaCheckCircle,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -21,9 +21,11 @@ const CombinedUsers = () => {
   const navigate = useNavigate();
   const limit = 10;
 
+  // 🔹 Fetch users + approved profiles
   const fetchData = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
+
       const token = localStorage.getItem("adminToken");
 
       const usersRes = await axios.get(
@@ -44,17 +46,29 @@ const CombinedUsers = () => {
     }
   };
 
-  // 🔗 Merge users + profiles
+  // 🔗 MERGE: ONLY approved profiles + username from users API
   useEffect(() => {
-    if (users.length) {
-      const merged = users.map((u) => {
-        const profile = profiles.find(
-          (p) => p.user?._id === u._id
+    if (!users.length || !profiles.length) return;
+
+    const merged = profiles
+      .map((profile) => {
+        const user = users.find(
+          (u) => u._id === profile.user?._id
         );
-        return { ...u, profile };
-      });
-      setMergedData(merged);
-    }
+
+        if (!user) return null;
+
+        return {
+          ...profile,            // profile data (approved only)
+          userId: user._id,
+          name: user.name,       // ✅ from users API
+          email: user.email,
+          badges: user.badges || [],
+        };
+      })
+      .filter(Boolean);
+
+    setMergedData(merged);
   }, [users, profiles]);
 
   useEffect(() => {
@@ -98,20 +112,14 @@ const CombinedUsers = () => {
           >
             {/* Background */}
             <img
-              src={
-                u.profile?.backgroundImage ||
-                "https://via.placeholder.com/400x200"
-              }
+              src={u.backgroundImage || "https://via.placeholder.com/400x200"}
               alt="background"
               style={{ width: "100%", height: 120, objectFit: "cover" }}
             />
 
             {/* Avatar */}
             <img
-              src={
-                u.profile?.avatar ||
-                "https://via.placeholder.com/200"
-              }
+              src={u.avatar || "https://via.placeholder.com/200"}
               alt={u.name}
               style={{
                 width: 100,
@@ -126,21 +134,20 @@ const CombinedUsers = () => {
             <div style={{ padding: 12 }}>
               <h3 style={{ marginBottom: 4 }}>{u.name}</h3>
 
-              {/* 🏷️ USER BADGES */}
-              {u.badges && u.badges.length > 0 && (
+              {/* 🏷️ BADGES */}
+              {u.badges.length > 0 && (
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "center",
-                    flexWrap: "wrap",
                     gap: 6,
                     marginBottom: 8,
+                    flexWrap: "wrap",
                   }}
                 >
-                  {u.badges.map((badge, index) => (
+                  {u.badges.map((badge, i) => (
                     <span
-                      key={index}
-                      title={badge.name}
+                      key={i}
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -148,40 +155,26 @@ const CombinedUsers = () => {
                         padding: "2px 8px",
                         fontSize: 12,
                         borderRadius: 12,
-                        backgroundColor:
-                          badge.type === "role"
-                            ? "#e0f2fe"
-                            : "#fef9c3",
-                        color:
-                          badge.type === "role"
-                            ? "#075985"
-                            : "#854d0e",
+                        background: "#e0f2fe",
+                        color: "#075985",
                         fontWeight: 600,
                       }}
                     >
-                      {/* ✅ Telegram VERIFIED BADGE ICON */}
-                      <span>
-                        {badge.name === "Verified Seller" ? (
-                          <FaCheckCircle color="#229ED9" />
-                        ) : (
-                          badge.icon
-                        )}
-                      </span>
-                      <span>{badge.name}</span>
+                      {badge.name === "Verified Seller" && (
+                        <FaCheckCircle color="#229ED9" />
+                      )}
+                      {badge.name}
                     </span>
                   ))}
                 </div>
               )}
 
-              <p style={{ fontWeight: "bold", marginBottom: 5 }}>
-                {u.profile?.field || "N/A"}
-              </p>
-
+              <p style={{ fontWeight: "bold" }}>{u.field || "N/A"}</p>
               <p style={{ fontSize: 14, color: "#555" }}>
-                {u.profile?.about || "No bio yet."}
+                {u.about || "No bio yet."}
               </p>
 
-              {/* 🔽 ACTION ICONS */}
+              {/* ACTION ICONS */}
               <div
                 style={{
                   display: "flex",
@@ -195,9 +188,8 @@ const CombinedUsers = () => {
                 <FaEnvelope size={20} color="#2196F3" />
                 <FaEye
                   size={20}
-                  color="#555"
                   style={{ cursor: "pointer" }}
-                  onClick={() => navigate(`/user/${u._id}`)}
+                  onClick={() => navigate(`/user/${u.userId}`)}
                 />
               </div>
             </div>
