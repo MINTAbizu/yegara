@@ -15,9 +15,16 @@ function HorizontalProductList() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const navigate = useNavigate();
   const listRef = useRef(null);
+
+  // Check login status
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    setIsLoggedIn(!!token);
+  }, []);
 
   // Fetch products
   useEffect(() => {
@@ -33,7 +40,6 @@ function HorizontalProductList() {
       });
   }, []);
 
-  // Toggle favorite locally
   const toggleFavorite = (productId) => {
     setFavorites((prev) =>
       prev.includes(productId)
@@ -42,11 +48,10 @@ function HorizontalProductList() {
     );
   };
 
-  // Open rating modal (with login check)
+  // Open rating modal (for logged-in users)
   const openRatingModal = (product) => {
-    const token = localStorage.getItem("userToken");
-    if (!token) {
-      alert("⚠ You must be logged in to rate this product.");
+    if (!isLoggedIn) {
+      alert("⚠ You must log in to rate this product.");
       navigate("/login");
       return;
     }
@@ -61,7 +66,7 @@ function HorizontalProductList() {
   const submitRating = async () => {
     const token = localStorage.getItem("userToken");
     if (!token) {
-      alert("⚠ You must be logged in to submit a rating.");
+      alert("⚠ You must log in to submit a rating.");
       setShowModal(false);
       return;
     }
@@ -114,17 +119,28 @@ function HorizontalProductList() {
             <div key={p._id} className="product-card">
               <div className="image-wrapper">
                 <img
-                  src={p.image || "https://dummyimage.com/400x200/cccccc/000000.png&text=No+Image"}
+                  src={
+                    p.image ||
+                    "https://dummyimage.com/400x200/cccccc/000000.png&text=No+Image"
+                  }
                   alt={p.productName}
                 />
 
-                {/* ⭐ Rating badge bottom-left */}
-                <div className="rating-badge" onClick={() => openRatingModal(p)}>
+                {/* ⭐ Rating badge */}
+                <div
+                  className="rating-badge"
+                  title={
+                    isLoggedIn
+                      ? "Click to rate"
+                      : "Log in to rate this product"
+                  }
+                  onClick={() => openRatingModal(p)}
+                >
                   <FaStar color="#ffc107" />
                   <span>{p.averageRating?.toFixed(1) || 0}</span>
                 </div>
 
-                {/* ❤️ Favorite icon bottom-right */}
+                {/* ❤️ Favorite icon */}
                 <FaHeart
                   className="favorite-icon"
                   color={favorites.includes(p._id) ? "red" : "#fff"}
@@ -155,11 +171,16 @@ function HorizontalProductList() {
                 <FaStar
                   key={star}
                   size={30}
-                  color={hoverRating >= star || rating >= star ? "#facc15" : "#d1d5db"}
+                  color={
+                    hoverRating >= star || rating >= star
+                      ? "#facc15"
+                      : "#d1d5db"
+                  }
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
                   onClick={() => setRating(star)}
                   style={{ cursor: "pointer" }}
+                  title={`${star} Star${star > 1 ? "s" : ""}`}
                 />
               ))}
             </div>
