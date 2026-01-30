@@ -59,3 +59,33 @@
   background-color:orange;
   color: black;
 }
+
+.product-card {
+  position: relative;
+}
+
+/* ❤️ Favorite */
+.favorite-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* ⭐ Rating */
+.rating-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+}
