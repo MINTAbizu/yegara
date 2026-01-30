@@ -6,6 +6,7 @@ import {
   FaThumbsDown,
   FaEnvelope,
   FaEye,
+  FaTelegramPlane, // ✅ Telegram icon
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -160,7 +161,14 @@ const CombinedUsers = () => {
                         fontWeight: 600,
                       }}
                     >
-                      <span>{badge.icon}</span>
+                      {/* ✅ ONLY Verified Seller icon changed */}
+                      <span>
+                        {badge.name === "Verified Seller" ? (
+                          <FaTelegramPlane />
+                        ) : (
+                          badge.icon
+                        )}
+                      </span>
                       <span>{badge.name}</span>
                     </span>
                   ))}
