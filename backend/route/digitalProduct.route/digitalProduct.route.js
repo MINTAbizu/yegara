@@ -22,7 +22,7 @@ router.get("/", getApprovedProducts);
 router.get("/:id", getSingleProduct);
 
 
-router.post("/:id/rate", protect, rateDigitalProduct);
+router.post("/:id/rate", rateDigitalProduct);
 
 // ADMIN PAGES
 router.get("/admin/all", getAllProductsAdmin);
