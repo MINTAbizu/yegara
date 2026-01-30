@@ -8,7 +8,8 @@ import {
   getSingleProduct,
   toggleStatus,
   getDigitalProductById,
-  getDigitalProductWithSellerStats
+  getDigitalProductWithSellerStats,
+  rateDigitalProduct
 } from "../../controller/digitalProduct.controller/digitalProduct.controller.js";
 import { protect } from "../../middleware/authMiddleware.js";
 
@@ -21,7 +22,7 @@ router.get("/", getApprovedProducts);
 router.get("/:id", getSingleProduct);
 
 
-
+router.post("/:id/rate", protect, rateDigitalProduct);
 
 // ADMIN PAGES
 router.get("/admin/all", getAllProductsAdmin);

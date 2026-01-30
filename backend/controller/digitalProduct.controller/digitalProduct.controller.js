@@ -81,14 +81,26 @@ export const toggleStatus = async (req, res) => {
 
 
 // List all approved digital products
+// export const getApprovedProducts = async (req, res) => {
+//   try {
+//     const products = await DigitalProduct.find({ status: "approved" }).populate("seller", "name email");
+//     res.json(products);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 export const getApprovedProducts = async (req, res) => {
   try {
-    const products = await DigitalProduct.find({ status: "approved" }).populate("seller", "name email");
+    const products = await DigitalProduct.find({ status: "approved" })
+      .populate("seller", "name email")
+      .select("productName price image seller averageRating ratings");
+
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Admin: list all products
 export const getAllProductsAdmin = async (req, res) => {
@@ -186,7 +198,7 @@ export const getDigitalProductWithSellerStats = async (req, res) => {
 
 
 
-import DigitalProduct from "../../model/digitalproducts/digital products.js";
+
 
 export const rateDigitalProduct = async (req, res) => {
   try {
