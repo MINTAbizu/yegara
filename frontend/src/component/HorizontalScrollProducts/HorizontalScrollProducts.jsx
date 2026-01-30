@@ -11,21 +11,15 @@ function HorizontalProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
+
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const listRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Check login status
-  useEffect(() => {
-    const token = localStorage.getItem("userToken");
-    setIsLoggedIn(!!token);
-  }, []);
 
   // Fetch products
   useEffect(() => {
@@ -41,25 +35,28 @@ function HorizontalProductList() {
       });
   }, []);
 
-  // ⭐ Handle redirect after login/registration to auto-open rating
+  // ⭐ Check for redirect after login to auto-open rating modal
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const rateProductId = searchParams.get("rate");
 
-    if (rateProductId && isLoggedIn && products.length > 0) {
-      const product = products.find((p) => p._id === rateProductId);
-      if (product) {
-        openRatingModal(product);
+    if (rateProductId && products.length > 0) {
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        const product = products.find((p) => p._id === rateProductId);
+        if (product) {
+          openRatingModal(product);
 
-        // Remove rate query param after opening modal
-        searchParams.delete("rate");
-        navigate(
-          { pathname: location.pathname, search: searchParams.toString() },
-          { replace: true }
-        );
+          // Remove rate query param after opening modal
+          searchParams.delete("rate");
+          navigate(
+            { pathname: location.pathname, search: searchParams.toString() },
+            { replace: true }
+          );
+        }
       }
     }
-  }, [location.search, isLoggedIn, products]);
+  }, [location.search, products]);
 
   const toggleFavorite = (productId) => {
     setFavorites((prev) =>
@@ -70,7 +67,7 @@ function HorizontalProductList() {
   };
 
   const openRatingModal = (product) => {
-    const token = localStorage.getItem("userToken");
+    const token = localStorage.getItem("userToken"); // ✅ Always check latest token
     if (!token) {
       // Redirect to login if not logged in
       navigate(
@@ -107,7 +104,7 @@ function HorizontalProductList() {
 
       alert("⭐ Rating submitted!");
 
-      // Update average rating locally
+      // Update local product rating
       setProducts((prev) =>
         prev.map((p) =>
           p._id === selectedProduct._id
@@ -151,7 +148,7 @@ function HorizontalProductList() {
                 {/* ⭐ Rating badge */}
                 <div
                   className="rating-badge"
-                  title={isLoggedIn ? "Click to rate" : "Log in to rate"}
+                  title="Click to rate"
                   onClick={() => openRatingModal(p)}
                 >
                   <FaStar color="#ffc107" />
