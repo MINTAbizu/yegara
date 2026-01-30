@@ -74,7 +74,7 @@ function HorizontalProductList() {
     if (!token) {
       // Redirect to login if not logged in
       navigate(
-        `/login?redirect=${encodeURIComponent(location.pathname)}&rate=${product._id}`
+        `/register?redirect=${encodeURIComponent(location.pathname)}&rate=${product._id}`
       );
       return;
     }
