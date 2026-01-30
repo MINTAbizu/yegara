@@ -1,149 +1,135 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { ClipLoader } from "react-spinners";
-import { FaHeart, FaStar } from "react-icons/fa";
-import "./HorizontalScrollProducts.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function HorizontalProductList() {
+const DigitalProductsPage = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState([]);
-
-  // ⭐ Rating modal states
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const listRef = useRef(null);
-
+  // Fetch products
   useEffect(() => {
-    axios.get(`${API_URL}/api/digital-products/`)
-      .then(res => {
-        setProducts(res.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+    axios
+      .get(`${API_URL}/digital-products/approved`)
+      .then((res) => setProducts(res.data))
+      .catch(console.error);
   }, []);
 
-  const toggleFavorite = (productId) => {
-    setFavorites(prev =>
-      prev.includes(productId)
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    );
-  };
-
-  // ⭐ Open rating modal
-  const openRatingModal = (product) => {
+  // Open rating modal
+  const openModal = (product) => {
     setSelectedProduct(product);
     setRating(0);
-    setHoverRating(0);
     setShowModal(true);
   };
 
-  // ⭐ Submit rating
+  // Submit rating
   const submitRating = async () => {
+    if (!rating) return alert("Select a rating");
     try {
-      const token = localStorage.getItem("userToken");
-
-      await axios.post(
-        `${API_URL}/api/digital-products/${selectedProduct._id}/rate`,
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `${API_URL}/digital-products/${selectedProduct._id}/rate`,
         { rating },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert("⭐ Rating submitted!");
+      // Update product average rating locally
+      setProducts((prev) =>
+        prev.map((p) =>
+          p._id === selectedProduct._id
+            ? { ...p, averageRating: res.data.averageRating, ratings: p.ratings.concat([{ user: "you", value: rating }]) }
+            : p
+        )
+      );
+
       setShowModal(false);
     } catch (err) {
-      console.error(err);
-      alert("Failed to submit rating");
+      alert(err.response?.data?.message || "Rating failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="horizontal-product-container">
-      <h2 className="digitalproducttitle">Digital Products</h2>
-
-      {loading ? (
-        <div className="spinner-center">
-          <ClipLoader color="#4dabf7" size={60} />
-        </div>
-      ) : (
-        <div className="horizontal-product-list" ref={listRef}>
-          {products.map((p) => (
-            <div key={p._id} className="product-card">
-
-              {/* IMAGE + ICONS */}
-              <div className="image-wrapper">
-                <img src={p.image} alt={p.productName} />
-
-                {/* ⭐ Rating badge */}
-                <div
-                  className="rating-badge"
-                  onClick={() => openRatingModal(p)}
-                >
-                  <FaStar />
-                  <span>{p.rating || 0}</span>
-                </div>
-
-                {/* ❤️ Favorite */}
-                <FaHeart
-                  className="favorite-icon"
-                  color={favorites.includes(p._id) ? "red" : "#fff"}
-                  onClick={() => toggleFavorite(p._id)}
-                />
+    <div style={{ padding: "20px" }}>
+      <h2>Digital Products</h2>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+        {products.map((p) => (
+          <div key={p._id} style={{ width: "250px", border: "1px solid #ddd", borderRadius: "8px", padding: "10px" }}>
+            <div style={{ position: "relative" }}>
+              <img
+                src={p.image}
+                alt={p.productName}
+                style={{ width: "100%", height: "180px", objectFit: "cover", borderRadius: "6px" }}
+              />
+              {/* Rating badge */}
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "8px",
+                  left: "8px",
+                  background: "rgba(0,0,0,0.7)",
+                  color: "#fff",
+                  padding: "4px 8px",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                }}
+                onClick={() => openModal(p)}
+              >
+                ⭐ {p.averageRating?.toFixed(1) || 0} ({p.ratings?.length || 0})
               </div>
-
-              <h5>{p.productName}</h5>
-              <p className="price">{p.price} ETB</p>
-              <p className="seller">Seller: {p.seller?.name}</p>
-
-              <Link to={`/ProductDetails/${p._id}?type=digital`}>
-                <button className="btn btn-primary mt-2">View</button>
-              </Link>
             </div>
-          ))}
-        </div>
-      )}
+            <h4>{p.productName}</h4>
+            <p>{p.price} ETB</p>
+          </div>
+        ))}
+      </div>
 
-      {/* ⭐⭐⭐⭐⭐ RATING MODAL */}
+      {/* ⭐ RATING MODAL */}
       {showModal && (
-        <div className="rating-modal-overlay">
-          <div className="rating-modal">
-            <h4>Rate {selectedProduct?.productName}</h4>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div style={{ background: "#fff", padding: "20px", borderRadius: "8px", width: "300px", textAlign: "center" }}>
+            <h3>Rate {selectedProduct.productName}</h3>
 
-            <div className="stars">
+            <div style={{ fontSize: "28px", margin: "15px 0" }}>
               {[1, 2, 3, 4, 5].map((star) => (
-                <FaStar
+                <span
                   key={star}
-                  size={30}
-                  color={
-                    hoverRating >= star || rating >= star
-                      ? "#facc15"
-                      : "#d1d5db"
-                  }
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
+                  style={{
+                    cursor: "pointer",
+                    color: star <= rating ? "#ffc107" : "#ccc",
+                  }}
                   onClick={() => setRating(star)}
-                  style={{ cursor: "pointer" }}
-                />
+                >
+                  ★
+                </span>
               ))}
             </div>
 
-            <div className="modal-actions">
-              <button onClick={() => setShowModal(false)}>Cancel</button>
-              <button
-                disabled={rating === 0}
-                onClick={submitRating}
-              >
-                Submit
+            <div>
+              <button onClick={submitRating} disabled={loading}>
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+              <button onClick={() => setShowModal(false)} style={{ marginLeft: "10px" }}>
+                Cancel
               </button>
             </div>
           </div>
@@ -151,6 +137,6 @@ function HorizontalProductList() {
       )}
     </div>
   );
-}
+};
 
-export default HorizontalProductList;
+export default DigitalProductsPage;
