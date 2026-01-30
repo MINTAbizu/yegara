@@ -71,7 +71,7 @@ function HorizontalProductList() {
     const token = localStorage.getItem("userToken");
     if (!token) {
       // Redirect to login with current page + product to rate
-      navigate(`/login?redirect=${encodeURIComponent(location.pathname)}&rate=${product._id}`);
+      navigate(`/register?redirect=${encodeURIComponent(location.pathname)}&rate=${product._id}`);
       return;
     }
 
