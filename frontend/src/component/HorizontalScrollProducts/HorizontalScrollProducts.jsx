@@ -164,8 +164,8 @@ function HorizontalProductList() {
               </div>
 
               <h5>{p.productName}</h5>
-              <p className="price">{p.price} ETB</p>
-              <p className="seller">Seller: {p.seller?.name}</p>
+              <p className="price">{p.price} .00 ETB</p>
+              {/* <p className="seller">Seller: {p.seller?.name}</p> */}
 
               <Link to={`/ProductDetails/${p._id}?type=digital`}>
                 <button className="btn btn-primary mt-2">View</button>
