@@ -19,19 +19,20 @@ const AdminKYCList = () => {
       const res = await fetch(`${API_URL}/api/kyc`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
-      console.log("Fetched KYC data:", data);
 
-      // ✅ Ensure array + newest first
+      // 🆕 newest first (safe even if createdAt missing)
       const sorted = Array.isArray(data)
-        ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        ? [...data].sort(
+            (a, b) =>
+              new Date(b.createdAt || b._id) -
+              new Date(a.createdAt || a._id)
+          )
         : [];
 
       setKycList(sorted);
     } catch (err) {
       console.error(err);
-      setKycList([]);
     } finally {
       setLoading(false);
     }
@@ -60,11 +61,16 @@ const AdminKYCList = () => {
     }
   };
 
-  // ================= SEARCH + PAGINATION =================
-  const filteredKYC = kycList.filter((k) =>
-    k.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // ================= SEARCH =================
+  const filteredKYC = kycList.filter((k) => {
+    if (!searchTerm) return true;
+    return (
+      k.user?.name &&
+      k.user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
+  // ================= PAGINATION =================
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentItems = filteredKYC.slice(indexOfFirst, indexOfLast);
@@ -77,7 +83,7 @@ const AdminKYCList = () => {
       <h3>KYC Submissions</h3>
 
       {/* 🔍 Search */}
-      <div className="d-flex justify-content-end mb-2">
+      <div className="mb-2 d-flex justify-content-end">
         <input
           type="text"
           className="form-control form-control-sm"
@@ -126,28 +132,46 @@ const AdminKYCList = () => {
                   <td>{kyc.residentialAddress}</td>
                   <td>
                     {kyc.faceId && (
-                      <img
-                        src={`http://localhost:5000/uploads/${kyc.faceId}`}
-                        alt="Face ID"
-                        width="45"
-                        className="img-thumbnail me-1"
-                      />
+                      <a
+                        href={`http://localhost:5000/uploads/${kyc.faceId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={`http://localhost:5000/uploads/${kyc.faceId}`}
+                          alt="Face ID"
+                          width="50"
+                          className="img-thumbnail me-1"
+                        />
+                      </a>
                     )}
                     {kyc.idFront && (
-                      <img
-                        src={`http://localhost:5000/uploads/${kyc.idFront}`}
-                        alt="ID Front"
-                        width="45"
-                        className="img-thumbnail me-1"
-                      />
+                      <a
+                        href={`http://localhost:5000/uploads/${kyc.idFront}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={`http://localhost:5000/uploads/${kyc.idFront}`}
+                          alt="ID Front"
+                          width="50"
+                          className="img-thumbnail me-1"
+                        />
+                      </a>
                     )}
                     {kyc.idBack && (
-                      <img
-                        src={`http://localhost:5000/uploads/${kyc.idBack}`}
-                        alt="ID Back"
-                        width="45"
-                        className="img-thumbnail"
-                      />
+                      <a
+                        href={`http://localhost:5000/uploads/${kyc.idBack}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={`http://localhost:5000/uploads/${kyc.idBack}`}
+                          alt="ID Back"
+                          width="50"
+                          className="img-thumbnail"
+                        />
+                      </a>
                     )}
                   </td>
                   <td>
