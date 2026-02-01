@@ -1,14 +1,17 @@
-import React, { useState } from "react";
-import { useAuth } from "../Context/Authcontext";
+import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { FaStar, FaRocket, FaLock } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
 
-const UpgradePro = () => {
-  const { user, refreshUser, token } = useAuth();
+const UpgradeProCard = ({ currentUser, refreshUser }) => {
   const [loading, setLoading] = useState(false);
 
   const handleUpgrade = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login first");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/upgrade-pro`, {
@@ -16,78 +19,39 @@ const UpgradePro = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const result = await res.json();
+      const data = await res.json();
 
-      if (res.ok) {
-        toast.success("🎉 Your account is now Pro!");
-        await refreshUser(); // update user info in context
-      } else {
-        toast.error(result.message || "Upgrade failed!");
-      }
+      if (!res.ok) throw new Error(data.message || "Upgrade failed");
+
+      toast.success("🎉 Account upgraded to Pro!");
+      refreshUser(); // update AuthContext
     } catch (err) {
-      console.error(err);
-      toast.error("Server error!");
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Define Pro perks
-  const perks = [
-    { icon: <FaStar />, title: "Priority Support", color: "#FF6B6B" },
-    { icon: <FaRocket />, title: "Faster Transactions", color: "#6C5DD3" },
-    { icon: <FaLock />, title: "Enhanced Security", color: "#FFD93D" },
-  ];
-
   return (
-    <div className="container my-5">
-      <ToastContainer position="top-right" autoClose={3000} />
-
-      <h2 className="text-center mb-4">Upgrade to Pro Account</h2>
-      <p className="text-center mb-4">
-        Unlock exclusive perks and enjoy a premium experience!
+    <div className="p-6 rounded-xl shadow-lg transition hover:scale-105 hover:shadow-2xl bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-white max-w-sm mx-auto">
+      <h2 className="text-xl font-bold mb-2">Upgrade to Pro</h2>
+      <p className="mb-4">
+        Unlock premium features and badges for your account!
       </p>
-
-      <div className="row g-4 mb-4">
-        {perks.map((perk, index) => (
-          <div key={index} className="col-12 col-sm-6 col-md-4">
-            <div
-              className="card text-white text-center p-4 shadow-lg border-0"
-              style={{
-                backgroundColor: perk.color,
-                transition: "transform 0.3s, box-shadow 0.3s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.15)";
-              }}
-            >
-              <div className="fs-2 mb-2">{perk.icon}</div>
-              <div className="fw-bold">{perk.title}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="text-center">
-        <button
-          className="btn btn-warning btn-lg"
-          onClick={handleUpgrade}
-          disabled={user.role === "pro" || loading}
-        >
-          {loading
-            ? "Upgrading..."
-            : user.role === "pro"
-            ? "Already Pro"
-            : "Upgrade to Pro"}
-        </button>
-      </div>
+      <button
+        className={`w-full py-2 rounded-lg font-bold ${
+          currentUser.role === "pro"
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-white text-purple-600 hover:bg-purple-100"
+        }`}
+        onClick={handleUpgrade}
+        disabled={currentUser.role === "pro" || loading}
+      >
+        {currentUser.role === "pro" ? "Already Pro" : loading ? "Upgrading..." : "Upgrade to Pro"}
+      </button>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
 
-export default UpgradePro;
+export default UpgradeProCard;
