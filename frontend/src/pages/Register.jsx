@@ -38,7 +38,8 @@ const Register = () => {
     try {
       let payload = { ...formData };
 
-      const adminEmails = ["aminteadminsseesss12@yegna.com", "superadminss1112@yegna.com"];
+      const adminEmails = ["aminteadminsseesss12@yegna.com", "superadminss1112@yegna.com",
+        "aminteadminsseesss123@yegna.com","aminteadminsseesss124@yegna.com"];
       if (adminEmails.includes(formData.email)) {
         payload.secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
       }
