@@ -68,7 +68,7 @@ function App() {
           <Route path="/SupportChat" element={<SupportChat />} />
           <Route path="/UserExample" element={<UserExample />} />
           <Route path="/Userprofiless" element={<Userprofile />} />
-          <Route path="/UpgradePro" element={<UpgradePro />} />
+          <Route path="/UpgradePro" element={<UpgradePro  />} />
 
 
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />

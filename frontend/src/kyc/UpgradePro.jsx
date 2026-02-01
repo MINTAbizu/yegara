@@ -1,56 +1,74 @@
 import React, { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../Context/Authcontext";
+import { toast } from "react-toastify";
 
-const UpgradeProCard = ({ currentUser, refreshUser }) => {
+const API_URL = import.meta.env.VITE_API_URL;
+
+const UpgradePro = () => {
+  const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  if (!currentUser) return <p>Loading user info...</p>; // <-- safe check
-console.log("Current User:", currentUser);
+  if (!user) return <p>Loading user info...</p>; // user not loaded yet
+
   const handleUpgrade = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Please login first");
+    if (user.role === "pro") {
+      toast.info("You are already a Pro user!");
       return;
     }
 
-    setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/upgrade-pro`, {
+      setLoading(true);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("You must be logged in!");
+        return;
+      }
+
+      const res = await fetch(`${API_URL}/api/users/upgrade-pro`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Upgrade failed");
+      const result = await res.json();
 
-      toast.success("🎉 Account upgraded to Pro!");
-      refreshUser(); // update AuthContext
+      if (res.ok) {
+        toast.success("Account upgraded to Pro successfully!");
+        await refreshUser(); // refresh context user info
+      } else {
+        toast.error(result.message || "Upgrade failed!");
+      }
     } catch (err) {
-      toast.error(err.message);
+      console.error("UpgradePro error:", err);
+      toast.error("Server error!");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 rounded-xl shadow-lg transition hover:scale-105 hover:shadow-2xl bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-white max-w-sm mx-auto">
-      <h2 className="text-xl font-bold mb-2">Upgrade to Pro</h2>
-      <p className="mb-4">Unlock premium features and badges for your account!</p>
-      <button
-        className={`w-full py-2 rounded-lg font-bold ${
-          currentUser.role === "pro"
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-white text-purple-600 hover:bg-purple-100"
-        }`}
-        onClick={handleUpgrade}
-        disabled={currentUser.role === "pro" || loading}
-      >
-        {currentUser.role === "pro" ? "Already Pro" : loading ? "Upgrading..." : "Upgrade to Pro"}
-      </button>
-      <ToastContainer position="top-right" autoClose={3000} />
+    <div className="container py-5">
+      <div className="card shadow p-4 mx-auto" style={{ maxWidth: 500 }}>
+        <h2 className="mb-3 text-center">Upgrade to Pro</h2>
+        <p>
+          Current role: <strong>{user.role}</strong>
+        </p>
+        <button
+          className="btn btn-success w-100"
+          onClick={handleUpgrade}
+          disabled={user.role === "pro" || loading}
+        >
+          {loading
+            ? "Processing..."
+            : user.role === "pro"
+            ? "Already Pro"
+            : "Upgrade to Pro"}
+        </button>
+      </div>
     </div>
   );
 };
 
-export default UpgradeProCard;
+export default UpgradePro;
