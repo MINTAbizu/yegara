@@ -35,20 +35,20 @@ export default function StepsAnimated() {
   return (
     <div className="container steps-anim-wrapper py-4">
            <div className="top text-center m-5">
-             <h1>How We Can sell On This Platform...............</h1>
+             <h1>How We Can sell On This Platform.......TG........</h1>
                                  <h3>Follow This Steps To Sell </h3>
-                            {/* <strong> <FaBoxOpen />First fill The Form from Ur dash baord Login'...'Kyc...Shop"..."Listings..Sell-SocialMedia-Account  </strong> */}
+                            {/* <strong> <FaBoxOpen />First fill The Form from Ur dash baord Login'...'Kyc...Shop"..."Listings..Sell-SocialMedia-Account  </strong>
                             <ul>
                                  <li>Admin Aprove it..Automaticaliy  posted on It </li>
                              <li>If any one Buy this Group..After Paid U Must be Transfer The Group Owner  for That Buyer </li>
                               <li>Recive price to on ur  Bank account</li>
 
-                            </ul> 
-                              <div className="sellbutton  btn btn-lg btn-primary mt-4">
+                            </ul>  */}
+                              {/* <div className="sellbutton  btn btn-lg btn-primary mt-4">
                                 <Link to={'/Login'}>
                                     <button>Social-Media-Account</button>
                                     </Link>
-                              </div>
+                              </div> */}
              
         </div>
       <div className="row gx-4">
