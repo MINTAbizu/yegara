@@ -53,6 +53,9 @@ import Admingiftproduct from './Admin/products/Admingiftproduct';
 
 function App() {
   return (
+    <>          
+     <ToastContainer position="top-right" autoClose={3000} />
+
     <AuthProvider>
       <Router>
         <Routes>
@@ -64,7 +67,8 @@ function App() {
           <Route path="/SupportChat" element={<SupportChat />} />
           <Route path="/UserExample" element={<UserExample />} />
           <Route path="/Userprofiless" element={<Userprofile />} />
-          <ToastContainer position="top-right" autoClose={3000} />
+
+
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />
           <Route
             path="/orders"
@@ -305,6 +309,7 @@ function App() {
         </Routes>
       </Router>
     </AuthProvider>
+    </>
   );
 }
 
