@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from "react";
+
 const API_URL = import.meta.env.VITE_API_URL;
+
 const AdminProfileList = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 🔍 Search & Pagination
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const profilesPerPage = 10;
+
+  // ================= FETCH PROFILES =================
   const fetchProfiles = async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${API_URL}/api/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       const data = await res.json();
-      setProfiles(data);
+
+      // 🆕 newest first
+      const sortedProfiles = data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      setProfiles(sortedProfiles);
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -23,9 +38,10 @@ const AdminProfileList = () => {
     fetchProfiles();
   }, []);
 
-  // Update status: approved or rejected
+  // ================= UPDATE STATUS =================
   const handleStatusChange = async (id, status) => {
-    if (!window.confirm(`Are you sure you want to ${status} this profile?`)) return;
+    if (!window.confirm(`Are you sure you want to ${status} this profile?`))
+      return;
 
     try {
       const token = localStorage.getItem("token");
@@ -39,7 +55,9 @@ const AdminProfileList = () => {
       });
 
       if (res.ok) {
-        setProfiles(profiles.map(p => (p._id === id ? { ...p, status } : p)));
+        setProfiles((prev) =>
+          prev.map((p) => (p._id === id ? { ...p, status } : p))
+        );
       } else {
         alert("Failed to update status");
       }
@@ -49,15 +67,44 @@ const AdminProfileList = () => {
     }
   };
 
+  // ================= SEARCH + PAGINATION =================
+  const filteredProfiles = profiles.filter((p) =>
+    p.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const indexOfLast = currentPage * profilesPerPage;
+  const indexOfFirst = indexOfLast - profilesPerPage;
+  const currentProfiles = filteredProfiles.slice(indexOfFirst, indexOfLast);
+
+  const totalPages = Math.ceil(filteredProfiles.length / profilesPerPage);
+
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="container-fluid mt-4">
       <h3>User Profiles</h3>
+
+      {/* 🔍 Search */}
+      <div className="mb-2 d-flex justify-content-end">
+        <input
+          type="text"
+          className="form-control form-control-sm"
+          style={{ maxWidth: "250px" }}
+          placeholder="Search by user name..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
+        />
+      </div>
+
+      {/* 📋 Table */}
       <div className="table-responsive">
         <table className="table table-sm table-bordered table-hover align-middle">
           <thead className="table-light">
             <tr>
+              <th>#</th>
               <th>Avatar</th>
               <th>User</th>
               <th>About</th>
@@ -69,24 +116,33 @@ const AdminProfileList = () => {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
-            {profiles.length > 0 ? (
-              profiles.map(profile => (
+            {currentProfiles.length > 0 ? (
+              currentProfiles.map((profile, i) => (
                 <tr key={profile._id}>
+                  <td>{indexOfFirst + i + 1}</td>
+
                   <td>
                     <img
-                      src={`http://localhost:5000/${profile.avatar}`}
+                      src={`${API_URL}/${profile.avatar}`}
                       alt="avatar"
                       className="rounded-circle"
-                      style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                      }}
                     />
                   </td>
+
                   <td>{profile.user?.name || "N/A"}</td>
                   <td>{profile.about || "-"}</td>
                   <td>{profile.region || "-"}</td>
                   <td>{profile.field || "-"}</td>
                   <td>{profile.shopLocation || "-"}</td>
                   <td>{profile.telegram || "-"}</td>
+
                   <td>
                     <span
                       className={
@@ -100,11 +156,14 @@ const AdminProfileList = () => {
                       {profile.status || "pending"}
                     </span>
                   </td>
+
                   <td>
                     {profile.status !== "approved" && (
                       <button
                         className="btn btn-success btn-sm me-1"
-                        onClick={() => handleStatusChange(profile._id, "approved")}
+                        onClick={() =>
+                          handleStatusChange(profile._id, "approved")
+                        }
                       >
                         Approve
                       </button>
@@ -112,7 +171,9 @@ const AdminProfileList = () => {
                     {profile.status !== "rejected" && (
                       <button
                         className="btn btn-danger btn-sm"
-                        onClick={() => handleStatusChange(profile._id, "rejected")}
+                        onClick={() =>
+                          handleStatusChange(profile._id, "rejected")
+                        }
                       >
                         Reject
                       </button>
@@ -122,13 +183,36 @@ const AdminProfileList = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="9" className="text-center">
+                <td colSpan="10" className="text-center">
                   No profiles found.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* 📄 Pagination */}
+      <div className="d-flex justify-content-center mt-3">
+        <button
+          className="btn btn-sm btn-secondary mx-1"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+        >
+          Prev
+        </button>
+
+        <span className="mx-2 align-self-center">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <button
+          className="btn btn-sm btn-secondary mx-1"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
