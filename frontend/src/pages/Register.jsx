@@ -23,7 +23,9 @@ const Register = () => {
   };
 
   const strongPasswordRegex =
-    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+   
+/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z\d^A-Za-z0-9]{8,}$/;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
