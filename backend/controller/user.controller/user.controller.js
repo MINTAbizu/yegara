@@ -213,8 +213,9 @@ export const createUser = async (req, res) => {
       return res.status(400).json({ message: "Name, email and password required" });
 
     // Strong password validation
-    const strongPasswordRegex =
-      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+   const strongPasswordRegex =
+  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
 
     if (!strongPasswordRegex.test(password)) {
       return res.status(400).json({
