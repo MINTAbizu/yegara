@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../Admin.css";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AdminKYCList = () => {
@@ -13,26 +14,23 @@ const AdminKYCList = () => {
 
   // ================= FETCH KYC =================
   const fetchKYC = async () => {
-    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${API_URL}/api/kyc`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       const data = await res.json();
 
-      // Ensure data is an array
-      const kycArray = Array.isArray(data) ? data : [];
-
-      // 🆕 Sort newest first
-      const sorted = kycArray.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
+      // ✅ Ensure array + newest first
+      const sorted = Array.isArray(data)
+        ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        : [];
 
       setKycList(sorted);
     } catch (err) {
       console.error(err);
-      setKycList([]); // fallback to empty array
+      setKycList([]);
     } finally {
       setLoading(false);
     }
@@ -52,6 +50,7 @@ const AdminKYCList = () => {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (res.ok) {
         setKycList((prev) => prev.filter((k) => k._id !== id));
       }
@@ -61,14 +60,14 @@ const AdminKYCList = () => {
   };
 
   // ================= SEARCH + PAGINATION =================
-  const filtered = kycList.filter((k) =>
+  const filteredKYC = kycList.filter((k) =>
     k.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
-  const currentItems = filtered.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const currentItems = filteredKYC.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filteredKYC.length / itemsPerPage);
 
   if (loading) return <p>Loading...</p>;
 
@@ -77,7 +76,7 @@ const AdminKYCList = () => {
       <h3>KYC Submissions</h3>
 
       {/* 🔍 Search */}
-      <div className="mb-2 d-flex justify-content-end">
+      <div className="d-flex justify-content-end mb-2">
         <input
           type="text"
           className="form-control form-control-sm"
@@ -116,32 +115,39 @@ const AdminKYCList = () => {
                 <tr key={kyc._id}>
                   <td>{indexOfFirst + i + 1}</td>
                   <td>{kyc.user?.name || "N/A"}</td>
-                  <td>{kyc.fullName || "-"}</td>
-                  <td>{kyc.dob || "-"}</td>
-                  <td>{kyc.gender || "-"}</td>
-                  <td>{kyc.nationality || "-"}</td>
-                  <td>{kyc.maritalStatus || "-"}</td>
-                  <td>{kyc.idType || "-"}</td>
-                  <td>{kyc.idNumber || "-"}</td>
-                  <td>{kyc.residentialAddress || "-"}</td>
+                  <td>{kyc.fullName}</td>
+                  <td>{kyc.dob}</td>
+                  <td>{kyc.gender}</td>
+                  <td>{kyc.nationality}</td>
+                  <td>{kyc.maritalStatus}</td>
+                  <td>{kyc.idType}</td>
+                  <td>{kyc.idNumber}</td>
+                  <td>{kyc.residentialAddress}</td>
                   <td>
-                    {["faceId", "idFront", "idBack"].map((field) => (
-                      kyc[field] && (
-                        <a
-                          key={field}
-                          href={`http://localhost:5000/uploads/${kyc[field]}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <img
-                            src={`http://localhost:5000/uploads/${kyc[field]}`}
-                            alt={field}
-                            width="50"
-                            className="img-thumbnail me-1"
-                          />
-                        </a>
-                      )
-                    ))}
+                    {kyc.faceId && (
+                      <img
+                        src={`http://localhost:5000/uploads/${kyc.faceId}`}
+                        alt="Face ID"
+                        width="45"
+                        className="img-thumbnail me-1"
+                      />
+                    )}
+                    {kyc.idFront && (
+                      <img
+                        src={`http://localhost:5000/uploads/${kyc.idFront}`}
+                        alt="ID Front"
+                        width="45"
+                        className="img-thumbnail me-1"
+                      />
+                    )}
+                    {kyc.idBack && (
+                      <img
+                        src={`http://localhost:5000/uploads/${kyc.idBack}`}
+                        alt="ID Back"
+                        width="45"
+                        className="img-thumbnail"
+                      />
+                    )}
                   </td>
                   <td>
                     <button
