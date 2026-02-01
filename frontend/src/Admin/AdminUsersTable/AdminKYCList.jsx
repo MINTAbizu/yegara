@@ -21,6 +21,7 @@ const AdminKYCList = () => {
       });
 
       const data = await res.json();
+      console.log("Fetched KYC data:", data);
 
       // ✅ Ensure array + newest first
       const sorted = Array.isArray(data)
