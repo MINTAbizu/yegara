@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
-import '../Admin.css'
+import "../Admin.css";
 const API_URL = import.meta.env.VITE_API_URL;
+
 const AdminKYCList = () => {
   const [kycList, setKycList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all KYC submissions
+  // 🔍 Search & Pagination
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // ================= FETCH KYC =================
   const fetchKYC = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -13,7 +19,12 @@ const AdminKYCList = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      setKycList(data);
+
+      // 🆕 newest first
+      const sorted = data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      setKycList(sorted);
     } catch (err) {
       console.error(err);
     } finally {
@@ -25,32 +36,59 @@ const AdminKYCList = () => {
     fetchKYC();
   }, []);
 
-  // Delete a KYC submission
+  // ================= DELETE =================
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this KYC?")) return;
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${API_URL}/api/kyc/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) {
-        setKycList(kycList.filter((k) => k._id !== id));
-      }
+      if (res.ok) setKycList((prev) => prev.filter((k) => k._id !== id));
     } catch (err) {
       console.error(err);
     }
   };
+
+  // ================= SEARCH + PAGINATION =================
+  const filtered = kycList.filter((k) =>
+    k.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentItems = filtered.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="container-fluid mt-4">
       <h3>KYC Submissions</h3>
+
+      {/* 🔍 Search */}
+      <div className="mb-2 d-flex justify-content-end">
+        <input
+          type="text"
+          className="form-control form-control-sm"
+          style={{ maxWidth: "250px" }}
+          placeholder="Search by user name..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
+        />
+      </div>
+
+      {/* 📋 Table */}
       <div className="table-responsive">
         <table className="table table-sm table-bordered table-hover align-middle">
           <thead className="table-light">
             <tr>
+              <th>#</th>
               <th>User</th>
               <th>Full Name</th>
               <th>DOB</th>
@@ -65,9 +103,10 @@ const AdminKYCList = () => {
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(kycList) && kycList.length > 0 ? (
-              kycList.map((kyc) => (
+            {currentItems.length > 0 ? (
+              currentItems.map((kyc, i) => (
                 <tr key={kyc._id}>
+                  <td>{indexOfFirst + i + 1}</td>
                   <td>{kyc.user?.name || "N/A"}</td>
                   <td>{kyc.fullName}</td>
                   <td>{kyc.dob}</td>
@@ -78,7 +117,6 @@ const AdminKYCList = () => {
                   <td>{kyc.idNumber}</td>
                   <td>{kyc.residentialAddress}</td>
                   <td>
-                    {/* Display thumbnails with clickable links */}
                     {kyc.faceId && (
                       <a
                         href={`http://localhost:5000/uploads/${kyc.faceId}`}
@@ -134,13 +172,36 @@ const AdminKYCList = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="11" className="text-center">
+                <td colSpan="12" className="text-center">
                   No KYC submissions found.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* 📄 Pagination */}
+      <div className="d-flex justify-content-center mt-3">
+        <button
+          className="btn btn-sm btn-secondary mx-1"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+        >
+          Prev
+        </button>
+
+        <span className="mx-2 align-self-center">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <button
+          className="btn btn-sm btn-secondary mx-1"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
