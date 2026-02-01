@@ -13,6 +13,7 @@ const AdminKYCList = () => {
 
   // ================= FETCH KYC =================
   const fetchKYC = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${API_URL}/api/kyc`, {
@@ -20,13 +21,18 @@ const AdminKYCList = () => {
       });
       const data = await res.json();
 
-      // 🆕 newest first
-      const sorted = data.sort(
+      // Ensure data is an array
+      const kycArray = Array.isArray(data) ? data : [];
+
+      // 🆕 Sort newest first
+      const sorted = kycArray.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
+
       setKycList(sorted);
     } catch (err) {
       console.error(err);
+      setKycList([]); // fallback to empty array
     } finally {
       setLoading(false);
     }
@@ -46,7 +52,9 @@ const AdminKYCList = () => {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) setKycList((prev) => prev.filter((k) => k._id !== id));
+      if (res.ok) {
+        setKycList((prev) => prev.filter((k) => k._id !== id));
+      }
     } catch (err) {
       console.error(err);
     }
@@ -108,57 +116,32 @@ const AdminKYCList = () => {
                 <tr key={kyc._id}>
                   <td>{indexOfFirst + i + 1}</td>
                   <td>{kyc.user?.name || "N/A"}</td>
-                  <td>{kyc.fullName}</td>
-                  <td>{kyc.dob}</td>
-                  <td>{kyc.gender}</td>
-                  <td>{kyc.nationality}</td>
-                  <td>{kyc.maritalStatus}</td>
-                  <td>{kyc.idType}</td>
-                  <td>{kyc.idNumber}</td>
-                  <td>{kyc.residentialAddress}</td>
+                  <td>{kyc.fullName || "-"}</td>
+                  <td>{kyc.dob || "-"}</td>
+                  <td>{kyc.gender || "-"}</td>
+                  <td>{kyc.nationality || "-"}</td>
+                  <td>{kyc.maritalStatus || "-"}</td>
+                  <td>{kyc.idType || "-"}</td>
+                  <td>{kyc.idNumber || "-"}</td>
+                  <td>{kyc.residentialAddress || "-"}</td>
                   <td>
-                    {kyc.faceId && (
-                      <a
-                        href={`http://localhost:5000/uploads/${kyc.faceId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <img
-                          src={`http://localhost:5000/uploads/${kyc.faceId}`}
-                          alt="Face ID"
-                          width="50"
-                          className="img-thumbnail me-1"
-                        />
-                      </a>
-                    )}
-                    {kyc.idFront && (
-                      <a
-                        href={`http://localhost:5000/uploads/${kyc.idFront}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <img
-                          src={`http://localhost:5000/uploads/${kyc.idFront}`}
-                          alt="ID Front"
-                          width="50"
-                          className="img-thumbnail me-1"
-                        />
-                      </a>
-                    )}
-                    {kyc.idBack && (
-                      <a
-                        href={`http://localhost:5000/uploads/${kyc.idBack}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <img
-                          src={`http://localhost:5000/uploads/${kyc.idBack}`}
-                          alt="ID Back"
-                          width="50"
-                          className="img-thumbnail"
-                        />
-                      </a>
-                    )}
+                    {["faceId", "idFront", "idBack"].map((field) => (
+                      kyc[field] && (
+                        <a
+                          key={field}
+                          href={`http://localhost:5000/uploads/${kyc[field]}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <img
+                            src={`http://localhost:5000/uploads/${kyc[field]}`}
+                            alt={field}
+                            width="50"
+                            className="img-thumbnail me-1"
+                          />
+                        </a>
+                      )
+                    ))}
                   </td>
                   <td>
                     <button
@@ -182,27 +165,29 @@ const AdminKYCList = () => {
       </div>
 
       {/* 📄 Pagination */}
-      <div className="d-flex justify-content-center mt-3">
-        <button
-          className="btn btn-sm btn-secondary mx-1"
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((p) => p - 1)}
-        >
-          Prev
-        </button>
+      {totalPages > 1 && (
+        <div className="d-flex justify-content-center mt-3">
+          <button
+            className="btn btn-sm btn-secondary mx-1"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+          >
+            Prev
+          </button>
 
-        <span className="mx-2 align-self-center">
-          Page {currentPage} of {totalPages}
-        </span>
+          <span className="mx-2 align-self-center">
+            Page {currentPage} of {totalPages}
+          </span>
 
-        <button
-          className="btn btn-sm btn-secondary mx-1"
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((p) => p + 1)}
-        >
-          Next
-        </button>
-      </div>
+          <button
+            className="btn btn-sm btn-secondary mx-1"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
