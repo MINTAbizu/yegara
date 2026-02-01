@@ -6,7 +6,7 @@ const UpgradeProCard = ({ currentUser, refreshUser }) => {
   const [loading, setLoading] = useState(false);
 
   if (!currentUser) return <p>Loading user info...</p>; // <-- safe check
-
+console.log("Current User:", currentUser);
   const handleUpgrade = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
