@@ -16,7 +16,7 @@ function Settings() {
 
   const sidebarItems = [
     { name: "Home", path: "/", icon: <FaHome />, color: "#6C5DD3" },
-    { name: "Create Pro Account", path: "/create-pro", icon: <FaUserPlus />, color: "#FF6B6B" },
+    { name: "Create Pro Account", path: "/UpgradePro", icon: <FaUserPlus />, color: "#FF6B6B" },
     { name: "Change Account", path: "/orders", icon: <FaEye />, color: "#4ECDC4" },
     { name: "ADD Account", path: "/UserProfile", icon: <FaCog />, color: "#FFD93D" },
     { name: "Change Bank Account", path: "/bank", icon: <FaUniversity />, color: "#FF6B6B" },
