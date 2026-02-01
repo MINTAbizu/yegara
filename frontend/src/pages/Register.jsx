@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../Context/Authcontext";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Register = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -105,20 +108,34 @@ const Register = () => {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="form-control"
-              placeholder="Enter your password"
-              required
-            />
-            <small className="text-muted">
-              Must include uppercase, lowercase, number, special character, min 8 characters.
-            </small>
-          </div>
+  <label className="form-label">Password</label>
+
+  <div className="input-group">
+    <input
+      type={showPassword ? "text" : "password"}
+      name="password"
+      value={formData.password}
+      onChange={handleChange}
+      className="form-control"
+      placeholder="Enter your password"
+      required
+    />
+
+    <button
+      type="button"
+      className="btn btn-outline-secondary"
+      onClick={() => setShowPassword(!showPassword)}
+      aria-label={showPassword ? "Hide password" : "Show password"}
+    >
+      {showPassword ? <FaEyeSlash /> : <FaEye />}
+    </button>
+  </div>
+
+  <small className="text-muted">
+    Must include uppercase, lowercase, number, special character, min 8 characters.
+  </small>
+</div>
+
 
           <button type="submit" className="btn btn-primary w-100" disabled={loading}>
             {loading ? "Registering..." : "Register"}
