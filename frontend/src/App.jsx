@@ -5,6 +5,12 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
+
+
 import { AuthProvider } from './Context/Authcontext';
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
 import RequireKycAndProfile from './ProtectedRoute/RequireKycAndProfile';
@@ -58,7 +64,7 @@ function App() {
           <Route path="/SupportChat" element={<SupportChat />} />
           <Route path="/UserExample" element={<UserExample />} />
           <Route path="/Userprofiless" element={<Userprofile />} />
-
+          <ToastContainer position="top-right" autoClose={3000} />
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />
           <Route
             path="/orders"

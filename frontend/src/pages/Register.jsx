@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../Context/Authcontext";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaUserPlus } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,7 +12,7 @@ const Register = () => {
     email: "",
     password: "",
   });
-  const [message, setMessage] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -22,68 +23,77 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // ✅ Strong password regex (accepts ANY special character)
   const strongPasswordRegex =
-   
-/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/
-
-
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage("");
 
     if (!strongPasswordRegex.test(formData.password)) {
-      setLoading(false);
-      setMessage(
-        "Password must contain: uppercase, lowercase, number, special character, minimum 8 characters."
+      toast.warning(
+        "Password must include uppercase, lowercase, number, special character, and be at least 8 characters."
       );
       return;
     }
 
+    setLoading(true);
+
     try {
       let payload = { ...formData };
 
-      const adminEmails = ["aminteadminsseesss12@yegna.com", "superadminss1112@yegna.com",
-        "aminteadminsseesss123@yegna.com","aminteadminsseesss124@yegna.com","aminteadminsseesss1233@yegna.com"];
+      const adminEmails = [
+        "aminteadminsseesss12@yegna.com",
+        "superadminss1112@yegna.com",
+        "aminteadminsseesss123@yegna.com",
+        "aminteadminsseesss124@yegna.com",
+        "aminteadminsseesss1233@yegna.com",
+      ];
+
       if (adminEmails.includes(formData.email)) {
         payload.secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
       }
 
       await register(payload);
 
-      // ⭐ Check for redirect query param
+      // 🎉 Success popup
+      toast.success("Registration successful! 🎉");
+
+      // Handle redirect logic
       const searchParams = new URLSearchParams(location.search);
       const redirectTo = searchParams.get("redirect");
-      const rateProductId = searchParams.get("rate"); // optional: open rating modal
+      const rateProductId = searchParams.get("rate");
 
-      if (redirectTo) {
-        // Redirect back to the product page after registration
-        let url = redirectTo;
-        if (rateProductId) url += `?rate=${rateProductId}`;
-        navigate(url, { replace: true });
-      } else {
-        // Normal behavior
-        if (adminEmails.includes(formData.email)) {
-          navigate("/AdminKYCList");
+      setTimeout(() => {
+        if (redirectTo) {
+          let url = redirectTo;
+          if (rateProductId) url += `?rate=${rateProductId}`;
+          navigate(url, { replace: true });
         } else {
-          navigate("/RecognitionForm");
+          if (adminEmails.includes(formData.email)) {
+            navigate("/AdminKYCList");
+          } else {
+            navigate("/RecognitionForm");
+          }
         }
-      }
+      }, 1200); // let user see toast before redirect
     } catch (err) {
-      setMessage(err.response?.data?.message || "Registration failed!");
+      toast.error(err.response?.data?.message || "Registration failed!");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div className="card p-4 shadow-sm" style={{ maxWidth: "400px", width: "100%" }}>
+      <div
+        className="card p-4 shadow-sm"
+        style={{ maxWidth: "400px", width: "100%" }}
+      >
         <h2 className="card-title text-center mb-3">Register</h2>
-        {message && <div className="alert alert-danger">{message}</div>}
 
         <form onSubmit={handleSubmit}>
+          {/* Name */}
           <div className="mb-3">
             <label className="form-label">Name</label>
             <input
@@ -97,6 +107,7 @@ const Register = () => {
             />
           </div>
 
+          {/* Email */}
           <div className="mb-3">
             <label className="form-label">Email</label>
             <input
@@ -110,42 +121,61 @@ const Register = () => {
             />
           </div>
 
+          {/* Password */}
           <div className="mb-3">
-  <label className="form-label">Password</label>
+            <label className="form-label">Password</label>
 
-  <div className="input-group">
-    <input
-      type={showPassword ? "text" : "password"}
-      name="password"
-      value={formData.password}
-      onChange={handleChange}
-      className="form-control"
-      placeholder="Enter your password"
-      required
-    />
+            <div className="input-group">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="Enter your password"
+                required
+              />
 
-    <button
-      type="button"
-      className="btn btn-outline-secondary"
-      onClick={() => setShowPassword(!showPassword)}
-      aria-label={showPassword ? "Hide password" : "Show password"}
-    >
-      {showPassword ? <FaEyeSlash /> : <FaEye />}
-    </button>
-  </div>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
 
-  <small className="text-muted">
-    Must include uppercase, lowercase, number, special character, min 8 characters.
-  </small>
-</div>
+            <small className="text-muted">
+              Must include uppercase, lowercase, number, special character, min
+              8 characters.
+            </small>
+          </div>
 
-
-          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-            {loading ? "Registering..." : "Register"}
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="btn btn-primary w-100 d-flex justify-content-center align-items-center gap-2"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Registering...
+              </>
+            ) : (
+              <>
+                <FaUserPlus />
+                Register
+              </>
+            )}
           </button>
 
-          <p className="mt-3">
-            Already have an account? <Link to={"/login"}>Login</Link>
+          <p className="mt-3 text-center">
+            Already have an account? <Link to="/login">Login</Link>
           </p>
         </form>
       </div>
