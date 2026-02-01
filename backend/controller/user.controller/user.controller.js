@@ -529,3 +529,23 @@ export const removeBadge = async (req, res) => {
 //     res.status(500).json({ message: "Server error" });
 //   }
 // };
+
+export const upgradeToPro = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.role === "pro") return res.status(400).json({ message: "Already a Pro account" });
+
+    user.role = "pro";
+    user.proSince = new Date();
+
+    await user.save();
+
+    res.json({ message: "Account upgraded to Pro!", user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+

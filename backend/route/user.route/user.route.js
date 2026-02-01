@@ -92,7 +92,8 @@ import {
   getMe,
   ouruser,
   removeBadge,
-  assignBadge
+  assignBadge,
+  upgradeToPro
 } from "../../controller/user.controller/user.controller.js";
 import { protect, adminOnly } from "../../middleware/authMiddleware.js";
 // import { assignBadge } from "../../controller/profilecontroller/profile.controller.js";
@@ -103,6 +104,7 @@ const router = express.Router();
 router.post("/register", createUser);
 router.post("/login", loginUser);
 router.post("/google", googleLogin);
+router.post("/upgrade-pro", protect, upgradeToPro);
 
 // Protected
 router.get("/me", protect, getMe);

@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
   },
 ],
 
-     role: { type: String, enum: ["seller", "buyer", "admin"], default: "buyer" },
+     role: { type: String, enum: ["seller", "buyer", "pro", "admin"], default: "buyer" },
   // Add this field:
   chapaWallet: { type: String }
 }, { timestamps: true });
