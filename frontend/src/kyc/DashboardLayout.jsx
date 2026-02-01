@@ -16,7 +16,7 @@ const DashboardLayout = ({ children }) => {
   const sidebarItems = [
     { name: "Home", path: "/", icon: <FaHome /> },
     { name: "Dashboard", path: "/dashboard", icon: <FaTachometerAlt /> },
-    { name: "Create Pro Account", path: "/create-pro", icon: <FaUserPlus /> },
+    { name: "Create Pro Account", path: "/UpgradePro", icon: <FaUserPlus /> },
     { name: "View Page", path: "/Viewpage", icon: <FaEye /> },
     { name: "Shope(ሱቅ ክፈት)", path: "/orders", icon: <FaEye /> },
     { name: "Setting", path: "/Settings", icon: <FaCog /> },
