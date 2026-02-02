@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -21,12 +22,12 @@ const AdminProfileList = () => {
 
       const data = await res.json();
 
-      // 🆕 newest first
-      const sortedProfiles = data.sort(
+      // newest first
+      const sorted = data.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
 
-      setProfiles(sortedProfiles);
+      setProfiles(sorted);
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -36,6 +37,10 @@ const AdminProfileList = () => {
 
   useEffect(() => {
     fetchProfiles();
+
+    // 🔁 auto refresh every 30 sec
+    const interval = setInterval(fetchProfiles, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   // ================= UPDATE STATUS =================
@@ -67,6 +72,11 @@ const AdminProfileList = () => {
     }
   };
 
+  // ================= NOTIFICATION COUNT =================
+  const pendingCount = profiles.filter(
+    (p) => p.status === "pending"
+  ).length;
+
   // ================= SEARCH + PAGINATION =================
   const filteredProfiles = profiles.filter((p) =>
     p.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -74,15 +84,41 @@ const AdminProfileList = () => {
 
   const indexOfLast = currentPage * profilesPerPage;
   const indexOfFirst = indexOfLast - profilesPerPage;
-  const currentProfiles = filteredProfiles.slice(indexOfFirst, indexOfLast);
+  const currentProfiles = filteredProfiles.slice(
+    indexOfFirst,
+    indexOfLast
+  );
 
-  const totalPages = Math.ceil(filteredProfiles.length / profilesPerPage);
+  const totalPages = Math.ceil(
+    filteredProfiles.length / profilesPerPage
+  );
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="text-center">Loading...</p>;
 
   return (
     <div className="container-fluid mt-4">
-      <h3>User Profiles</h3>
+      {/* 🔔 HEADER + NOTIFICATION */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h3>User Profiles</h3>
+
+        <div style={{ position: "relative" }}>
+          <i className="bi bi-bell fs-4"></i>
+
+          {pendingCount > 0 && (
+            <span
+              className="badge bg-danger"
+              style={{
+                position: "absolute",
+                top: "-6px",
+                right: "-10px",
+                fontSize: "0.7rem",
+              }}
+            >
+              {pendingCount}
+            </span>
+          )}
+        </div>
+      </div>
 
       {/* 🔍 Search */}
       <div className="mb-2 d-flex justify-content-end">
@@ -129,8 +165,8 @@ const AdminProfileList = () => {
                       alt="avatar"
                       className="rounded-circle"
                       style={{
-                        width: "50px",
-                        height: "50px",
+                        width: "45px",
+                        height: "45px",
                         objectFit: "cover",
                       }}
                     />
@@ -168,6 +204,7 @@ const AdminProfileList = () => {
                         Approve
                       </button>
                     )}
+
                     {profile.status !== "rejected" && (
                       <button
                         className="btn btn-danger btn-sm"
