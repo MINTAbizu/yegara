@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import { RingLoader } from "react-spinners";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -92,7 +93,15 @@ const DigitalProductDetail = () => {
     }
   };
 
-  if (!product) return <p>Loading...</p>;
+if (!product)
+  return (
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{ height: "50vh" }}
+    >
+      <RingLoader color="#4dabf7" size={80} />
+    </div>
+  );
 
   return (
     <div className="container py-5">
