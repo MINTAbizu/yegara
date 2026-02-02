@@ -54,7 +54,7 @@ const DigitalProductDetail = () => {
         if (res.data.seller?._id) {
           try {
             const relatedRes = await axios.get(
-              `${API_URL}/api/products/by-seller/${res.data.seller._id}`
+              `${API_URL}/api/digital-products/products/by-seller/${res.data.seller._id}`
             );
             setRelatedProducts(
               relatedRes.data.filter((p) => p._id !== res.data._id)
