@@ -94,7 +94,7 @@ const FullMultiStepKYC = () => {
       <sm style={{ color: 'red', display: 'flex', textAlign: 'center', marginBottom: '15px' }}>
           <span> Please provide all required information to access your Dashboard.
             <br /> Fill all steps accurately.</span>
-           <span style={{ color: "hsl(128, 89%, 46%)", fontSize: 14 }}>
+           <span style={{ color: "hsl(128, 89%, 46%)", fontSize: 14   , marginLeft: 60 }}>
                         <FaCheckCircle /> your verification stataus is Pending 
               </span>
       </sm>
