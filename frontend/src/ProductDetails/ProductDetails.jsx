@@ -69,6 +69,7 @@ const DigitalProductDetail = () => {
     };
 
     fetchProduct();
+     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
 
   /* ================= FIND SELLER PROFILE ================= */
