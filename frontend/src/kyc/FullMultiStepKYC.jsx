@@ -135,7 +135,7 @@ const FullMultiStepKYC = () => {
         </span>
         <span style={{ color: verificationStatus === "Verified" ? "green" : "orange", fontWeight: "bold" }}>
           <FaCheckCircle style={{ marginRight: 5 }} />
-          {verificationStatus}
+        your verification status    {verificationStatus}    
         </span>
       </div>
 
