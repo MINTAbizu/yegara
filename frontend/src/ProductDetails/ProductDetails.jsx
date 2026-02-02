@@ -95,7 +95,7 @@ const DigitalProductDetail = () => {
 
   return (
     <div className="container py-5">
-
+       test
       {/* ================= SELLER PROFILE HEADER (NEW) ================= */}
       {sellerProfile && (
         <div className="card shadow-sm mb-4 p-3 d-flex flex-row align-items-center gap-3">
