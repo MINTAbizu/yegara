@@ -12,6 +12,8 @@ import {
   rateDigitalProduct
 } from "../../controller/digitalProduct.controller/digitalProduct.controller.js";
 import { protect } from "../../middleware/authMiddleware.js";
+import digitalProducts from "../../model/digitalproducts/digital products.js";
+import digitalProducts from "../../model/physicalproduct/physicalprosuct.model.js";
 
 const router = express.Router();
 // CREATE PRODUCT
@@ -34,3 +36,16 @@ router.patch("/admin/toggle/:id", toggleStatus);
 router.get("/:id", getDigitalProductById);
 router.get("/:id", getDigitalProductWithSellerStats);
 export default router;
+
+router.get("/products/by-seller/:sellerId", async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+
+    const digital = await digitalProducts.find({ seller: sellerId });
+    const physical = await PhysicalProduct.find({ seller: sellerId });
+
+    res.json([...digital, ...physical]);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch products" });
+  }
+});
