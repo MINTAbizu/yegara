@@ -93,7 +93,7 @@ const FullMultiStepKYC = () => {
       <ToastContainer position="top-right" autoClose={3000} />
       <sm style={{ color: 'red', display: 'flex', textAlign: 'center', marginBottom: '15px' }}>
           <span> Please provide all required information to access your Dashboard. Fill all steps accurately.</span>
-           <span style={{ color: "#229ED9", fontSize: 14 }}>
+           <span style={{ color: "hsl(128, 89%, 46%)", fontSize: 14 }}>
                         <FaCheckCircle /> your verification stataus is Pending 
                       </span>
       </sm>
