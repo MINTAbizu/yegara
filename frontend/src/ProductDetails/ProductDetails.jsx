@@ -14,29 +14,32 @@ const DigitalProductDetail = () => {
     totalProducts: 0,
     totalSold: 0,
   });
+
+  // 🔹 NEW
   const [relatedProducts, setRelatedProducts] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // 🔹 Try digital first
+        // digital
         let res;
         try {
           res = await axios.get(`${API_URL}/api/digital-products/${id}`);
         } catch {
+          // physical fallback
           res = await axios.get(`${API_URL}/api/physical-products/${id}`);
         }
 
         setProduct(res.data);
 
-        // 🔹 Seller stats
         if (res.data.seller?._id) {
+          // seller stats (existing)
           const statsRes = await axios.get(
             `${API_URL}/api/users/${res.data.seller._id}/stats`
           );
           setSellerStats(statsRes.data);
 
-          // 🔹 Related products by seller
+          // 🔹 NEW: related products
           const relatedRes = await axios.get(
             `${API_URL}/api/products/by-seller/${res.data.seller._id}`
           );
@@ -67,79 +70,108 @@ const DigitalProductDetail = () => {
     }
   };
 
-  if (!product) return <p className="text-center py-5">Loading...</p>;
+  if (!product) return <p>Loading...</p>;
 
   return (
     <div className="container py-5">
-      {/* ================= SELLER HEADER ================= */}
+
+      {/* ================= NEW: SELLER HEADER ================= */}
       {product.seller && (
-        <div className="card shadow-sm p-3 mb-4 d-flex flex-row align-items-center gap-3">
+        <div className="card shadow-sm mb-4 p-3 d-flex align-items-center flex-row gap-3">
           {product.seller.avatar ? (
             <img
               src={product.seller.avatar}
               alt={product.seller.name}
-              style={{ width: 70, height: 70, borderRadius: "50%" }}
+              style={{ width: 60, height: 60, borderRadius: "50%" }}
             />
           ) : (
-            <FaUserCircle size={70} color="#adb5bd" />
+            <FaUserCircle size={60} className="text-secondary" />
           )}
 
           <div>
-            <h5 className="mb-1">{product.seller.name}</h5>
+            <h6 className="mb-0">{product.seller.name}</h6>
             <small className="text-muted">
               {sellerStats.totalProducts} products · {sellerStats.totalSold} sold
             </small>
           </div>
         </div>
       )}
+      {/* ================= END NEW ================= */}
 
-      {/* ================= PRODUCT DETAILS ================= */}
-      <div className="card shadow-sm mb-5">
-        <div style={{ height: 300, overflow: "hidden" }}>
-          <img
-            src={product.image}
-            alt={product.productName}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
+      {/* ======== YOUR ORIGINAL LAYOUT (UNCHANGED) ======== */}
+      <div
+        className="d-flex flex-wrap gap-4"
+        style={{ justifyContent: "space-between", alignItems: "flex-start" }}
+      >
+        {/* Product Detail Card */}
+        <div style={{ flex: "1 1 48%", minWidth: "300px" }}>
+          <div className="card shadow-sm h-100">
+            <div style={{ width: "100%", height: "300px", overflow: "hidden" }}>
+              <img
+                src={product.image}
+                alt={product.productName}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            </div>
+
+            <div className="card-body">
+              <h3 className="card-title">{product.productName}</h3>
+              <p>{product.description}</p>
+              <p className="fw-bold text-success">{product.price} ETB</p>
+
+              <button
+                className="btn btn-primary mt-3"
+                onClick={() =>
+                  handleBuy(
+                    product._id,
+                    product.price,
+                    product.seller?.chapaWallet
+                  )
+                }
+              >
+                Buy Now
+              </button>
+
+              {product.seller && (
+                <div className="card mt-3 shadow-sm p-2">
+                  <h5>Uploaded by:</h5>
+                  <p>Name: {product.seller.name}</p>
+                </div>
+              )}
+
+              {product.telegram && (
+                <a href={product.telegram} target="_blank" rel="noreferrer">
+                  Telegram
+                </a>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="card-body">
-          <h3>{product.productName}</h3>
-          <p>{product.description}</p>
-          <p className="fw-bold text-success">{product.price} ETB</p>
-
-          <button
-            className="btn btn-primary"
-            onClick={() =>
-              handleBuy(
-                product._id,
-                product.price,
-                product.seller?.chapaWallet
-              )
-            }
-          >
-            Buy Now
-          </button>
-
-          {/* Links */}
-          <div className="mt-3">
-            {product.telegram && (
-              <a href={product.telegram} target="_blank" rel="noreferrer">
-                Telegram
-              </a>
-            )}
-            {product.drive && (
-              <a href={product.drive} target="_blank" rel="noreferrer">
-                Google Drive
-              </a>
-            )}
+        {/* Seller Stats */}
+        <div
+          style={{
+            flex: "1 1 48%",
+            minWidth: "250px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+          }}
+        >
+          <div className="card shadow-sm p-3 text-center">
+            <h5>Total Products</h5>
+            <p className="fw-bold">{sellerStats.totalProducts}</p>
+          </div>
+          <div className="card shadow-sm p-3 text-center">
+            <h5>Total Sold</h5>
+            <p className="fw-bold">{sellerStats.totalSold}</p>
           </div>
         </div>
       </div>
 
-      {/* ================= RELATED PRODUCTS ================= */}
+      {/* ================= NEW: RELATED PRODUCTS ================= */}
       {relatedProducts.length > 0 && (
-        <>
+        <div className="mt-5">
           <h4 className="mb-3">More from this seller</h4>
 
           <div className="row g-3">
@@ -152,8 +184,8 @@ const DigitalProductDetail = () => {
                     style={{ height: 150, objectFit: "cover" }}
                   />
                   <div className="card-body">
-                    <h6 className="mb-1">{p.productName}</h6>
-                    <p className="text-success fw-bold">{p.price} ETB</p>
+                    <h6>{p.productName}</h6>
+                    <p className="fw-bold text-success">{p.price} ETB</p>
                     <button
                       className="btn btn-sm btn-outline-primary w-100"
                       onClick={() =>
@@ -167,8 +199,9 @@ const DigitalProductDetail = () => {
               </div>
             ))}
           </div>
-        </>
+        </div>
       )}
+      {/* ================= END NEW ================= */}
     </div>
   );
 };
