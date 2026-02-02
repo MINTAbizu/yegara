@@ -112,7 +112,7 @@ const AdminProfileList = () => {
                 top: "-6px",
                 right: "-10px",
                 fontSize: "0.7rem",
-                color:'red'
+                // color:'red'
               }}
             >
               {pendingCount}
