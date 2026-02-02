@@ -4,6 +4,7 @@ import { useAuth } from "../Context/Authcontext";
 import DashboardLayout from "./DashboardLayout";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaCheckCircle } from "react-icons/fa";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -92,6 +93,9 @@ const FullMultiStepKYC = () => {
       <ToastContainer position="top-right" autoClose={3000} />
       <sm style={{ color: 'red' }}>
         Please provide all required information to access your Dashboard. Fill all steps accurately.
+           <span style={{ color: "#229ED9", fontSize: 14 }}>
+                        <FaCheckCircle /> your verification stataus is Pending 
+                      </span>
       </sm>
 
       <div className="d-flex justify-content-center py-5">
