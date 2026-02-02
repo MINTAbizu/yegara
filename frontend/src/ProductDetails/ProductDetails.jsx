@@ -15,39 +15,53 @@ const DigitalProductDetail = () => {
     totalSold: 0,
   });
 
-  // 🔹 NEW
+  // 🔹 NEW STATES
+  const [profiles, setProfiles] = useState([]);
+  const [loadingProfile, setLoadingProfile] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
 
+  /* ================= FETCH APPROVED PROFILES ================= */
+  const fetchProfiles = async () => {
+    try {
+      setLoadingProfile(true);
+      const res = await axios.get(`${API_URL}/api/profile/approved`);
+      setProfiles(res.data || []);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfiles();
+  }, []);
+
+  /* ================= FETCH PRODUCT (DIGITAL / PHYSICAL) ================= */
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // digital
         let res;
         try {
           res = await axios.get(`${API_URL}/api/digital-products/${id}`);
         } catch {
-          // physical fallback
           res = await axios.get(`${API_URL}/api/physical-products/${id}`);
         }
 
         setProduct(res.data);
 
+        // 🔹 Related products by same seller (if endpoint exists)
         if (res.data.seller?._id) {
-          // seller stats (existing)
-          const statsRes = await axios.get(
-            `${API_URL}/api/users/${res.data.seller._id}/stats`
-          );
-          setSellerStats(statsRes.data);
-
-          // 🔹 NEW: related products
-          const relatedRes = await axios.get(
-            `${API_URL}/api/digital-products/products/by-seller/${res.data.seller._id}`
-          );
-
-          setRelatedProducts(
-            relatedRes.data.filter((p) => p._id !== res.data._id)
-          );
-          console.log("Related Products:", relatedRes.data);
+          try {
+            const relatedRes = await axios.get(
+              `${API_URL}/api/products/by-seller/${res.data.seller._id}`
+            );
+            setRelatedProducts(
+              relatedRes.data.filter((p) => p._id !== res.data._id)
+            );
+          } catch {
+            setRelatedProducts([]);
+          }
         }
       } catch (err) {
         console.error(err);
@@ -57,6 +71,12 @@ const DigitalProductDetail = () => {
     fetchProduct();
   }, [id]);
 
+  /* ================= FIND SELLER PROFILE ================= */
+  const sellerProfile = profiles.find(
+    (p) => p.user?._id === product?.seller?._id
+  );
+
+  /* ================= BUY HANDLER ================= */
   const handleBuy = async (productId, amount, recipientWallet) => {
     try {
       const res = await axios.post(`${API_URL}/api/payment/initiate`, {
@@ -76,13 +96,13 @@ const DigitalProductDetail = () => {
   return (
     <div className="container py-5">
 
-      {/* ================= NEW: SELLER HEADER ================= */}
-      {product.seller && (
-        <div className="card shadow-sm mb-4 p-3 d-flex align-items-center flex-row gap-3">
-          {product.seller.avatar ? (
+      {/* ================= SELLER PROFILE HEADER (NEW) ================= */}
+      {sellerProfile && (
+        <div className="card shadow-sm mb-4 p-3 d-flex flex-row align-items-center gap-3">
+          {sellerProfile.profileImage ? (
             <img
-              src={product.seller.avatar}
-              alt={product.seller.name}
+              src={sellerProfile.profileImage}
+              alt={sellerProfile.fullName}
               style={{ width: 60, height: 60, borderRadius: "50%" }}
             />
           ) : (
@@ -90,16 +110,16 @@ const DigitalProductDetail = () => {
           )}
 
           <div>
-            <h6 className="mb-0">{product.seller.name}</h6>
+            <h6 className="mb-0">{sellerProfile.fullName}</h6>
             <small className="text-muted">
-              {sellerStats.totalProducts} products · {sellerStats.totalSold} sold
+              {sellerProfile.profession || "Seller"}
             </small>
           </div>
         </div>
       )}
       {/* ================= END NEW ================= */}
 
-      {/* ======== YOUR ORIGINAL LAYOUT (UNCHANGED) ======== */}
+      {/* ================= ORIGINAL LAYOUT (UNCHANGED) ================= */}
       <div
         className="d-flex flex-wrap gap-4"
         style={{ justifyContent: "space-between", alignItems: "flex-start" }}
@@ -133,6 +153,7 @@ const DigitalProductDetail = () => {
                 Buy Now
               </button>
 
+              {/* Original Seller Info */}
               {product.seller && (
                 <div className="card mt-3 shadow-sm p-2">
                   <h5>Uploaded by:</h5>
@@ -140,16 +161,52 @@ const DigitalProductDetail = () => {
                 </div>
               )}
 
+              {/* Original Links */}
               {product.telegram && (
-                <a href={product.telegram} target="_blank" rel="noreferrer">
+                <a
+                  href={product.telegram}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="d-block mb-1"
+                >
                   Telegram
+                </a>
+              )}
+              {product.drive && (
+                <a
+                  href={product.drive}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="d-block mb-1"
+                >
+                  Google Drive
+                </a>
+              )}
+              {product.dropbox && (
+                <a
+                  href={product.dropbox}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="d-block mb-1"
+                >
+                  Dropbox
+                </a>
+              )}
+              {product.productLink && (
+                <a
+                  href={product.productLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="d-block"
+                >
+                  Product Link
                 </a>
               )}
             </div>
           </div>
         </div>
 
-        {/* Seller Stats */}
+        {/* Seller Stats Cards (UNCHANGED) */}
         <div
           style={{
             flex: "1 1 48%",
@@ -170,7 +227,7 @@ const DigitalProductDetail = () => {
         </div>
       </div>
 
-      {/* ================= NEW: RELATED PRODUCTS ================= */}
+      {/* ================= RELATED PRODUCTS (NEW) ================= */}
       {relatedProducts.length > 0 && (
         <div className="mt-5">
           <h4 className="mb-3">More from this seller</h4>
