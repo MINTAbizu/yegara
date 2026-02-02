@@ -47,6 +47,7 @@ const DigitalProductDetail = () => {
           setRelatedProducts(
             relatedRes.data.filter((p) => p._id !== res.data._id)
           );
+          console.log("Related Products:", relatedRes.data);
         }
       } catch (err) {
         console.error(err);
