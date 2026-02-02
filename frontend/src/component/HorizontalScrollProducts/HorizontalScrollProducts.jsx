@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
-import { FaHeart, FaStar } from "react-icons/fa";
+import { FaHeart, FaStar, FaSpinner } from "react-icons/fa";
 import "./HorizontalScrollProducts.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -16,6 +16,8 @@ function HorizontalProductList() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
+
+  const [viewLoadingId, setViewLoadingId] = useState(null); // ✅ VIEW BUTTON LOADER
 
   const listRef = useRef(null);
   const navigate = useNavigate();
@@ -35,7 +37,7 @@ function HorizontalProductList() {
       });
   }, []);
 
-  // ⭐ Check for redirect after login to auto-open rating modal
+  // ⭐ Auto-open rating modal after login redirect
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const rateProductId = searchParams.get("rate");
@@ -47,7 +49,6 @@ function HorizontalProductList() {
         if (product) {
           openRatingModal(product);
 
-          // Remove rate query param after opening modal
           searchParams.delete("rate");
           navigate(
             { pathname: location.pathname, search: searchParams.toString() },
@@ -67,11 +68,12 @@ function HorizontalProductList() {
   };
 
   const openRatingModal = (product) => {
-    const token = localStorage.getItem("userToken"); // ✅ Always check latest token
+    const token = localStorage.getItem("userToken");
     if (!token) {
-      // Redirect to login if not logged in
       navigate(
-        `/register?redirect=${encodeURIComponent(location.pathname)}&rate=${product._id}`
+        `/register?redirect=${encodeURIComponent(
+          location.pathname
+        )}&rate=${product._id}`
       );
       return;
     }
@@ -104,14 +106,13 @@ function HorizontalProductList() {
 
       alert("⭐ Rating submitted!");
 
-      // Update local product rating
       setProducts((prev) =>
         prev.map((p) =>
           p._id === selectedProduct._id
             ? {
                 ...p,
                 averageRating: res.data.averageRating,
-                ratings: [...(p.ratings || []), { user: "you", value: rating }],
+                ratings: [...(p.ratings || []), { value: rating }],
               }
             : p
         )
@@ -155,7 +156,7 @@ function HorizontalProductList() {
                   <span>{p.averageRating?.toFixed(1) || 0}</span>
                 </div>
 
-                {/* ❤️ Favorite icon */}
+                {/* ❤️ Favorite */}
                 <FaHeart
                   className="favorite-icon"
                   color={favorites.includes(p._id) ? "red" : "#fff"}
@@ -165,11 +166,27 @@ function HorizontalProductList() {
 
               <h5>{p.productName}</h5>
               <p className="price">{p.price} .00 ETB</p>
-              {/* <p className="seller">Seller: {p.seller?.name}</p> */}
 
-              <Link to={`/ProductDetails/${p._id}?type=digital`}>
-                <button className="btn btn-primary mt-2">View</button>
-              </Link>
+              {/* ✅ VIEW BUTTON WITH LOADER */}
+              <button
+                className="btn btn-primary mt-2"
+                disabled={viewLoadingId === p._id}
+                onClick={() => {
+                  setViewLoadingId(p._id);
+                  setTimeout(() => {
+                    navigate(`/ProductDetails/${p._id}?type=digital`);
+                  }, 300);
+                }}
+              >
+                {viewLoadingId === p._id ? (
+                  <span className="view-loading">
+                    <FaSpinner className="spin" />
+                    Opening…
+                  </span>
+                ) : (
+                  "View"
+                )}
+              </button>
             </div>
           ))}
         </div>
@@ -186,12 +203,15 @@ function HorizontalProductList() {
                 <FaStar
                   key={star}
                   size={30}
-                  color={hoverRating >= star || rating >= star ? "#facc15" : "#d1d5db"}
+                  color={
+                    hoverRating >= star || rating >= star
+                      ? "#facc15"
+                      : "#d1d5db"
+                  }
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
                   onClick={() => setRating(star)}
                   style={{ cursor: "pointer" }}
-                  title={`${star} Star${star > 1 ? "s" : ""}`}
                 />
               ))}
             </div>

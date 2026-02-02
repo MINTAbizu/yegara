@@ -170,3 +170,20 @@
   display: flex;
   justify-content: space-between;
 }
+
+
+.view-loading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
