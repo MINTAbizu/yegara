@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/Authcontext";
 import DashboardLayout from "./DashboardLayout";
@@ -9,15 +9,48 @@ import { FaCheckCircle } from "react-icons/fa";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const FullMultiStepKYC = () => {
-  const { refreshUser } = useAuth();
+  const { currentUser, refreshUser } = useAuth(); // <-- make sure currentUser comes from context
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    fullName: "", dob: "", gender: "", nationality: "", maritalStatus: "",
-    faceId: null, idType: "", idFront: null, idBack: null,
-    idNumber: "", issueDate: "", expireDate: "", residentialAddress: "",
-    phone: "", email: "",
+    fullName: "",
+    dob: "",
+    gender: "",
+    nationality: "",
+    maritalStatus: "",
+    faceId: null,
+    idType: "",
+    idFront: null,
+    idBack: null,
+    idNumber: "",
+    issueDate: "",
+    expireDate: "",
+    residentialAddress: "",
+    phone: "",
+    email: "",
   });
+
+  const [verificationStatus, setVerificationStatus] = useState(
+    currentUser?.verificationStatus || "Pending"
+  );
+
+  // 👆 Sync with context on mount
+  useEffect(() => {
+    if (currentUser?.verificationStatus) {
+      setVerificationStatus(currentUser.verificationStatus);
+    }
+  }, [currentUser]);
+
+  // 👆 Optional: auto-refresh verification status every 30s
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      await refreshUser();
+      if (currentUser?.verificationStatus) {
+        setVerificationStatus(currentUser.verificationStatus);
+      }
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [currentUser, refreshUser]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -77,6 +110,9 @@ const FullMultiStepKYC = () => {
 
         // Refresh user info in context
         await refreshUser();
+        if (currentUser?.verificationStatus) {
+          setVerificationStatus(currentUser.verificationStatus);
+        }
 
         navigate("/orders", { replace: true });
       } else {
@@ -91,14 +127,19 @@ const FullMultiStepKYC = () => {
   return (
     <DashboardLayout>
       <ToastContainer position="top-right" autoClose={3000} />
-      <sm style={{ color: 'red', display: 'flex', textAlign: 'center', marginBottom: '15px' }}>
-          <span> Please provide all required information to access your Dashboard.
-            <br /> Fill all steps accurately.</span>
-           <span style={{ color: "hsl(128, 89%, 46%)", fontSize: 14   , marginLeft: 60 }}>
-                        <FaCheckCircle /> your verification stataus is Pending 
-              </span>
-      </sm>
 
+      {/* Verification status */}
+      <div className="text-center mb-3">
+        <span style={{ color: 'red', marginRight: 15 }}>
+          Please complete all KYC steps to access your Dashboard.
+        </span>
+        <span style={{ color: verificationStatus === "Verified" ? "green" : "orange", fontWeight: "bold" }}>
+          <FaCheckCircle style={{ marginRight: 5 }} />
+          {verificationStatus}
+        </span>
+      </div>
+
+      {/* Multi-step form */}
       <div className="d-flex justify-content-center py-5">
         <div className="card shadow p-3" style={{ maxWidth: 500, width: "100%" }}>
           <div className="card-body">
