@@ -95,28 +95,31 @@ const DigitalProductDetail = () => {
 
   return (
     <div className="container py-5">
-       test
+      
       {/* ================= SELLER PROFILE HEADER (NEW) ================= */}
-      {sellerProfile && (
-        <div className="card shadow-sm mb-4 p-3 d-flex flex-row align-items-center gap-3">
-          {sellerProfile.profileImage ? (
-            <img
-              src={sellerProfile.profileImage}
-              alt={sellerProfile.fullName}
-              style={{ width: 60, height: 60, borderRadius: "50%" }}
-            />
-          ) : (
-            <FaUserCircle size={60} className="text-secondary" />
-          )}
+    {(sellerProfile || product.seller) && (
+  <div className="card shadow-sm mb-4 p-3 d-flex flex-row align-items-center gap-3">
+    {sellerProfile?.profileImage ? (
+      <img
+        src={sellerProfile.profileImage}
+        alt={sellerProfile.fullName}
+        style={{ width: 60, height: 60, borderRadius: "50%" }}
+      />
+    ) : (
+      <FaUserCircle size={60} className="text-secondary" />
+    )}
 
-          <div>
-            <h6 className="mb-0">{sellerProfile.fullName}</h6>
-            <small className="text-muted">
-              {sellerProfile.profession || "Seller"}
-            </small>
-          </div>
-        </div>
-      )}
+    <div>
+      <h6 className="mb-0">
+        {sellerProfile?.fullName || product.seller.name}
+      </h6>
+      <small className="text-muted">
+        {sellerProfile?.profession || "Seller"}
+      </small>
+    </div>
+  </div>
+)}
+
       {/* ================= END NEW ================= */}
 
       {/* ================= ORIGINAL LAYOUT (UNCHANGED) ================= */}
