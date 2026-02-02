@@ -92,10 +92,11 @@ const FullMultiStepKYC = () => {
     <DashboardLayout>
       <ToastContainer position="top-right" autoClose={3000} />
       <sm style={{ color: 'red', display: 'flex', textAlign: 'center', marginBottom: '15px' }}>
-          <span> Please provide all required information to access your Dashboard. Fill all steps accurately.</span>
+          <span> Please provide all required information to access your Dashboard.
+            <br /> Fill all steps accurately.</span>
            <span style={{ color: "hsl(128, 89%, 46%)", fontSize: 14 }}>
                         <FaCheckCircle /> your verification stataus is Pending 
-                      </span>
+              </span>
       </sm>
 
       <div className="d-flex justify-content-center py-5">
