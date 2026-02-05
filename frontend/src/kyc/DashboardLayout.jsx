@@ -2,16 +2,30 @@ import React, { useState } from "react";
 import "./DashboardLayout.css";
 import { useAuth } from "../Context/Authcontext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaHome, FaTachometerAlt, FaUserPlus, FaEye, FaCog, FaUniversity, FaMoneyCheckAlt, FaQuestionCircle, FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaHome,
+  FaTachometerAlt,
+  FaUserPlus,
+  FaEye,
+  FaCog,
+  FaUniversity,
+  FaMoneyCheckAlt,
+  FaQuestionCircle,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth(); // ✅ include loading
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalTarget, setModalTarget] = useState("");
   const navigate = useNavigate();
+
+  // ⚠️ Block rendering until auth is ready
+  if (loading) return null; // or a spinner/skeleton
 
   const sidebarItems = [
     { name: "Home", path: "/", icon: <FaHome /> },
@@ -25,46 +39,39 @@ const DashboardLayout = ({ children }) => {
     { name: "Help", path: "/help", icon: <FaQuestionCircle /> },
   ];
 
-  // handle Shop link clicks: prevent navigation and prompt user to complete KYC/profile
   const handleShopClick = (e) => {
-  // If KYC not submitted
-  if (!user?.kycSubmitted) {
-    e.preventDefault();
-    setModalMessage("You must complete KYC before accessing the shop.");
-    setModalTarget("/RecognitionForm");
-    setModalOpen(true);
-    return;
-  }
-
-  // If profile not completed
-  // if (!user?.profileCompleted) {
-  //   e.preventDefault();
-  //   setModalMessage("You must complete your profile before accessing the shop.");
-  //   setModalTarget("/UserProfile");
-  //   setModalOpen(true);
-  //   return;
-  // }
-
-  // Allow access
-  navigate("/orders");
-};
-
+    if (!user?.kycSubmitted) {
+      e.preventDefault();
+      setModalMessage("You must complete KYC before accessing the shop.");
+      setModalTarget("/RecognitionForm");
+      setModalOpen(true);
+      return;
+    }
+    navigate("/orders");
+  };
 
   return (
     <div className="dashboard-wrapper d-flex">
-      {/* Overlay for mobile */}
-      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}
+      {sidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
 
       {/* Sidebar */}
       <nav className={`sidebar bg-light ${sidebarOpen ? "open" : ""}`}>
         <div className="d-flex justify-content-between align-items-center mb-4 d-md-none">
           <span className="fw-bold">Menu</span>
-          <button className="btn btn-outline-danger" onClick={() => setSidebarOpen(false)}>
+          <button
+            className="btn btn-outline-danger"
+            onClick={() => setSidebarOpen(false)}
+          >
             <FaTimes />
           </button>
         </div>
         <div className="sidebar-header text-center py-2 fw-bold d-none d-md-block">
-          Dear, {user?.name}
+          Dear, {user?.name || "User"} {/* ✅ fallback */}
         </div>
         <ul className="list-unstyled">
           {sidebarItems.map((item, index) => (
@@ -72,12 +79,13 @@ const DashboardLayout = ({ children }) => {
               <Link
                 to={item.path}
                 className={`d-flex align-items-center gap-2 p-2 rounded text-decoration-none ${
-                  location.pathname === item.path ? "bg-primary text-white" : "text-dark"
+                  location.pathname === item.path
+                    ? "bg-primary text-white"
+                    : "text-dark"
                 }`}
                 onClick={(e) => {
-                  setSidebarOpen(false); // close sidebar on mobile
-                  // Intercept shop link to enforce KYC/profile completion
-                  if (item.name === "Shope") handleShopClick(e);
+                  setSidebarOpen(false);
+                  if (item.name.includes("Shope")) handleShopClick(e);
                 }}
               >
                 <span>{item.icon}</span>
@@ -92,14 +100,20 @@ const DashboardLayout = ({ children }) => {
       <div className="main-content flex-grow-1">
         {/* Mobile Header */}
         <div className="mobile-header d-flex d-md-none justify-content-between align-items-center p-2 shadow-sm bg-white">
-          <button className="btn btn-outline-primary" onClick={() => setSidebarOpen(true)}>
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => setSidebarOpen(true)}
+          >
             <FaBars />
           </button>
           <span className="fw-bold">Dashboard</span>
-           <Link to='/userprofile'>
-          <div className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle" style={{ width: "35px", height: "35px",cursor:'pointer' }}>
-           <Link to='/userprofile'>  {user?.name?.charAt(0)?.toUpperCase()}</Link>
-          </div>
+          <Link to="/userprofile">
+            <div
+              className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle"
+              style={{ width: "35px", height: "35px", cursor: "pointer" }}
+            >
+              {(user?.name?.charAt(0) || "?").toUpperCase()} {/* ✅ fallback */}
+            </div>
           </Link>
         </div>
 
@@ -120,27 +134,30 @@ const DashboardLayout = ({ children }) => {
               </svg>
               <span className="notification-dot"></span>
             </div>
-            <div className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle" style={{ width: "35px", height: "35px" }}>
-              {user?.name?.charAt(0)?.toUpperCase()}
+            <div
+              className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle"
+              style={{ width: "35px", height: "35px" }}
+            >
+              {(user?.name?.charAt(0) || "?").toUpperCase()} {/* ✅ fallback */}
             </div>
           </div>
         </header>
 
         <main className="p-4">{children}</main>
 
-        {/* Simple modal shown when user needs to complete KYC/profile */}
+        {/* Modal */}
         {modalOpen && (
           <div
             style={{
-              position: 'fixed',
+              position: "fixed",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'rgba(0,0,0,0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              background: "rgba(0,0,0,0.5)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               zIndex: 2000,
             }}
             onClick={() => setModalOpen(false)}
@@ -148,18 +165,23 @@ const DashboardLayout = ({ children }) => {
             <div
               onClick={(e) => e.stopPropagation()}
               style={{
-                background: '#fff',
-                padding: '20px',
-                borderRadius: '8px',
-                maxWidth: '420px',
-                width: '100%',
-                boxShadow: '0 6px 18px rgba(0,0,0,0.2)'
+                background: "#fff",
+                padding: "20px",
+                borderRadius: "8px",
+                maxWidth: "420px",
+                width: "100%",
+                boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
               }}
             >
               <h5 className="mb-3">Action required</h5>
               <p>{modalMessage}</p>
               <div className="d-flex justify-content-end gap-2">
-                <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancel</button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setModalOpen(false)}
+                >
+                  Cancel
+                </button>
                 <button
                   className="btn btn-primary"
                   onClick={() => {
@@ -179,8 +201,3 @@ const DashboardLayout = ({ children }) => {
 };
 
 export default DashboardLayout;
-
-// Helper: handle click to Shop link and show modal if user not ready
-function handleShopClick(e) {
-  // `this` is not bound here; we'll rely on closures of variables defined in component
-}
