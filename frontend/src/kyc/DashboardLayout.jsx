@@ -3,29 +3,20 @@ import "./DashboardLayout.css";
 import { useAuth } from "../Context/Authcontext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  FaHome,
-  FaTachometerAlt,
-  FaUserPlus,
-  FaEye,
-  FaCog,
-  FaUniversity,
-  FaMoneyCheckAlt,
-  FaQuestionCircle,
-  FaBars,
-  FaTimes,
+  FaHome, FaTachometerAlt, FaUserPlus, FaEye, FaCog, FaUniversity, FaMoneyCheckAlt, FaQuestionCircle, FaBars, FaTimes
 } from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
   const { user, loading } = useAuth(); // ✅ include loading
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalTarget, setModalTarget] = useState("");
-  const navigate = useNavigate();
 
-  // ⚠️ Block rendering until auth is ready
-  if (loading) return null; // or a spinner/skeleton
+  // ⚠️ Block render until auth is ready
+  if (loading) return null; // or a spinner
 
   const sidebarItems = [
     { name: "Home", path: "/", icon: <FaHome /> },
@@ -52,26 +43,18 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <div className="dashboard-wrapper d-flex">
-      {sidebarOpen && (
-        <div
-          className="sidebar-overlay"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
 
       {/* Sidebar */}
       <nav className={`sidebar bg-light ${sidebarOpen ? "open" : ""}`}>
         <div className="d-flex justify-content-between align-items-center mb-4 d-md-none">
           <span className="fw-bold">Menu</span>
-          <button
-            className="btn btn-outline-danger"
-            onClick={() => setSidebarOpen(false)}
-          >
+          <button className="btn btn-outline-danger" onClick={() => setSidebarOpen(false)}>
             <FaTimes />
           </button>
         </div>
         <div className="sidebar-header text-center py-2 fw-bold d-none d-md-block">
-          Dear, {user?.name || "User"} {/* ✅ fallback */}
+          Dear, {user?.name || "User"}
         </div>
         <ul className="list-unstyled">
           {sidebarItems.map((item, index) => (
@@ -79,9 +62,7 @@ const DashboardLayout = ({ children }) => {
               <Link
                 to={item.path}
                 className={`d-flex align-items-center gap-2 p-2 rounded text-decoration-none ${
-                  location.pathname === item.path
-                    ? "bg-primary text-white"
-                    : "text-dark"
+                  location.pathname === item.path ? "bg-primary text-white" : "text-dark"
                 }`}
                 onClick={(e) => {
                   setSidebarOpen(false);
@@ -100,19 +81,13 @@ const DashboardLayout = ({ children }) => {
       <div className="main-content flex-grow-1">
         {/* Mobile Header */}
         <div className="mobile-header d-flex d-md-none justify-content-between align-items-center p-2 shadow-sm bg-white">
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => setSidebarOpen(true)}
-          >
+          <button className="btn btn-outline-primary" onClick={() => setSidebarOpen(true)}>
             <FaBars />
           </button>
           <span className="fw-bold">Dashboard</span>
           <Link to="/userprofile">
-            <div
-              className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle"
-              style={{ width: "35px", height: "35px", cursor: "pointer" }}
-            >
-              {(user?.name?.charAt(0) || "?").toUpperCase()} {/* ✅ fallback */}
+            <div className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle" style={{ width: 35, height: 35, cursor: "pointer" }}>
+              {(user?.name?.charAt(0) || "?").toUpperCase()}
             </div>
           </Link>
         </div>
@@ -122,23 +97,13 @@ const DashboardLayout = ({ children }) => {
           <h1 className="h5 m-0">Dashboard</h1>
           <div className="d-flex align-items-center">
             <div className="position-relative me-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="currentColor"
-                className="bi bi-bell text-dark"
-                viewBox="0 0 16 16"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-bell text-dark" viewBox="0 0 16 16">
                 <path d="M8 16a2 2 0 0 0 1.985-1.75H6.015A2 2 0 0 0 8 16zm.5-14a1.5 1.5 0 1 0-1 0v.5c0 .828-.168 1.654-.5 2.39a5.978 5.978 0 0 1-1.67 2.125c-.245.196-.36.484-.36.777V11h7v-1.708c0-.293-.115-.581-.36-.777a5.978 5.978 0 0 1-1.67-2.125c-.332-.736-.5-1.562-.5-2.39V2z" />
               </svg>
               <span className="notification-dot"></span>
             </div>
-            <div
-              className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle"
-              style={{ width: "35px", height: "35px" }}
-            >
-              {(user?.name?.charAt(0) || "?").toUpperCase()} {/* ✅ fallback */}
+            <div className="avatar bg-secondary text-white d-flex justify-content-center align-items-center rounded-circle" style={{ width: 35, height: 35 }}>
+              {(user?.name?.charAt(0) || "?").toUpperCase()}
             </div>
           </div>
         </header>
@@ -147,50 +112,13 @@ const DashboardLayout = ({ children }) => {
 
         {/* Modal */}
         {modalOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: "rgba(0,0,0,0.5)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 2000,
-            }}
-            onClick={() => setModalOpen(false)}
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                background: "#fff",
-                padding: "20px",
-                borderRadius: "8px",
-                maxWidth: "420px",
-                width: "100%",
-                boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
-              }}
-            >
+          <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2000 }} onClick={() => setModalOpen(false)}>
+            <div onClick={(e) => e.stopPropagation()} style={{ background: "#fff", padding: 20, borderRadius: 8, maxWidth: 420, width: "100%", boxShadow: "0 6px 18px rgba(0,0,0,0.2)" }}>
               <h5 className="mb-3">Action required</h5>
               <p>{modalMessage}</p>
               <div className="d-flex justify-content-end gap-2">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => {
-                    setModalOpen(false);
-                    navigate(modalTarget);
-                  }}
-                >
-                  Go to form
-                </button>
+                <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancel</button>
+                <button className="btn btn-primary" onClick={() => { setModalOpen(false); navigate(modalTarget); }}>Go to form</button>
               </div>
             </div>
           </div>

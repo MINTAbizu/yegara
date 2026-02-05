@@ -5,9 +5,15 @@ const API_URL = import.meta.env.VITE_API_URL;
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // ✅ Safe initialization from localStorage
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (err) {
+      console.error("Failed to parse user from localStorage:", err);
+      return null;
+    }
   });
 
   const [loading, setLoading] = useState(true);
@@ -15,7 +21,6 @@ export const AuthProvider = ({ children }) => {
   // Load user on app start
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       setLoading(false);
       return;
@@ -34,15 +39,12 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, []);
 
   // Register
   const register = async (data) => {
     let payload = { ...data };
-
     const adminEmails = ["adminm@yegara.com", "owner@yegara.com"];
     if (adminEmails.includes(data.email)) {
       payload.secret = "MY_SUPER_SECRET_KEY_2025";
@@ -59,43 +61,43 @@ export const AuthProvider = ({ children }) => {
 
   // Login
   const login = async (data) => {
-    const res = await axios.post(
-      `${API_URL}/api/users/login`, // FIXED (no space)
-      data
-    );
-
+    const res = await axios.post(`${API_URL}/api/users/login`, data); // ✅ fixed URL
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("user", JSON.stringify(res.data.user));
     setUser(res.data.user);
-
     return res;
   };
 
   // Logout
   const logout = () => {
+    setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setUser(null);
   };
 
-  // Refresh user (used after KYC submit)
+  // Refresh user (use after KYC/profile update)
   const refreshUser = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token) return null;
 
-    const res = await axios.get(`${API_URL}/api/users/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    setUser(res.data.user);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    return res.data.user;
+    try {
+      const res = await axios.get(`${API_URL}/api/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      return res.data.user;
+    } catch (err) {
+      console.error(err);
+      setUser(null);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      return null;
+    }
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, register, login, logout, refreshUser }}
-    >
+    <AuthContext.Provider value={{ user, loading, register, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
