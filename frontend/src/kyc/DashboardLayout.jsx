@@ -3,19 +3,28 @@ import "./DashboardLayout.css";
 import { useAuth } from "../Context/Authcontext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  FaHome, FaTachometerAlt, FaUserPlus, FaEye, FaCog, FaUniversity, FaMoneyCheckAlt, FaQuestionCircle, FaBars, FaTimes
+  FaHome,
+  FaTachometerAlt,
+  FaUserPlus,
+  FaEye,
+  FaCog,
+  FaUniversity,
+  FaMoneyCheckAlt,
+  FaQuestionCircle,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
   const { user, loading } = useAuth(); // ✅ include loading
   const location = useLocation();
   const navigate = useNavigate();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalTarget, setModalTarget] = useState("");
 
-  // ⚠️ Block render until auth is ready
   if (loading) return null; // or a spinner
 
   const sidebarItems = [

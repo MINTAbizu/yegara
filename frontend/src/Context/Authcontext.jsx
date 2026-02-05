@@ -9,7 +9,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       const storedUser = localStorage.getItem("user");
-      return storedUser ? JSON.parse(storedUser) : null;
+      if (!storedUser || storedUser === "undefined") return null;
+      return JSON.parse(storedUser);
     } catch (err) {
       console.error("Failed to parse user from localStorage:", err);
       return null;
@@ -61,7 +62,7 @@ export const AuthProvider = ({ children }) => {
 
   // Login
   const login = async (data) => {
-    const res = await axios.post(`${API_URL}/api/users/login`, data); // ✅ fixed URL
+    const res = await axios.post(`${API_URL}/api/users/login`, data);
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("user", JSON.stringify(res.data.user));
     setUser(res.data.user);
