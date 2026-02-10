@@ -27,17 +27,20 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // CORS
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",      // Vite local
-      "https://yegara.netlify.app",  // Netlify production
-      "https://twiness.netlify.app",
-      "http://localhost:5174"
-    ],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:5173",      // Vite local
+//       "https://yegara.netlify.app",  // Netlify production
+//       "https://twiness.netlify.app",
+//       "http://localhost:5174"
+//     ],
+//     credentials: true,
+//   })
+// );
+// Express example
+app.use(cors({ origin: '*' }));
+
 app.use(express.json());
 
 // MongoDB
