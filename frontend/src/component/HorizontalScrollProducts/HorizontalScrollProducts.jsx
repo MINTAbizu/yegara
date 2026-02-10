@@ -28,7 +28,7 @@ function HorizontalProductList() {
     axios
       .get(`${API_URL}/api/digital-products/`)
       .then((res) => {
-         console.log("API RESPONSE:", res.data);
+        
         setProducts(res.data);
         setLoading(false);
       })
