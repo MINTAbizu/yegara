@@ -51,6 +51,7 @@ import Userprofile from './component/User/Userprofile';
 import Addgiftproduct from './component/Shope/userprofilepage/Addgiftproduct';
 import Admingiftproduct from './Admin/products/Admingiftproduct';
 import UpgradePro from './kyc/UpgradePro';
+import Giftproduct from './ProductDetails/Giftproduct';
 
 
 function App() {
@@ -84,9 +85,18 @@ function App() {
               // </ProtectedRoute>
             }
           />
+          // product Details
          <Route path="/ProductDetails/:id" element={
           // <ProtectedRoute>
           <ProductDetails />
+          // </ProtectedRoute>
+          } />
+
+          //Gift products
+
+           <Route path="/ProductDetails/:id" element={
+          // <ProtectedRoute>
+          <Giftproduct />
           // </ProtectedRoute>
           } />
 
