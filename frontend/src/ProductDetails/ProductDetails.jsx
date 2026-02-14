@@ -27,6 +27,7 @@ const DigitalProductDetail = () => {
       setLoadingProfile(true);
       const res = await axios.get(`${API_URL}/api/profile/approved`);
       setProfiles(res.data || []);
+      console.log("profile", res.data)
     } catch (err) {
       console.error("Fetch error:", err);
     } finally {
@@ -45,6 +46,7 @@ const DigitalProductDetail = () => {
         let res;
         try {
           res = await axios.get(`${API_URL}/api/digital-products/${id}`);
+          console.log("product",res)
         } catch {
           res = await axios.get(`${API_URL}/api/physical-products/${id}`);
         }
@@ -57,6 +59,7 @@ const DigitalProductDetail = () => {
             const relatedRes = await axios.get(
               `${API_URL}/api/digital-products/products/by-seller/${res.data.seller._id}`
             );
+            console.log("related",relatedRes)
             setRelatedProducts(
               relatedRes.data.filter((p) => p._id !== res.data._id)
             );
