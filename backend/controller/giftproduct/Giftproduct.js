@@ -1,3 +1,4 @@
+import giftproduct from "../../model/giftproduct/giftproduct.js";
 import Giftproduct from "../../model/giftproduct/giftproduct.js";
 import PhysicalProduct from "../../model/physicalproduct/physicalprosuct.model.js"; // assuming you have this
 import User from "../../model/user.model/user.model.js";
@@ -141,7 +142,7 @@ export const physicalProductDetail = async (req, res) => {
 };
 export const getSingleProduct = async (req, res) => {
   try {
-    const product = await DigitalProduct.findById(req.params.id)
+    const product = await giftproduct.findById(req.params.id)
       .populate("seller", "name email");
 
     res.json(product);
