@@ -1,0 +1,105 @@
+/* ======================
+   GLOBAL ECOMMERCE TYPOGRAPHY
+====================== */
+
+:root {
+  --primary: #0d6efd;
+  --text-main: #1f2933;
+  --text-muted: #6b7280;
+  --price: #16a34a;
+}
+
+/* Reset */
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+  background: #f9fafb;
+  color: var(--text-main);
+}
+
+/* ======================
+   HEADINGS
+====================== */
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+h5 {
+  font-size: 1.1rem;
+}
+
+h6 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* ======================
+   TEXT TYPES
+====================== */
+
+.text-body {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--price);
+}
+
+/* ======================
+   PRODUCT CARD TEXT
+====================== */
+
+.product-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.product-desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* ======================
+   BUTTON TEXT
+====================== */
+
+button {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ======================
+   LINKS
+====================== */
+
+a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
