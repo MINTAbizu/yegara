@@ -94,7 +94,7 @@ function App() {
 
           {/* //Gift products */}
 
-           <Route path="/ProductDetails/:id" element={
+           <Route path="/giftProductDetails/:id" element={
           // <ProtectedRoute>
           <Giftproduct />
           // </ProtectedRoute>

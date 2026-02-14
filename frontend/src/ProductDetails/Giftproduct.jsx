@@ -24,6 +24,7 @@ const Giftproduct = () => {
       try {
         const res = await axios.get(`${API_URL}/api/profile/approved`);
         setProfiles(res.data || []);
+        console.log("profile",res.data)
       } catch (err) {
         console.error("Profile fetch error:", err);
       }
@@ -40,12 +41,15 @@ const Giftproduct = () => {
 
         try {
           res = await axios.get(`${API_URL}/api/giftproduct/${id}`);
+          console.log("res", res.data);
         } catch {
           res = await axios.get(`${API_URL}/api/physical-products/${id}`);
         }
 
         const data = res?.data;
         if (!data) return;
+
+        console.log("product",res.data)
 
         setProduct(data);
 
@@ -63,6 +67,8 @@ const Giftproduct = () => {
                 (p) => p?._id !== data?._id
               )
             );
+
+            
           } catch {
             setRelatedProducts([]);
           }

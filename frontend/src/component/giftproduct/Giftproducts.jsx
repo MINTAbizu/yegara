@@ -59,7 +59,7 @@ function Giftproducts() {
               <p className="price">{p.price} ETB</p>
               <p className="seller">Seller: {p.seller?.name}</p>
 
-              <Link to={`/ProductDetails/${p._id}?type=digital`}>
+              <Link to={`/giftProductDetails/${p._id}?type=digital`}>
                 <button className="btn btn-primary mt-2">View</button>
               </Link>
             </div>
