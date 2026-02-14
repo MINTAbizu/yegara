@@ -85,14 +85,14 @@ function App() {
               // </ProtectedRoute>
             }
           />
-          // product Details
+          {/* // product Details */}
          <Route path="/ProductDetails/:id" element={
           // <ProtectedRoute>
           <ProductDetails />
           // </ProtectedRoute>
           } />
 
-          //Gift products
+          {/* //Gift products */}
 
            <Route path="/ProductDetails/:id" element={
           // <ProtectedRoute>
