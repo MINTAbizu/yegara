@@ -12,6 +12,10 @@ import {
 } from "../../controller/giftproduct/Giftproduct.js";
 import { protect } from "../../middleware/authMiddleware.js";
 
+
+import DigitalProductsList from "../../model/digitalproducts/digital products.js";
+import PhysicalProduct from "../../model/physicalproduct/physicalprosuct.model.js";
+
 const router = express.Router();
 // CREATE PRODUCT
 router.post("/create", protect, upload.single("image"), addgiftproduct);
@@ -33,3 +37,17 @@ router.patch("/admin/toggle/:id", toggleStatus);
 router.get("/:id", getDigitalProductById);
 router.get("/:id", getDigitalProductWithSellerStats);
 export default router;
+
+
+router.get("/products/by-seller/:sellerId", async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+
+    const digital = await DigitalProductsList.find({ seller: sellerId });
+    const physical = await PhysicalProduct.find({ seller: sellerId });
+
+    res.json([...digital, ...physical]);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch products" });
+  }
+});
