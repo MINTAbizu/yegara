@@ -24,7 +24,7 @@ router.post(
       const {
         fullName, dob, gender, nationality, maritalStatus,
         idType, idNumber, issueDate, expireDate,
-        residentialAddress, phone, email
+        residentialAddress, phone, email,lat, lng
       } = req.body;
 
       // Create KYC entry
@@ -36,6 +36,7 @@ router.post(
         faceId: req.files.faceId?.[0]?.filename,
         idFront: req.files.idFront?.[0]?.filename,
         idBack: req.files.idBack?.[0]?.filename,
+         location: { lat, lng },
       });
 
       await kyc.save();

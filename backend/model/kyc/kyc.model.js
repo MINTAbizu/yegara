@@ -17,7 +17,10 @@ const KYCSchema = new mongoose.Schema({
   idNumber: { type: String, required: true },
   issueDate: { type: String, required: true },
   expireDate: { type: String, required: true },
-
+    location: {
+    lat: { type: Number },
+    lng: { type: Number },
+  },
   // Step 3
   residentialAddress: { type: String, required: true },
   phone: String,
