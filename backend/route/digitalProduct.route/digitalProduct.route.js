@@ -12,7 +12,7 @@ import {
   rateDigitalProduct
 } from "../../controller/digitalProduct.controller/digitalProduct.controller.js";
 import { protect } from "../../middleware/authMiddleware.js";
-import digitalProducts from "../../model/giftproduct/giftproduct.js";
+import digitalProducts from "../../model/digitalproducts/digital products.js";
 import PhysicalProduct from "../../model/physicalproduct/physicalprosuct.model.js";
 
 const router = express.Router();
