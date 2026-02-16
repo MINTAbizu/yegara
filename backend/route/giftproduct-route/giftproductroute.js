@@ -13,8 +13,8 @@ import {
 import { protect } from "../../middleware/authMiddleware.js";
 
 
-import DigitalProductsList from "../../model/digitalproducts/digital products.js";
 import PhysicalProduct from "../../model/physicalproduct/physicalprosuct.model.js";
+import giftproduct from "../../model/giftproduct/giftproduct.js";
 
 const router = express.Router();
 // CREATE PRODUCT
@@ -43,7 +43,7 @@ router.get("/products/by-seller/:sellerId", async (req, res) => {
   try {
     const { sellerId } = req.params;
 
-    const digital = await DigitalProductsList.find({ seller: sellerId });
+    const digital = await giftproduct.find({ seller: sellerId });
     const physical = await PhysicalProduct.find({ seller: sellerId });
 
     res.json([...digital, ...physical]);
