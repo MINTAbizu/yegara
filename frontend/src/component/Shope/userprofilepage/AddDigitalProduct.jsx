@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+
 const API_URL = import.meta.env.VITE_API_URL;
+
 const AddDigitalProduct = () => {
   const [formData, setFormData] = useState({
     productName: "",
@@ -13,6 +15,27 @@ const AddDigitalProduct = () => {
     dropbox: "",
     productLink: "",
   });
+
+  const [location, setLocation] = useState({ lat: null, lng: null });
+
+  // ================= GET USER LOCATION =================
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.warn("Could not get location:", error.message);
+        }
+      );
+    } else {
+      console.warn("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -31,6 +54,12 @@ const AddDigitalProduct = () => {
       data.append(key, formData[key]);
     }
 
+    // append location automatically
+    if (location.lat && location.lng) {
+      data.append("lat", location.lat);
+      data.append("lng", location.lng);
+    }
+
     try {
       const token = localStorage.getItem("token"); // JWT from login
       if (!token) {
@@ -39,8 +68,6 @@ const AddDigitalProduct = () => {
       }
 
       const res = await axios.post(
-        // 'http://localhost:5000/api/digital-products/create',
-        
         `${API_URL}/api/digital-products/create`,
         data,
         {
@@ -73,15 +100,76 @@ const AddDigitalProduct = () => {
       <div className="card shadow-sm p-4" style={{ width: "400px" }}>
         <h4 className="card-title mb-4 text-center">Add Digital Product</h4>
         <form onSubmit={handleSubmit}>
-          <input type="text" name="productName" placeholder="Product Name" onChange={handleChange} required className="form-control mb-2" />
-          <input type="number" name="price" placeholder="Price" onChange={handleChange} required className="form-control mb-2" />
-          <textarea name="description" placeholder="Description" onChange={handleChange} required className="form-control mb-2" />
-          <input type="file" name="image" onChange={handleChange} accept="image/*" required className="form-control mb-2" />
-          <input type="text" name="telegram" placeholder="Telegram Link" onChange={handleChange} className="form-control mb-2" />
-          <input type="text" name="drive" placeholder="Drive Link" onChange={handleChange} className="form-control mb-2" />
-          <input type="text" name="dropbox" placeholder="Dropbox Link" onChange={handleChange} className="form-control mb-2" />
-          <input type="url" name="productLink" placeholder="Product Link" onChange={handleChange} className="form-control mb-2" />
-          <button type="submit" className="btn btn-success w-100">Add Product</button>
+          <input
+            type="text"
+            name="productName"
+            placeholder="Product Name"
+            onChange={handleChange}
+            required
+            className="form-control mb-2"
+          />
+          <input
+            type="number"
+            name="price"
+            placeholder="Price"
+            onChange={handleChange}
+            required
+            className="form-control mb-2"
+          />
+          <textarea
+            name="description"
+            placeholder="Description"
+            onChange={handleChange}
+            required
+            className="form-control mb-2"
+          />
+          <input
+            type="file"
+            name="image"
+            onChange={handleChange}
+            accept="image/*"
+            required
+            className="form-control mb-2"
+          />
+          <input
+            type="text"
+            name="telegram"
+            placeholder="Telegram Link"
+            onChange={handleChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="text"
+            name="drive"
+            placeholder="Drive Link"
+            onChange={handleChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="text"
+            name="dropbox"
+            placeholder="Dropbox Link"
+            onChange={handleChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="url"
+            name="productLink"
+            placeholder="Product Link"
+            onChange={handleChange}
+            className="form-control mb-2"
+          />
+
+          {/* Show detected location (optional) */}
+          {location.lat && location.lng && (
+            <p className="text-muted small">
+              Detected location: {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
+            </p>
+          )}
+
+          <button type="submit" className="btn btn-success w-100">
+            Add Product
+          </button>
         </form>
       </div>
     </div>
