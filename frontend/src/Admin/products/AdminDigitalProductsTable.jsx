@@ -251,15 +251,17 @@ const AdminDigitalProductsTable = () => {
                 <td>{p.price} ETB</td>
 
                 {/* ✅ LOCATION COLUMN */}
-                <td>
-                  {p.locationFrom ? (
-                    <span className="badge bg-info text-dark">
-                      {p.locationFrom}
-                    </span>
-                  ) : (
-                    <span className="text-muted">—</span>
-                  )}
-                </td>
+               <td>
+  {p.location?.coordinates ? (
+    <span className="badge bg-info text-dark">
+      {p.location.coordinates[1].toFixed(4)},{" "}
+      {p.location.coordinates[0].toFixed(4)}
+    </span>
+  ) : (
+    <span className="text-muted">—</span>
+  )}
+</td>
+
 
                 <td>
                   <span
