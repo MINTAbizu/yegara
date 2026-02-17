@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
   dropbox: String,
   productLink: String,
 
-  type: { type: String, enum: ["digital", "physical"], required: true },
+  // type: { type: String, enum: ["digital", "physical"], required: true },
 
   location: { // optional for digital, required for physical
     type: { type: String, enum: ["Point"], default: "Point" },
