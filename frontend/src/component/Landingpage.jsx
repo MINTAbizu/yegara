@@ -20,6 +20,7 @@ import OurCustomers from './User/OurCustomers '
 import StepsAnimated from './StepsAnimated/StepsAnimated'
  import Userprofile from '../component/User/Userprofile'
 import Giftproducts from './giftproduct/Giftproducts'
+import BuyerProducts from '../nearproducts/BuyerProducts'
 function Landingpage() {
   return (
     <div>
@@ -34,6 +35,7 @@ function Landingpage() {
                     <Userprofile/>
                     {/* <RewardsList/> */}
                     <StepsAnimated/>
+                    <BuyerProducts/>
 
                     <PromotionCarousel/>
                     <ProAccount/>

@@ -49,3 +49,27 @@ router.get("/products/by-seller/:sellerId", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch products" });
   }
 });
+
+// routes/digitalProducts.js (add this)
+router.get("/nearby", async (req, res) => {
+  try {
+    const { lat, lng, maxDistanceKm = 10 } = req.query;
+
+    if (!lat || !lng) return res.status(400).json({ message: "Missing coordinates" });
+
+    const products = await Product.find({
+      status: "approved",
+      location: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)] },
+          $maxDistance: parseFloat(maxDistanceKm) * 1000, // meters
+        },
+      },
+    });
+
+    res.json(products);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
