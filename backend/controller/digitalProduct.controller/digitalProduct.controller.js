@@ -130,6 +130,7 @@ export const getApprovedProducts = async (req, res) => {
       .select("productName price image seller averageRating ratings");
 
     res.json(products);
+    console.log(products)
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
