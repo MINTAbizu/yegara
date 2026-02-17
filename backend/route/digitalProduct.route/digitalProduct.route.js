@@ -63,7 +63,7 @@ router.get("/nearby", async (req, res) => {
     const maxDistanceMeters = (parseFloat(maxDistanceKm) || 5) * 1000; // default 5 km
 
     // Query products with valid location
-    const products = await Product.find({
+    const products = await digitalProducts.find({
       location: { $exists: true, $ne: null },
       "location.coordinates": { $type: "array", $ne: [] },
       "location.coordinates.0": { $type: "number" },
