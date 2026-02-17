@@ -9,7 +9,8 @@ import {
   toggleStatus,
   getDigitalProductById,
   getDigitalProductWithSellerStats,
-  rateDigitalProduct
+  rateDigitalProduct,
+  nearbyproducts
 } from "../../controller/digitalProduct.controller/digitalProduct.controller.js";
 import { protect } from "../../middleware/authMiddleware.js";
 import digitalProducts from "../../model/digitalproducts/digital products.js";
@@ -21,6 +22,7 @@ router.post("/create", protect, upload.single("image"), addDigitalProduct);
 
 // USER PAGES
 router.get("/", getApprovedProducts);
+router.get("/nearby", nearbyproducts);
 router.get("/:id", getSingleProduct);
 
 
@@ -52,32 +54,32 @@ router.get("/products/by-seller/:sellerId", async (req, res) => {
 
 // backend/routes/digitalProducts.js
 
-router.get("/nearby", async (req, res) => {
-  try {
-    const { lat, lng, maxDistanceKm } = req.query;
+// router.get("/nearby", async (req, res) => {
+//   try {
+//     const { lat, lng, maxDistanceKm } = req.query;
 
-    if (!lat || !lng) return res.status(400).json({ message: "Latitude and longitude required" });
+//     if (!lat || !lng) return res.status(400).json({ message: "Latitude and longitude required" });
 
-    const latitude = parseFloat(lat);
-    const longitude = parseFloat(lng);
-    const maxDistanceMeters = (parseFloat(maxDistanceKm) || 5) * 1000; // default 5 km
+//     const latitude = parseFloat(lat);
+//     const longitude = parseFloat(lng);
+//     const maxDistanceMeters = (parseFloat(maxDistanceKm) || 5) * 1000; // default 5 km
 
-    // Query products with valid location
-    const products = await digitalProducts.find({
-      location: { $exists: true, $ne: null },
-      "location.coordinates": { $type: "array", $ne: [] },
-      "location.coordinates.0": { $type: "number" },
-      "location.coordinates.1": { $type: "number" },
-      $or: [
-        { location: { $nearSphere: { $geometry: { type: "Point", coordinates: [longitude, latitude] }, $maxDistance: maxDistanceMeters } } }
-      ]
-    }).sort({ createdAt: -1 });
- console.log(products)
-    res.json(products);
-  } catch (err) {
-    console.error("Nearby endpoint error:", err);
-    res.status(500).json({ message: "Server error fetching nearby products", error: err.message });
-  }
-});
+//     // Query products with valid location
+//     const products = await digitalProducts.find({
+//       location: { $exists: true, $ne: null },
+//       "location.coordinates": { $type: "array", $ne: [] },
+//       "location.coordinates.0": { $type: "number" },
+//       "location.coordinates.1": { $type: "number" },
+//       $or: [
+//         { location: { $nearSphere: { $geometry: { type: "Point", coordinates: [longitude, latitude] }, $maxDistance: maxDistanceMeters } } }
+//       ]
+//     }).sort({ createdAt: -1 });
+//  console.log(products)
+//     res.json(products);
+//   } catch (err) {
+//     console.error("Nearby endpoint error:", err);
+//     res.status(500).json({ message: "Server error fetching nearby products", error: err.message });
+//   }
+// });
 
 

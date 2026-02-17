@@ -427,3 +427,33 @@ export const rateDigitalProduct = async (req, res) => {
   }
 };
 
+
+
+
+export const nearbyproducts = async (req, res) => {
+   try {
+      const { lat, lng, maxDistanceKm } = req.query;
+  
+      if (!lat || !lng) return res.status(400).json({ message: "Latitude and longitude required" });
+  
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+      const maxDistanceMeters = (parseFloat(maxDistanceKm) || 5) * 1000; // default 5 km
+  
+      // Query products with valid location
+      const products = await digitalProducts.find({
+        location: { $exists: true, $ne: null },
+        "location.coordinates": { $type: "array", $ne: [] },
+        "location.coordinates.0": { $type: "number" },
+        "location.coordinates.1": { $type: "number" },
+        $or: [
+          { location: { $nearSphere: { $geometry: { type: "Point", coordinates: [longitude, latitude] }, $maxDistance: maxDistanceMeters } } }
+        ]
+      }).sort({ createdAt: -1 });
+   console.log(products)
+      res.json(products);
+    } catch (err) {
+      console.error("Nearby endpoint error:", err);
+      res.status(500).json({ message: "Server error fetching nearby products", error: err.message });
+    }
+}
