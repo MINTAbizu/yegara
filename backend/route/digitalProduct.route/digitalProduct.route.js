@@ -73,7 +73,7 @@ router.get("/products/by-seller/:sellerId", async (req, res) => {
 //     res.status(500).json({ message: "Server error" });
 //   }
 // });
-router.get("/api/digital-products/nearby", async (req, res) => {
+router.get("/nearby", async (req, res) => {
   try {
     const { lat, lng, maxDistanceKm } = req.query;
     if (!lat || !lng) return res.status(400).json({ message: "lat/lng required" });
