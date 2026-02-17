@@ -37,7 +37,7 @@ const AdminDigitalProductsTable = () => {
 
   useEffect(() => {
     fetchProducts();
-    const interval = setInterval(fetchProducts, 30000); // auto refresh
+    const interval = setInterval(fetchProducts, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -115,7 +115,6 @@ const AdminDigitalProductsTable = () => {
             </span>
           )}
 
-          {/* 🔽 DROPDOWN */}
           {showDropdown && (
             <div
               className="card shadow"
@@ -221,6 +220,7 @@ const AdminDigitalProductsTable = () => {
               <th>Image</th>
               <th>Name</th>
               <th>Price</th>
+              <th>Location</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -247,7 +247,19 @@ const AdminDigitalProductsTable = () => {
                 </td>
 
                 <td>{p.productName}</td>
+
                 <td>{p.price} ETB</td>
+
+                {/* ✅ LOCATION COLUMN */}
+                <td>
+                  {p.locationFrom ? (
+                    <span className="badge bg-info text-dark">
+                      {p.locationFrom}
+                    </span>
+                  ) : (
+                    <span className="text-muted">—</span>
+                  )}
+                </td>
 
                 <td>
                   <span
