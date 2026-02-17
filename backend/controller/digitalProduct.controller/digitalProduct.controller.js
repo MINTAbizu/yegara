@@ -140,6 +140,8 @@ export const addDigitalProduct = async (req, res) => {
           geo.data.address.village ||
           geo.data.display_name ||
           null;
+          console.log("Location name:", locationName);
+
       } catch (geoError) {
         console.warn("Reverse geocode failed:", geoError.message);
       }
