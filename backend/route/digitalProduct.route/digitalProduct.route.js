@@ -72,7 +72,7 @@ router.get("/nearby", async (req, res) => {
         { location: { $nearSphere: { $geometry: { type: "Point", coordinates: [longitude, latitude] }, $maxDistance: maxDistanceMeters } } }
       ]
     }).sort({ createdAt: -1 });
-
+ console.log(products)
     res.json(products);
   } catch (err) {
     console.error("Nearby endpoint error:", err);
