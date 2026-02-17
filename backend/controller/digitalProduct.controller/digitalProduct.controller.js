@@ -31,30 +31,64 @@ import User from "../../model/user.model/user.model.js";
 //     res.status(500).json({ message: error.message });
 //   }
 // };
+// export const addDigitalProduct = async (req, res) => {
+//   console.log("REQ FILE:", req.file);
+//   console.log("REQ BODY:", req.body);
+
+//   try {
+//     const { productName, description, price } = req.body;
+
+//     const imageUrl = req.file?.path;   // <-- important
+
+//     const newProduct = new DigitalProduct({
+//       productName,
+//       description,
+//       price,
+//       seller: req.user._id,
+//       image: imageUrl,
+//     });
+
+//     const saved = await newProduct.save();
+//     res.status(201).json(saved);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+// import DigitalProduct from "../../model/digitalproducts/digital products.js";
+
 export const addDigitalProduct = async (req, res) => {
-  console.log("REQ FILE:", req.file);
-  console.log("REQ BODY:", req.body);
-
   try {
-    const { productName, description, price } = req.body;
+    const { productName, description, price, telegram, drive, dropbox, productLink, lat, lng } = req.body;
 
-    const imageUrl = req.file?.path;   // <-- important
+    const imageUrl = req.file?.path;
 
     const newProduct = new DigitalProduct({
       productName,
       description,
       price,
+      telegram,
+      drive,
+      dropbox,
+      productLink,
       seller: req.user._id,
       image: imageUrl,
+      location: lat && lng ? {
+        type: "Point",
+        coordinates: [parseFloat(lng), parseFloat(lat)]
+      } : undefined
     });
 
     const saved = await newProduct.save();
     res.status(201).json(saved);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 export const toggleStatus = async (req, res) => {
   try {

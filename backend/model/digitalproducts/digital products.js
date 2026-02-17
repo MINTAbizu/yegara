@@ -1,44 +1,41 @@
 import mongoose from "mongoose";
 
-const digitalProductSchema = new mongoose.Schema({
-  productName: String,
-  price: Number,
+const productSchema = new mongoose.Schema({
+  productName: { type: String, required: true },
+  price: { type: Number, required: true },
   description: String,
   image: String,
   telegram: String,
   drive: String,
   dropbox: String,
+  productLink: String,
 
-    // ⭐ RATING SYSTEM
-  ratings: [
-    {
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-      },
-      value: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5
-      }
-    }
-  ],
+  type: { type: String, enum: ["digital", "physical"], required: true },
 
-  averageRating: {
-    type: Number,
-    default: 0
+  location: { // optional for digital, required for physical
+    type: { type: String, enum: ["Point"], default: "Point" },
+    coordinates: { type: [Number], default: [0, 0] }, // [lng, lat]
   },
 
-  productLink: String,
-   seller: {
+  seller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    required: true,
   },
- 
+
+  ratings: [
+    {
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+      value: { type: Number, required: true, min: 1, max: 5 },
+    },
+  ],
+  averageRating: { type: Number, default: 0 },
+
   status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+
 }, { timestamps: true });
 
-export default mongoose.model("DigitalProduct", digitalProductSchema);
+// geospatial index for physical products
+productSchema.index({ location: "2dsphere" });
+
+export default mongoose.model("Product", productSchema);
