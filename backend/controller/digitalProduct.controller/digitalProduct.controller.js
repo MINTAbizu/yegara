@@ -58,11 +58,92 @@ import User from "../../model/user.model/user.model.js";
 
 // import DigitalProduct from "../../model/digitalproducts/digital products.js";
 
+// export const addDigitalProduct = async (req, res) => {
+//   try {
+//     const { productName, description, price, telegram, drive, dropbox, productLink, lat, lng } = req.body;
+
+//     const imageUrl = req.file?.path;
+
+//     const newProduct = new DigitalProduct({
+//       productName,
+//       description,
+//       price,
+//       telegram,
+//       drive,
+//       dropbox,
+//       productLink,
+//       seller: req.user._id,
+//       image: imageUrl,
+//       location: lat && lng ? {
+//         type: "Point",
+//         coordinates: [parseFloat(lng), parseFloat(lat)]
+//       } : undefined
+//     });
+
+//     const saved = await newProduct.save();
+//     res.status(201).json(saved);
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+import axios from "axios";
+
 export const addDigitalProduct = async (req, res) => {
   try {
-    const { productName, description, price, telegram, drive, dropbox, productLink, lat, lng } = req.body;
+    const {
+      productName,
+      description,
+      price,
+      telegram,
+      drive,
+      dropbox,
+      productLink,
+      lat,
+      lng,
+    } = req.body;
 
     const imageUrl = req.file?.path;
+
+    let location;
+    let locationName = null;
+
+    // ================= REVERSE GEOCODE =================
+    if (lat && lng) {
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+
+      location = {
+        type: "Point",
+        coordinates: [longitude, latitude],
+      };
+
+      try {
+        const geo = await axios.get(
+          `https://nominatim.openstreetmap.org/reverse`,
+          {
+            params: {
+              lat: latitude,
+              lon: longitude,
+              format: "json",
+            },
+            headers: {
+              "User-Agent": "your-app-name",
+            },
+          }
+        );
+
+        locationName =
+          geo.data.address.city ||
+          geo.data.address.town ||
+          geo.data.address.village ||
+          geo.data.display_name ||
+          null;
+      } catch (geoError) {
+        console.warn("Reverse geocode failed:", geoError.message);
+      }
+    }
 
     const newProduct = new DigitalProduct({
       productName,
@@ -74,13 +155,12 @@ export const addDigitalProduct = async (req, res) => {
       productLink,
       seller: req.user._id,
       image: imageUrl,
-      location: lat && lng ? {
-        type: "Point",
-        coordinates: [parseFloat(lng), parseFloat(lat)]
-      } : undefined
+      location,
+      locationName,
     });
 
     const saved = await newProduct.save();
+
     res.status(201).json(saved);
 
   } catch (error) {
