@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-
 const productSchema = new mongoose.Schema({
   productName: { type: String, required: true },
   price: { type: Number, required: true },
@@ -10,12 +8,13 @@ const productSchema = new mongoose.Schema({
   dropbox: String,
   productLink: String,
 
-  // type: { type: String, enum: ["digital", "physical"], required: true },
-
-  location: { // optional for digital, required for physical
+  location: {
     type: { type: String, enum: ["Point"], default: "Point" },
-    coordinates: { type: [Number], default: [0, 0] }, // [lng, lat]
+    coordinates: { type: [Number], default: [0, 0] },
   },
+
+  // ⭐ ADD THIS
+  locationName: String,
 
   seller: {
     type: mongoose.Schema.Types.ObjectId,
@@ -29,13 +28,13 @@ const productSchema = new mongoose.Schema({
       value: { type: Number, required: true, min: 1, max: 5 },
     },
   ],
+
   averageRating: { type: Number, default: 0 },
 
-  status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+  status: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
+  },
 
 }, { timestamps: true });
-
-// geospatial index for physical products
-productSchema.index({ location: "2dsphere" });
-
-export default mongoose.model("Product", productSchema);
