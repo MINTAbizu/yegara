@@ -16,33 +16,61 @@ const AddDigitalProduct = () => {
     productLink: "",
   });
 
-  const [location, setLocation] = useState({ lat: null, lng: null });
+  const [coords, setCoords] = useState({ lat: null, lng: null });
+  const [locationName, setLocationName] = useState({
+    region: "",
+    subcity: "",
+    woreda: "",
+  });
 
   // ================= GET USER LOCATION =================
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.warn("Could not get location:", error.message);
-        }
-      );
-    } else {
-      console.warn("Geolocation is not supported by this browser.");
+    if (!navigator.geolocation) {
+      console.warn("Geolocation not supported by this browser");
+      return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        setCoords({ lat: latitude, lng: longitude });
+
+        try {
+          // ================= REVERSE GEOCODING =================
+          const res = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+            params: {
+              lat: latitude,
+              lon: longitude,
+              format: "json",
+              addressdetails: 1,
+            },
+            headers: {
+              "User-Agent": "digital-product-app", // Required by Nominatim
+            },
+          });
+
+          const address = res.data.address;
+          setLocationName({
+            region: address.city || address.town || address.village || "",
+            subcity: address.suburb || address.city_district || "",
+            woreda: address.neighbourhood || address.hamlet || "",
+          });
+        } catch (err) {
+          console.warn("Reverse geocoding failed:", err.message);
+        }
+      },
+      (error) => {
+        console.warn("Could not get location:", error.message);
+      }
+    );
   }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (files) {
-      setFormData({ ...formData, [name]: files[0] });
+    if (files && files[0]) {
+      setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -54,29 +82,30 @@ const AddDigitalProduct = () => {
       data.append(key, formData[key]);
     }
 
-    // append location automatically
-    if (location.lat && location.lng) {
-      data.append("lat", location.lat);
-      data.append("lng", location.lng);
+    // append coordinates
+    if (coords.lat && coords.lng) {
+      data.append("lat", coords.lat);
+      data.append("lng", coords.lng);
     }
 
+    // append reverse geocoded location info
+    data.append("region", locationName.region);
+    data.append("subcity", locationName.subcity);
+    data.append("woreda", locationName.woreda);
+
     try {
-      const token = localStorage.getItem("token"); // JWT from login
+      const token = localStorage.getItem("token");
       if (!token) {
         alert("You must be logged in to add a product");
         return;
       }
 
-      const res = await axios.post(
-        `${API_URL}/api/digital-products/create`,
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post(`${API_URL}/api/digital-products/create`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       alert("Digital Product Added Successfully!");
       setFormData({
@@ -160,10 +189,14 @@ const AddDigitalProduct = () => {
             className="form-control mb-2"
           />
 
-          {/* Show detected location (optional) */}
-          {location.lat && location.lng && (
-            <p className="text-muted small">
-              Detected location: {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
+          {coords.lat && coords.lng && (
+            <p className="text-muted small mb-2">
+              Current location: {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
+            </p>
+          )}
+          {(locationName.region || locationName.subcity || locationName.woreda) && (
+            <p className="text-muted small mb-2">
+              Detected region: {locationName.region} | Subcity: {locationName.subcity} | Woreda: {locationName.woreda}
             </p>
           )}
 
