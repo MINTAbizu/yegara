@@ -43,7 +43,15 @@ const BuyerProducts = () => {
 
   if (loading) return <p>Loading nearby products...</p>;
   if (error) return <p>{error}</p>;
-  if (!products.length) return <p>No products near you</p>;
+  if (!products.length) return <p>No products near you. Be the first to post!</p>;
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "https://via.placeholder.com/400x250?text=No+Image";
+    // If imagePath already starts with http or https, return it as is
+    if (imagePath.startsWith("http")) return imagePath;
+    // Otherwise, prepend backend URL
+    return `${API_URL}/${imagePath.replace(/^\/+/, "")}`;
+  };
 
   return (
     <div className="container py-4">
@@ -51,15 +59,25 @@ const BuyerProducts = () => {
       <div className="row">
         {products.map((p) => (
           <div key={p._id} className="col-md-4 mb-3">
-            <div className="card shadow-sm">
-              {p.image && <img src={`${API_URL}/${p.image}`} className="card-img-top" alt={p.productName} />}
-              <div className="card-body">
+            <div className="card shadow-sm h-100">
+              <img
+                src={getImageUrl(p.image)}
+                className="card-img-top"
+                alt={p.productName}
+                style={{ objectFit: "cover", height: "200px" }}
+              />
+              <div className="card-body d-flex flex-column">
                 <h5>{p.productName}</h5>
                 <p>Price: {p.price} ETB</p>
                 <p style={{ fontSize: "0.85rem", color: "#555" }}>
-                  {p.region}, {p.subcity}, {p.wereda}, {p.kebele}
+                  {p.region || "-"}, {p.subcity || "-"}, {p.woreda || "-"}, {p.kebele || "-"}
                 </p>
-                <a href={p.productLink} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">
+                <a
+                  href={p.productLink || "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-primary btn-sm mt-auto"
+                >
                   View Product
                 </a>
               </div>
