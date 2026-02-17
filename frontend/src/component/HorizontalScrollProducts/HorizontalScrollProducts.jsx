@@ -128,7 +128,7 @@ function HorizontalProductList() {
 
   return (
     <div className="horizontal-product-container">
-      <h2 className="digitalproducttitle">Digital Products</h2>
+      <h2 className="digitalproducttitle">Physical Products</h2>
 
       {loading ? (
         <div className="spinner-center">

@@ -21,6 +21,7 @@ import StepsAnimated from './StepsAnimated/StepsAnimated'
  import Userprofile from '../component/User/Userprofile'
 import Giftproducts from './giftproduct/Giftproducts'
 import BuyerProducts from '../nearproducts/BuyerProducts'
+import HowPlatformWorks from '../nearproducts/HowPlatformWorks'
 function Landingpage() {
   return (
     <div>
@@ -32,12 +33,15 @@ function Landingpage() {
                     <Giftproducts/>
                     {/* <RewardsList/> */}
                     {/* <Handmadeproduct/> */}
-                    <Userprofile/>
+
+                    <HowPlatformWorks/>
+                    
                     {/* <RewardsList/> */}
                     <StepsAnimated/>
                     <BuyerProducts/>
-
+              
                     <PromotionCarousel/>
+                    <Userprofile/>
                     <ProAccount/>
                     <ServicesSection/>
 
