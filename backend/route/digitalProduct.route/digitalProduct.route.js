@@ -51,25 +51,47 @@ router.get("/products/by-seller/:sellerId", async (req, res) => {
 });
 
 // routes/digitalProducts.js (add this)
-router.get("/nearby", async (req, res) => {
-  try {
-    const { lat, lng, maxDistanceKm = 10 } = req.query;
+// router.get("/nearby", async (req, res) => {
+//   try {
+//     const { lat, lng, maxDistanceKm = 10 } = req.query;
 
-    if (!lat || !lng) return res.status(400).json({ message: "Missing coordinates" });
+//     if (!lat || !lng) return res.status(400).json({ message: "Missing coordinates" });
+
+//     const products = await Product.find({
+//       status: "approved",
+//       location: {
+//         $near: {
+//           $geometry: { type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)] },
+//           $maxDistance: parseFloat(maxDistanceKm) * 1000, // meters
+//         },
+//       },
+//     });
+
+//     res.json(products);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+router.get("/api/digital-products/nearby", async (req, res) => {
+  try {
+    const { lat, lng, maxDistanceKm } = req.query;
+    if (!lat || !lng) return res.status(400).json({ message: "lat/lng required" });
+
+    const maxDistanceMeters = (maxDistanceKm ? parseFloat(maxDistanceKm) : 5) * 1000;
 
     const products = await Product.find({
-      status: "approved",
       location: {
-        $near: {
+        $nearSphere: {
           $geometry: { type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)] },
-          $maxDistance: parseFloat(maxDistanceKm) * 1000, // meters
+          $maxDistance: maxDistanceMeters,
         },
       },
     });
 
     res.json(products);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Nearby endpoint error:", err);
+    res.status(500).json({ message: "Server error fetching nearby products", error: err.message });
   }
 });
