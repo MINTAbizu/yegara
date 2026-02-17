@@ -26,10 +26,10 @@ const AddDigitalProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
-    for (const key in formData) {
-      data.append(key, formData[key]);
-    }
+    // const data = new FormData();
+    // for (const key in formData) {
+    //   data.append(key, formData[key]);
+    // }
 
     try {
       const token = localStorage.getItem("token"); // JWT from login
