@@ -88,62 +88,123 @@ import User from "../../model/user.model/user.model.js";
 //     res.status(500).json({ message: error.message });
 //   }
 // };
+// import axios from "axios";
+
+// export const addDigitalProduct = async (req, res) => {
+//   try {
+//     const {
+//       productName,
+//       description,
+//       price,
+//       telegram,
+//       drive,
+//       dropbox,
+//       productLink,
+//       lat,
+//       lng,
+//     } = req.body;
+
+//     const imageUrl = req.file?.path;
+
+//     let location;
+//     let locationName = null;
+
+//     // ================= REVERSE GEOCODE =================
+//     if (lat && lng) {
+//       const latitude = parseFloat(lat);
+//       const longitude = parseFloat(lng);
+
+//       location = {
+//         type: "Point",
+//         coordinates: [longitude, latitude],
+//       };
+
+//       try {
+//         const geo = await axios.get(
+//           `https://nominatim.openstreetmap.org/reverse`,
+//           {
+//             params: {
+//               lat: latitude,
+//               lon: longitude,
+//               format: "json",
+//             },
+//             headers: {
+//               "User-Agent": "your-app-name",
+//             },
+//           }
+//         );
+
+//         locationName =
+//           geo.data.address.city ||
+//           geo.data.address.town ||
+//           geo.data.address.village ||
+//           geo.data.display_name ||
+//           null;
+//           console.log("Location name:", locationName);
+
+//       } catch (geoError) {
+//         console.warn("Reverse geocode failed:", geoError.message);
+//       }
+//     }
+
+//     const newProduct = new DigitalProduct({
+//       productName,
+//       description,
+//       price,
+//       telegram,
+//       drive,
+//       dropbox,
+//       productLink,
+//       seller: req.user._id,
+//       image: imageUrl,
+//       location,
+//       locationName,
+//     });
+
+//     const saved = await newProduct.save();
+
+//     res.status(201).json(saved);
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+// import Product from "../models/Product.js";
 import axios from "axios";
 
+// Create digital product
 export const addDigitalProduct = async (req, res) => {
   try {
-    const {
-      productName,
-      description,
-      price,
-      telegram,
-      drive,
-      dropbox,
-      productLink,
-      lat,
-      lng,
-    } = req.body;
-
+    const { productName, description, price, telegram, drive, dropbox, productLink, lat, lng } = req.body;
     const imageUrl = req.file?.path;
 
-    let location;
-    let locationName = null;
+    let locationObj = null;
+    let region = "", subcity = "", woreda = "", kebele = "", display_name = "";
 
-    // ================= REVERSE GEOCODE =================
     if (lat && lng) {
       const latitude = parseFloat(lat);
       const longitude = parseFloat(lng);
 
-      location = {
-        type: "Point",
-        coordinates: [longitude, latitude],
-      };
+      locationObj = { type: "Point", coordinates: [longitude, latitude] };
 
+      // Reverse geocode
       try {
-        const geo = await axios.get(
-          `https://nominatim.openstreetmap.org/reverse`,
-          {
-            params: {
-              lat: latitude,
-              lon: longitude,
-              format: "json",
-            },
-            headers: {
-              "User-Agent": "your-app-name",
-            },
-          }
-        );
+        const geo = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+          params: { lat: latitude, lon: longitude, format: "json", addressdetails: 1 },
+          headers: { "User-Agent": "digital-product-app" }
+        });
 
-        locationName =
-          geo.data.address.city ||
-          geo.data.address.town ||
-          geo.data.address.village ||
-          geo.data.display_name ||
-          null;
-          console.log("Location name:", locationName);
+        const addr = geo.data.address || {};
+        display_name = geo.data.display_name || "";
 
-      } catch (geoError) {
-        console.warn("Reverse geocode failed:", geoError.message);
+        region = addr.state || addr.region || addr.city || addr.town || "";
+        subcity = addr.city_district || addr.suburb || addr.quarter || "";
+        woreda = addr.neighbourhood || addr.locality || addr.hamlet || "";
+        kebele = addr.village || addr.croft || addr.kebele || "";
+
+      } catch (err) {
+        console.warn("Reverse geocode failed:", err.message);
       }
     }
 
@@ -157,12 +218,15 @@ export const addDigitalProduct = async (req, res) => {
       productLink,
       seller: req.user._id,
       image: imageUrl,
-      location,
-      locationName,
+      location: locationObj,
+      region,
+      subcity,
+      woreda,
+      kebele,
+      display_name,
     });
 
     const saved = await newProduct.save();
-
     res.status(201).json(saved);
 
   } catch (error) {
@@ -170,6 +234,7 @@ export const addDigitalProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 export const toggleStatus = async (req, res) => {

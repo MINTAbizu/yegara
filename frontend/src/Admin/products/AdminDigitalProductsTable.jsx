@@ -251,15 +251,16 @@ const AdminDigitalProductsTable = () => {
                 <td>{p.price} ETB</td>
 
                 {/* ✅ LOCATION COLUMN */}
-        <td>
-        {p.locationName ? (
-          <span className="badge bg-info text-dark">
-            {p.locationName}
-          </span>
-        ) : (
-          <span className="text-muted">—</span>
-        )}
-      </td>
+       <td>
+  {p.region || p.subcity || p.woreda || p.kebele ? (
+    <span className="badge bg-info text-dark">
+      {p.region}{p.subcity ? ` / ${p.subcity}` : ""}{p.woreda ? ` / ${p.woreda}` : ""}{p.kebele ? ` / ${p.kebele}` : ""}
+    </span>
+  ) : (
+    <span className="text-muted">—</span>
+  )}
+</td>
+
 
 
 

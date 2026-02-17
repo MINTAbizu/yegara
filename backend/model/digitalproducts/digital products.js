@@ -1,50 +1,4 @@
-import mongoose from "mongoose";
-
-const productSchema = new mongoose.Schema({
-  productName: { type: String, required: true },
-  price: { type: Number, required: true },
-  description: String,
-  image: String,
-  telegram: String,
-  drive: String,
-  dropbox: String,
-  productLink: String,
-
-  // type: { type: String, enum: ["digital", "physical"], required: true },
-
-  location: { // optional for digital, required for physical
-    type: { type: String, enum: ["Point"], default: "Point" },
-    coordinates: { type: [Number], default: [0, 0] }, // [lng, lat]
-  },
-  locationName: String,
-
-  seller: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-
-  ratings: [
-    {
-      user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-      value: { type: Number, required: true, min: 1, max: 5 },
-    },
-  ],
-  averageRating: { type: Number, default: 0 },
-
-  status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
-
-}, { timestamps: true });
-
-// geospatial index for physical products
-productSchema.index({ location: "2dsphere" });
-
-export default mongoose.model("Product", productSchema);
-
-
-
-
-
+// import mongoose from "mongoose";
 
 // const productSchema = new mongoose.Schema({
 //   productName: { type: String, required: true },
@@ -56,12 +10,12 @@ export default mongoose.model("Product", productSchema);
 //   dropbox: String,
 //   productLink: String,
 
-//   location: {
-//     type: { type: String, enum: ["Point"], default: "Point" },
-//     coordinates: { type: [Number], default: [0, 0] },
-//   },
+//   // type: { type: String, enum: ["digital", "physical"], required: true },
 
-//   // ⭐ ADD THIS
+//   location: { // optional for digital, required for physical
+//     type: { type: String, enum: ["Point"], default: "Point" },
+//     coordinates: { type: [Number], default: [0, 0] }, // [lng, lat]
+//   },
 //   locationName: String,
 
 //   seller: {
@@ -76,13 +30,56 @@ export default mongoose.model("Product", productSchema);
 //       value: { type: Number, required: true, min: 1, max: 5 },
 //     },
 //   ],
-
 //   averageRating: { type: Number, default: 0 },
 
-//   status: {
-//     type: String,
-//     enum: ["pending", "approved", "rejected"],
-//     default: "pending",
-//   },
+//   status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
 
 // }, { timestamps: true });
+
+// // geospatial index for physical products
+// productSchema.index({ location: "2dsphere" });
+
+// export default mongoose.model("Product", productSchema);
+
+
+
+import mongoose from "mongoose";
+
+const productSchema = new mongoose.Schema({
+  productName: { type: String, required: true },
+  price: { type: Number, required: true },
+  description: String,
+  image: String,
+  telegram: String,
+  drive: String,
+  dropbox: String,
+  productLink: String,
+
+  // Seller reference
+  seller: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+
+  // Location
+  location: {
+    type: { type: String, enum: ["Point"], default: "Point" },
+    coordinates: { type: [Number], default: [0, 0] }, // [lng, lat]
+  },
+
+  // Location details
+  region: String,
+  subcity: String,
+  woreda: String,
+  kebele: String,
+  display_name: String, // Full address
+
+  ratings: [
+    { user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, value: { type: Number, min: 1, max: 5 } }
+  ],
+  averageRating: { type: Number, default: 0 },
+
+  status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" }
+}, { timestamps: true });
+
+// 2dsphere index for geospatial queries
+productSchema.index({ location: "2dsphere" });
+
+export default mongoose.model("Product", productSchema);
