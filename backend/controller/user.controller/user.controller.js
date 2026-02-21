@@ -205,17 +205,59 @@ const genToken = (user) => {
  */
 const ADMIN_EMAILS = ["admin@yegna.com", "super@yegna.com"];
 
+// export const createUser = async (req, res) => {
+//   try {
+//     const { name, email, password, secret } = req.body;
+
+//     if (!name || !email || !password)
+//       return res.status(400).json({ message: "Name, email and password required" });
+
+//     // Strong password validation
+//    const strongPasswordRegex =
+//   /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
+
+//     if (!strongPasswordRegex.test(password)) {
+//       return res.status(400).json({
+//         message:
+//           "Weak password! Must include uppercase, lowercase, number, special char & 8+ length",
+//       });
+//     }
+
+//     const existing = await User.findOne({ email });
+//     if (existing) return res.status(400).json({ message: "User already exists" });
+
+//     // Assign role (admin only with secret key)
+//     let role = "buyer";
+//     if (secret && secret === process.env.ADMIN_SECRET_KEY) {
+//       role = "admin";
+//     }
+
+//     const hashed = await bcrypt.hash(password, 10);
+//     const user = new User({ name, email, password: hashed, role });
+//     await user.save();
+
+//     const token = genToken(user);
+//     res.status(201).json({
+//       message: role === "admin" ? "Admin registered" : "User registered",
+//       user: { id: user._id, name: user.name, email: user.email, role: user.role },
+//       token,
+//     });
+//   } catch (err) {
+//     console.error("createUser error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, secret } = req.body;
+    const { name, email, password, secret, referralCode } = req.body;
 
     if (!name || !email || !password)
       return res.status(400).json({ message: "Name, email and password required" });
 
     // Strong password validation
-   const strongPasswordRegex =
-  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-
+    const strongPasswordRegex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
     if (!strongPasswordRegex.test(password)) {
       return res.status(400).json({
@@ -224,6 +266,7 @@ export const createUser = async (req, res) => {
       });
     }
 
+    // Check if user exists
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ message: "User already exists" });
 
@@ -233,8 +276,29 @@ export const createUser = async (req, res) => {
       role = "admin";
     }
 
+    // Hash password
     const hashed = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashed, role });
+
+    // If signup via referral, store who referred this user
+    if (referralCode) {
+      const referrer = await User.findOne({ referralCode });
+      if (referrer) {
+        user.referredBy = referrer._id;
+
+        // Credit referrer coins
+        referrer.coins = (referrer.coins || 0) + 50; // adjust referral reward
+        await referrer.save();
+
+        // Optional: log referral
+        await Referral.create({
+          referrer: referrer._id,
+          referee: user._id,
+          rewardGiven: true,
+        });
+      }
+    }
+
     await user.save();
 
     const token = genToken(user);
@@ -248,7 +312,6 @@ export const createUser = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 /**
  * Login user
