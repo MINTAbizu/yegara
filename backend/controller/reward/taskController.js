@@ -1,5 +1,5 @@
 import { completeTask } from "../../services/taskService.js";
-import Task from "../../model/reward/task.model.js"; // Task schema
+import Task from "../../model/user.model/reward/Task.js"; // Task schema
 import user from "../../model/user.model/user.model.js";
 
 export async function completeTaskController(req, res) {

@@ -460,7 +460,7 @@ export const nearbyproducts = async (req, res) => {
       ],
     }).sort({ createdAt: -1 });
 
-    console.log(products);
+    // console.log(products);
     res.json(products);
   } catch (err) {
     console.error("Nearby endpoint error:", err);
