@@ -21,9 +21,9 @@ import giftproduct from ".//route/giftproduct-route/giftproductroute.js";
 
 
 // reward systems routes
-import taskRoutes from "./route/rewardSystem/task.route.js";
-import referralRoutes from "./route/rewardSystem/referral.route.js";
-import walletRoutes from "./route/rewardSystem/wallet.route.js";
+import taskRoutes from "./route/reward/taskRoutes.js";
+import referralRoutes from "./route/reward/referralRoutes.js";
+import walletRoutes from "./route/reward/walletRoutes.js";
 
 // import telegeram from './route/telegram.routes.js'
 
