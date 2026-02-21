@@ -1,4 +1,6 @@
 import { completeTask } from "../../services/taskService.js";
+import UserTask from "../../model/user.model/reward/UserTask.js"; // ✅ THIS WAS MISSING
+
 import Task from "../../model/user.model/reward/Task.js"; // Task schema
 import user from "../../model/user.model/user.model.js";
 
@@ -79,33 +81,46 @@ export const getTasks = async (req, res) => {
 };
 
 // Complete a task
+// completeTaskController
 export const completeTaskController = async (req, res) => {
   try {
-    const user = req.user;
     const { taskType } = req.body;
+    const userId = req.user._id;
 
-    const task = await Task.findOne({ type: taskType });
-    if (!task) return res.status(404).json({ message: "Task not found" });
+    if (!taskType) {
+      return res.status(400).json({ message: "taskType is required" });
+    }
 
-    // check daily limit
+    // Find task
+    const task = await Task.findOne({ type: taskType, isActive: true });
+    if (!task) {
+      return res.status(404).json({ message: "Task not found or inactive" });
+    }
+
+    // Check daily limit
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const completedToday = await UserTask.countDocuments({
-      user: user._id,
+      user: userId,
       task: task._id,
-      completedAt: { $gte: new Date(new Date().setHours(0,0,0,0)) },
+      completedAt: { $gte: today },
     });
 
     if (completedToday >= task.dailyLimit) {
-      return res.status(400).json({ message: "Daily limit reached" });
+      return res.status(400).json({ message: "You have already completed this task today" });
     }
 
-    // record completion
-    await UserTask.create({ user: user._id, task: task._id });
+    // Record task completion
+    const userTask = new UserTask({ user: userId, task: task._id });
+    await userTask.save();
 
-    // update user's coins
-    user.coins = (user.coins || 0) + task.reward;
+    // Update user coins
+    const user = await User.findById(userId);
+    user.coins += task.reward;
     await user.save();
 
-    res.json({ message: "Task completed", coins: user.coins });
+    res.json({ message: "Task completed", reward: task.reward, coins: user.coins });
   } catch (err) {
     console.error("completeTaskController error:", err);
     res.status(500).json({ message: "Server error" });
