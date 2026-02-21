@@ -68,11 +68,10 @@ import user from "../../model/user.model/user.model.js";
 // Get all active tasks
 
 
-
 export const getTasks = async (req, res) => {
   try {
     const tasks = await Task.find({ isActive: true });
-    res.json({ tasks });
+    res.json(tasks); // return array directly
   } catch (err) {
     console.error("getTasks error:", err);
     res.status(500).json({ message: "Server error" });
