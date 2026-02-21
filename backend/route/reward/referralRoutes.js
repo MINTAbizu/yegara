@@ -1,9 +1,9 @@
 import express from "express";
-import auth from "../../middleware/authMiddleware.js";
+import {protect} from "../../middleware/authMiddleware.js";
 import { generateReferralLink } from "../../controller/reward/referralController.js";
 
 const router = express.Router();
 
-router.post("/link", auth, generateReferralLink);
+router.post("/link", protect, generateReferralLink);
 
 export default router;
