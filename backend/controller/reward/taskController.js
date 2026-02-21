@@ -2,7 +2,7 @@ import { completeTask } from "../../services/taskService.js";
 import UserTask from "../../model/user.model/reward/UserTask.js"; // ✅ THIS WAS MISSING
 
 import Task from "../../model/user.model/reward/Task.js"; // Task schema
-import user from "../../model/user.model/user.model.js";
+import User from "../../model/user.model/user.model.js";
 
 // export async function completeTaskController(req, res) {
 //   try {
