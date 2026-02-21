@@ -1,0 +1,9 @@
+import User from "../../model/user.model/reward/user";
+
+export const generateReferralLink = async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  const url = `https://yourdomain.com/signup?ref=${user.referralCode}`;
+
+  res.json({ url });
+};

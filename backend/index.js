@@ -20,6 +20,11 @@ import profileRoutes from './route/profile.route/profile.route.js'
 import giftproduct from ".//route/giftproduct-route/giftproductroute.js";
 
 
+// reward systems routes
+import taskRoutes from "./route/rewardSystem/task.route.js";
+import referralRoutes from "./route/rewardSystem/referral.route.js";
+import walletRoutes from "./route/rewardSystem/wallet.route.js";
+
 // import telegeram from './route/telegram.routes.js'
 
 
@@ -97,6 +102,22 @@ app.use("/api/payment", chapapayment);
 
 // AI chat route
 // app.use("/api/chat", chatRoutes);
+
+
+
+// REWARD SYSTEM ROUTES
+
+
+app.use("/api/tasks", taskRoutes);
+app.use("/api/referral", referralRoutes);
+app.use("/api/wallet", walletRoutes);
+
+
+
+
+
+
+
 
 
 // Error handler (return JSON for API errors)
