@@ -108,7 +108,8 @@ app.use("/api/payment", chapapayment);
 // REWARD SYSTEM ROUTES
 
 
-app.use("/api/tasks", taskRoutes);
+// app.use("/api/tasks", taskRoutes);
+app.use("/api", taskRoutes); // ✅ Now /api/tasks works
 app.use("/api/referral", referralRoutes);
 app.use("/api/wallet", walletRoutes);
 

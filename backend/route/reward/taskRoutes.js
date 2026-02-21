@@ -6,6 +6,6 @@ const router = express.Router();
 
 // router.post("/complete", protect, completeTaskController);
 // routes/taskRoutes.js
-router.get("/tasks", getTasks);          // fetch all tasks
+router.get("/tasks",protect, getTasks);          // fetch all tasks
 router.post("/tasks/complete", protect, completeTaskController); // complete task
 export default router;

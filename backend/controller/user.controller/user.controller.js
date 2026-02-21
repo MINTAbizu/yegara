@@ -297,6 +297,7 @@ export const createUser = async (req, res) => {
           rewardGiven: true,
         });
       }
+      console.log(referralCode)
     }
 
     await user.save();
