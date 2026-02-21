@@ -21,7 +21,7 @@ import giftproduct from ".//route/giftproduct-route/giftproductroute.js";
 
 
 // reward systems routes
-import taskRoutes from "./route/reward/taskRoutes.js";
+// import taskRoutes from "./route/reward/taskRoutes.js";
 import referralRoutes from "./route/reward/referralRoutes.js";
 import walletRoutes from "./route/reward/walletRoutes.js";
 
@@ -108,7 +108,7 @@ app.use("/api/payment", chapapayment);
 // REWARD SYSTEM ROUTES
 
 
-app.use("/api/tasks", taskRoutes);
+// app.use("/api/tasks", taskRoutes);
 app.use("/api/referral", referralRoutes);
 app.use("/api/wallet", walletRoutes);
 
