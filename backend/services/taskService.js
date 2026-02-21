@@ -1,6 +1,6 @@
 import Task from "../model/user.model/reward/Task.js";
 import UserTask from "../model/user.model/rewardUserTask.js";
-import { rewardUser } from "./rewardService.js";
+import { rewardUser } from "../services/rewardService.js";
 
 export async function completeTask(userId, taskType) {
   const task = await Task.findOne({
