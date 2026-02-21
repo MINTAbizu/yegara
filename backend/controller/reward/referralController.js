@@ -1,4 +1,4 @@
-import User from "../../model/user.model/reward/user.js";
+import User from "../../model/user.model/user.model";
 
 export const generateReferralLink = async (req, res) => {
   const user = await User.findById(req.user._id);

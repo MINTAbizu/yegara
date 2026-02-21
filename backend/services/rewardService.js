@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "../model/user.model/reward/user.js";
+import User from "../model/user.model/user.model.js";
 import CoinTransaction from "../model/user.model/reward/CoinTransaction.js";
 
 export async function rewardUser({

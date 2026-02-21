@@ -1,4 +1,4 @@
-import User from "../model/user.model/reward/user.js";
+import User from "../model/user.model/user.model.js";
 import { rewardUser } from "./rewardService.js";
 import referralConfig from "../config/reward/referralConfig.js";
 
