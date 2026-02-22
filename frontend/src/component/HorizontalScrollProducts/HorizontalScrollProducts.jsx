@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { ClipLoader } from "react-spinners";
-import { FaHeart, FaStar, FaSpinner } from "react-icons/fa";
+import { FaHeart, FaStar, FaSpinner, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./HorizontalScrollProducts.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -10,72 +9,63 @@ const API_URL = import.meta.env.VITE_API_URL;
 function HorizontalProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState(
+    JSON.parse(localStorage.getItem("favorites")) || []
+  );
+  const [error, setError] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
 
-  const [viewLoadingId, setViewLoadingId] = useState(null); // ✅ VIEW BUTTON LOADER
+  const [viewLoadingId, setViewLoadingId] = useState(null);
 
   const listRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch products
+  /* ================= FETCH ================= */
   useEffect(() => {
-    axios
-      .get(`${API_URL}/api/digital-products/`)
-      .then((res) => {
-        
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/digital-products/`);
         setProducts(res.data);
+      } catch {
+        setError("Unable to load products.");
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
+      }
+    };
+    fetchProducts();
   }, []);
 
-  // ⭐ Auto-open rating modal after login redirect
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const rateProductId = searchParams.get("rate");
+  /* ================= FAVORITES ================= */
+  const toggleFavorite = (id) => {
+    const updated = favorites.includes(id)
+      ? favorites.filter((f) => f !== id)
+      : [...favorites, id];
 
-    if (rateProductId && products.length > 0) {
-      const token = localStorage.getItem("userToken");
-      if (token) {
-        const product = products.find((p) => p._id === rateProductId);
-        if (product) {
-          openRatingModal(product);
-
-          searchParams.delete("rate");
-          navigate(
-            { pathname: location.pathname, search: searchParams.toString() },
-            { replace: true }
-          );
-        }
-      }
-    }
-  }, [location.search, products]);
-
-  const toggleFavorite = (productId) => {
-    setFavorites((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
+    setFavorites(updated);
+    localStorage.setItem("favorites", JSON.stringify(updated));
   };
 
+  /* ================= SCROLL ================= */
+  const scroll = (direction) => {
+    if (listRef.current) {
+      const scrollAmount = 300;
+      listRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  /* ================= RATING ================= */
   const openRatingModal = (product) => {
     const token = localStorage.getItem("userToken");
     if (!token) {
-      navigate(
-        `/register?redirect=${encodeURIComponent(
-          location.pathname
-        )}&rate=${product._id}`
-      );
+      navigate(`/register?redirect=${location.pathname}&rate=${product._id}`);
       return;
     }
 
@@ -86,141 +76,126 @@ function HorizontalProductList() {
   };
 
   const submitRating = async () => {
-    const token = localStorage.getItem("userToken");
-    if (!token) {
-      alert("⚠ You must log in to submit a rating.");
-      setShowModal(false);
-      return;
-    }
-
     try {
+      const token = localStorage.getItem("userToken");
       const res = await axios.post(
         `${API_URL}/api/digital-products/${selectedProduct._id}/rate`,
         { rating },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      alert("⭐ Rating submitted!");
 
       setProducts((prev) =>
         prev.map((p) =>
           p._id === selectedProduct._id
-            ? {
-                ...p,
-                averageRating: res.data.averageRating,
-                ratings: [...(p.ratings || []), { value: rating }],
-              }
+            ? { ...p, averageRating: res.data.averageRating }
             : p
         )
       );
 
       setShowModal(false);
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to submit rating");
+    } catch {
+      alert("Failed to submit rating.");
     }
   };
 
   return (
-    <div className="horizontal-product-container">
-      <h2 className="digitalproducttitle">Physical Products</h2>
+    <div className="horizontal-container">
+
+      <div className="section-header">
+        <h2>Trending Digital Products</h2>
+        <div className="scroll-buttons">
+          <button onClick={() => scroll("left")}><FaChevronLeft /></button>
+          <button onClick={() => scroll("right")}><FaChevronRight /></button>
+        </div>
+      </div>
 
       {loading ? (
-        <div className="spinner-center">
-          <ClipLoader color="#4dabf7" size={60} />
+        <div className="skeleton-wrapper">
+          {[1,2,3,4].map((i)=>(
+            <div key={i} className="skeleton-card" />
+          ))}
         </div>
+      ) : error ? (
+        <div className="error-state">{error}</div>
       ) : (
-        <div className="horizontal-product-list" ref={listRef}>
+        <div className="product-scroll" ref={listRef}>
           {products.map((p) => (
             <div key={p._id} className="product-card">
-              <div className="image-wrapper">
+
+              <div className="img-wrapper">
                 <img
-                  src={
-                    p.image ||
-                    "https://dummyimage.com/400x200/cccccc/000000.png&text=No+Image"
-                  }
+                  src={p.image || "https://dummyimage.com/400x300/cccccc/000000.png&text=No+Image"}
                   alt={p.productName}
                 />
 
-                {/* ⭐ Rating badge */}
                 <div
                   className="rating-badge"
-                  title="Click to rate"
                   onClick={() => openRatingModal(p)}
                 >
-                  <FaStar color="#ffc107" />
-                  <span>{p.averageRating?.toFixed(1) || 0}</span>
+                  <FaStar />
+                  {p.averageRating?.toFixed(1) || "0.0"}
                 </div>
 
-                {/* ❤️ Favorite */}
-                <FaHeart
-                  className="favorite-icon"
-                  color={favorites.includes(p._id) ? "red" : "#fff"}
+                <button
+                  className="favorite"
                   onClick={() => toggleFavorite(p._id)}
-                />
+                >
+                  <FaHeart color={favorites.includes(p._id) ? "red" : "#fff"} />
+                </button>
               </div>
 
-              <h5>{p.productName}</h5>
-              <p className="price">{p.price} .00 ETB</p>
+              <div className="card-body">
+                <h4>{p.productName}</h4>
+                <p className="price">{p.price} ETB</p>
 
-              {/* ✅ VIEW BUTTON WITH LOADER */}
-              <button
-                className="btn btn-primary mt-2"
-                disabled={viewLoadingId === p._id}
-                onClick={() => {
-                  setViewLoadingId(p._id);
-                  setTimeout(() => {
-                    navigate(`/ProductDetails/${p._id}?type=digital`);
-                  }, 300);
-                }}
-              >
-                {viewLoadingId === p._id ? (
-                  <span className="view-loading">
-                    <FaSpinner className="spin" />
-                    Opening…
-                  </span>
-                ) : (
-                  "View"
-                )}
-              </button>
+                <button
+                  className="view-btn"
+                  disabled={viewLoadingId === p._id}
+                  onClick={() => {
+                    setViewLoadingId(p._id);
+                    setTimeout(() => {
+                      navigate(`/ProductDetails/${p._id}?type=digital`);
+                    }, 300);
+                  }}
+                >
+                  {viewLoadingId === p._id ? (
+                    <>
+                      <FaSpinner className="spin" />
+                      Opening...
+                    </>
+                  ) : (
+                    "View Product"
+                  )}
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* ⭐ Rating Modal */}
+      {/* ⭐ RATING MODAL (Improved but NOT removed) */}
       {showModal && (
-        <div className="rating-modal-overlay">
-          <div className="rating-modal">
-            <h4>Rate {selectedProduct?.productName}</h4>
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Rate {selectedProduct?.productName}</h3>
 
             <div className="stars">
-              {[1, 2, 3, 4, 5].map((star) => (
+              {[1,2,3,4,5].map((star)=>(
                 <FaStar
                   key={star}
-                  size={30}
-                  color={
-                    hoverRating >= star || rating >= star
-                      ? "#facc15"
-                      : "#d1d5db"
-                  }
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                  onClick={() => setRating(star)}
-                  style={{ cursor: "pointer" }}
+                  size={32}
+                  color={hoverRating >= star || rating >= star ? "#facc15" : "#d1d5db"}
+                  onMouseEnter={()=>setHoverRating(star)}
+                  onMouseLeave={()=>setHoverRating(0)}
+                  onClick={()=>setRating(star)}
                 />
               ))}
             </div>
 
             <div className="modal-actions">
-              <button onClick={() => setShowModal(false)}>Cancel</button>
-              <button disabled={rating === 0} onClick={submitRating}>
-                Submit
+              <button onClick={()=>setShowModal(false)}>Cancel</button>
+              <button disabled={!rating} onClick={submitRating}>
+                Submit Rating
               </button>
             </div>
           </div>
