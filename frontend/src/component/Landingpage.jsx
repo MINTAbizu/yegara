@@ -25,6 +25,7 @@ import HowPlatformWorks from '../nearproducts/HowPlatformWorks'
 function Landingpage() {
   return (
     <div>
+      
       <Header />
         <Home/>
                     
