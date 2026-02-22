@@ -2,8 +2,10 @@ import { completeTask } from "../../services/taskService.js";
 import UserTask from "../../model/user.model/reward/UserTask.js"; // ✅ THIS WAS MISSING
 
 import Task from "../../model/user.model/reward/Task.js"; // Task schema
-import User from "../../model/user.model/user.model.js";
+// import User from "../../model/user.model/user.model.js";
+import Review from "../../model/reward/review.model.js";
 
+import User from "../../model/user.model/user.model.js";
 // export async function completeTaskController(req, res) {
 //   try {
 //     const result = await completeTask(
@@ -129,18 +131,69 @@ export const getTasks = async (req, res) => {
 
 
 // Complete task endpoint
+// export const completeTaskController = async (req, res) => {
+//   try {
+//     const user = req.user;
+//     const { taskType } = req.body;
+
+//     if (!taskType) return res.status(400).json({ message: "Task type required" });
+
+//     // 1. Find task
+//     const task = await Task.findOne({ type: taskType, isActive: true });
+//     if (!task) return res.status(404).json({ message: "Task not found" });
+
+//     // 2. Check daily limit
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
+
+//     const completedCount = await UserTask.countDocuments({
+//       user: user._id,
+//       task: task._id,
+//       completedAt: { $gte: today },
+//     });
+
+//     if (completedCount >= task.dailyLimit) {
+//       return res.status(400).json({ message: "Task already completed today" });
+//     }
+
+//     // 3. Record task completion
+//     const userTask = new UserTask({
+//       user: user._id,
+//       task: task._id,
+//       completedAt: new Date(),
+//     });
+//     await userTask.save();
+
+//     // 4. Award coins
+//     user.coins += task.reward;
+//     await user.save();
+
+//     res.json({
+//       message: "Task completed successfully",
+//       reward: task.reward,
+//       coins: user.coins,
+//     });
+
+//   } catch (err) {
+//     console.error("completeTaskController error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+
+
+
 export const completeTaskController = async (req, res) => {
   try {
+    const { taskType, reviewText } = req.body;
     const user = req.user;
-    const { taskType } = req.body;
 
     if (!taskType) return res.status(400).json({ message: "Task type required" });
 
-    // 1. Find task
     const task = await Task.findOne({ type: taskType, isActive: true });
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    // 2. Check daily limit
+    // Check daily limit
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -154,23 +207,33 @@ export const completeTaskController = async (req, res) => {
       return res.status(400).json({ message: "Task already completed today" });
     }
 
-    // 3. Record task completion
+    // If it's a review task, reviewText is required
+    if (task.type === "review" && (!reviewText || reviewText.trim().length === 0)) {
+      return res.status(400).json({ message: "Review text is required" });
+    }
+
+    // Save review if provided
+    if (reviewText) {
+      const review = new Review({
+        user: user._id,
+        task: task._id,
+        text: reviewText,
+      });
+      await review.save();
+    }
+
+    // Record task completion
     const userTask = new UserTask({
       user: user._id,
       task: task._id,
-      completedAt: new Date(),
     });
     await userTask.save();
 
-    // 4. Award coins
+    // Award coins
     user.coins += task.reward;
     await user.save();
 
-    res.json({
-      message: "Task completed successfully",
-      reward: task.reward,
-      coins: user.coins,
-    });
+    res.json({ message: "Task completed", reward: task.reward, coins: user.coins });
 
   } catch (err) {
     console.error("completeTaskController error:", err);
