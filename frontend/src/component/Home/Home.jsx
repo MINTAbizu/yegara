@@ -100,7 +100,7 @@ export default function Home() {
           line-height: 1.5;
         }
         h1,h2,h3,h4 { margin:0 0 12px; }
-        section { padding: 80px 20px; }
+        section { padding:  20px; }
         .center { text-align:center; }
 
         /* HERO */
