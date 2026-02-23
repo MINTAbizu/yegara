@@ -100,7 +100,7 @@ export default function Home() {
           line-height: 1.5;
         }
         h1,h2,h3,h4 { margin:0 0 12px; }
-        section { padding:  20px; }
+        // section { padding:  20px 0 0 0; }
         .center { text-align:center; }
 
         /* HERO */
@@ -145,7 +145,7 @@ export default function Home() {
 
         /* RESPONSIVE */
         @media (max-width:600px){
-          section { padding:60px 16px; }
+          // section { padding:10px 16px; }
           .steps { gap:20px; }
           .hero-icons { flex-direction:column; gap:12px; }
         }
