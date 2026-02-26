@@ -1,18 +1,27 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaHeart, FaStar, FaSpinner, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  FaHeart,
+  FaStar,
+  FaSpinner,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import "./HorizontalScrollProducts.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function HorizontalProductList() {
   const [products, setProducts] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [featuredProduct, setFeaturedProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState(
     JSON.parse(localStorage.getItem("favorites")) || []
   );
   const [error, setError] = useState(null);
+  const [activeCategory, setActiveCategory] = useState("All");
 
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -25,12 +34,27 @@ function HorizontalProductList() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const categories = [
+    "All",
+    "Ebooks",
+    "Courses",
+    "Templates",
+    "Software",
+    "Graphics",
+  ];
+
   /* ================= FETCH ================= */
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/digital-products/`);
         setProducts(res.data);
+        setFiltered(res.data);
+
+        const sorted = [...res.data].sort(
+          (a, b) => (b.averageRating || 0) - (a.averageRating || 0)
+        );
+        setFeaturedProduct(sorted[0]);
       } catch {
         setError("Unable to load products.");
       } finally {
@@ -39,6 +63,21 @@ function HorizontalProductList() {
     };
     fetchProducts();
   }, []);
+
+  /* ================= FILTER ================= */
+  const handleFilter = (category) => {
+    setActiveCategory(category);
+
+    if (category === "All") {
+      setFiltered(products);
+    } else {
+      setFiltered(
+        products.filter((p) =>
+          p.category?.toLowerCase().includes(category.toLowerCase())
+        )
+      );
+    }
+  };
 
   /* ================= FAVORITES ================= */
   const toggleFavorite = (id) => {
@@ -53,9 +92,8 @@ function HorizontalProductList() {
   /* ================= SCROLL ================= */
   const scroll = (direction) => {
     if (listRef.current) {
-      const scrollAmount = 300;
       listRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
+        left: direction === "left" ? -300 : 300,
         behavior: "smooth",
       });
     }
@@ -92,6 +130,14 @@ function HorizontalProductList() {
         )
       );
 
+      setFiltered((prev) =>
+        prev.map((p) =>
+          p._id === selectedProduct._id
+            ? { ...p, averageRating: res.data.averageRating }
+            : p
+        )
+      );
+
       setShowModal(false);
     } catch {
       alert("Failed to submit rating.");
@@ -109,17 +155,56 @@ function HorizontalProductList() {
         </div>
       </div>
 
+      {/* FEATURED SMART PICK */}
+      {featuredProduct && (
+        <div className="featured-product">
+          <div className="featured-content">
+            <span className="featured-label">✨ Smart Pick For You</span>
+            <h3>{featuredProduct.productName}</h3>
+            <p>Top rated digital product this week</p>
+            <button
+              onClick={() =>
+                navigate(`/ProductDetails/${featuredProduct._id}?type=digital`)
+              }
+            >
+              Explore Now
+            </button>
+          </div>
+          <img
+            src={featuredProduct.image}
+            alt={featuredProduct.productName}
+          />
+        </div>
+      )}
+
+      {/* FILTERS */}
+      <div className="digital-filters">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            className={`filter-btn ${activeCategory === cat ? "active" : ""}`}
+            onClick={() => handleFilter(cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
       {loading ? (
         <div className="skeleton-wrapper">
           {[1,2,3,4].map((i)=>(
-            <div key={i} className="skeleton-card" />
+            <div key={i} className="skeleton-card">
+              <div className="skeleton-img shimmer"/>
+              <div className="skeleton-line shimmer"/>
+              <div className="skeleton-line small shimmer"/>
+            </div>
           ))}
         </div>
       ) : error ? (
         <div className="error-state">{error}</div>
       ) : (
         <div className="product-scroll" ref={listRef}>
-          {products.map((p) => (
+          {filtered.map((p) => (
             <div key={p._id} className="product-card">
 
               <div className="img-wrapper">
@@ -135,6 +220,14 @@ function HorizontalProductList() {
                   <FaStar />
                   {p.averageRating?.toFixed(1) || "0.0"}
                 </div>
+
+                {p.averageRating >= 4.5 && (
+                  <div className="hot-badge">🔥 Hot</div>
+                )}
+
+                {Math.random() > 0.7 && (
+                  <div className="limited-badge">⚡ Limited</div>
+                )}
 
                 <button
                   className="favorite"
@@ -168,12 +261,13 @@ function HorizontalProductList() {
                   )}
                 </button>
               </div>
+
             </div>
           ))}
         </div>
       )}
 
-      {/* ⭐ RATING MODAL (Improved but NOT removed) */}
+      {/* RATING MODAL */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">
@@ -201,6 +295,7 @@ function HorizontalProductList() {
           </div>
         </div>
       )}
+
     </div>
   );
 }

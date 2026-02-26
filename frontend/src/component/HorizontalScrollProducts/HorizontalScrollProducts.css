@@ -309,3 +309,134 @@
   border-radius: 12px;
   text-align: center;
 }
+
+
+
+
+/* FILTER BUTTONS */
+.digital-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.filter-btn {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s ease;
+}
+
+.filter-btn:hover {
+  background: #111;
+  color: #fff;
+}
+
+.filter-btn.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+/* SKELETON */
+.skeleton-card {
+  min-width: 260px;
+  background: white;
+  padding: 15px;
+  border-radius: 16px;
+}
+
+.skeleton-img {
+  height: 160px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.skeleton-line {
+  height: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+.skeleton-line.small {
+  width: 60%;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #eeeeee 25%,
+    #dddddd 50%,
+    #eeeeee 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+
+
+
+.featured-product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg,#111,#222);
+  color: white;
+  padding: 40px;
+  border-radius: 20px;
+  margin-bottom: 40px;
+}
+
+.featured-content { max-width: 50%; }
+
+.featured-label {
+  background: gold;
+  color: black;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.featured-product img {
+  width: 280px;
+  border-radius: 16px;
+}
+
+.hot-badge {
+  position: absolute;
+  top: 45px;
+  left: 10px;
+  background: #ff3d3d;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.limited-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: #111;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 rgba(255,0,0,0.6); }
+  50% { box-shadow: 0 0 12px rgba(255,0,0,1); }
+  100% { box-shadow: 0 0 0 rgba(255,0,0,0.6); }
+}

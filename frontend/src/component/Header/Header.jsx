@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import "./Header.css";
 import { Link } from "react-router-dom";
-// import logo from "../../assets/image/core-img/logo.png";
+import logo from "../../assets/telegeram/የጋር2.png";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,8 +14,8 @@ const Header = () => {
   return (
     <header className="header d-flex justify-content-between align-items-center p-3">
       {/* Logo */}
-      <div className="logo">
-        {/* <img src={logo} alt="Logo" className="img-fluid" /> */}
+      <div className="logo" >
+        <img src={logo}  style={{width:"50px",  height:"35px", overflow:"hidden", justifyContent:"center" ,alignItems:"center"}} alt="Logo" className="img-fluid" />
       </div>
 
       {/* Menu Icon (always visible) */}

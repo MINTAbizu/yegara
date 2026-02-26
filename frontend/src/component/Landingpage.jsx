@@ -28,6 +28,8 @@ function Landingpage() {
       
       <Header />
         <Home/>
+
+        {/* https://themewagon.com/themes/furni-online-store/ */}
                     
                     <HorizontalProductList/>
                     <Productlist/>
@@ -38,7 +40,7 @@ function Landingpage() {
                     <HowPlatformWorks/>
                     
                     {/* <RewardsList/> */}
-                    <StepsAnimated/>
+                    {/* <StepsAnimated/> */}
                     <BuyerProducts/>
               
                     <PromotionCarousel/>

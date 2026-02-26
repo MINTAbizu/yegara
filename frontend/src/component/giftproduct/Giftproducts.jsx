@@ -11,24 +11,50 @@ function Giftproducts() {
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeOccasion, setActiveOccasion] = useState("All");
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [addingId, setAddingId] = useState(null);
 
   const listRef = useRef(null);
 
   const occasions = ["All", "Birthday", "Wedding", "Anniversary", "Surprise"];
 
-  /* ================= FETCH ================= */
+  /* ================= NETWORK STATUS ================= */
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  /* ================= FETCH DATA ================= */
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/giftproduct/`);
-        setProducts(res.data);
-        setFiltered(res.data);
+        if (navigator.onLine) {
+          const res = await axios.get(`${API_URL}/api/giftproduct/`);
+          setProducts(res.data);
+          setFiltered(res.data);
+          localStorage.setItem("cachedGifts", JSON.stringify(res.data));
+        } else {
+          const cached = JSON.parse(localStorage.getItem("cachedGifts"));
+          if (cached) {
+            setProducts(cached);
+            setFiltered(cached);
+          }
+        }
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
@@ -57,8 +83,32 @@ function Giftproducts() {
     }
   };
 
+  /* ================= ADD TO CART ================= */
+  const addToCart = async (product) => {
+    setAddingId(product._id);
+
+    // Simulate small delay (like real API)
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const exists = cart.find((item) => item._id === product._id);
+
+    if (!exists) {
+      cart.push(product);
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    setAddingId(null);
+  };
+
   return (
     <section className="gift-section">
+
+      {!isOnline && (
+        <div className="offline-banner">
+          ⚠️ You are offline. Showing saved products.
+        </div>
+      )}
 
       {/* HERO */}
       <div className="gift-hero">
@@ -67,7 +117,7 @@ function Giftproducts() {
         <p>Make someone smile today 🎁</p>
       </div>
 
-      {/* FILTER CHIPS */}
+      {/* FILTER */}
       <div className="gift-filters">
         {occasions.map((o) => (
           <button
@@ -80,10 +130,10 @@ function Giftproducts() {
         ))}
       </div>
 
-      {/* LOADING */}
+      {/* SKELETON LOADING */}
       {loading ? (
         <div className="gift-skeleton-wrapper">
-          {[1,2,3,4].map((i)=>(
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="gift-skeleton-card" />
           ))}
         </div>
@@ -114,7 +164,6 @@ function Giftproducts() {
                     }
                     alt={p.productName}
                   />
-
                   <div className="gift-badge">
                     <FaStar size={12} /> Perfect Gift
                   </div>
@@ -127,11 +176,21 @@ function Giftproducts() {
                     Trusted Seller: {p.seller?.name}
                   </p>
 
-                  <Link to={`/giftProductDetails/${p._id}?type=digital`}>
-                    <button className="gift-btn">
-                      View Gift
+                  <div className="gift-actions">
+                    <Link to={`/giftProductDetails/${p._id}?type=digital`}>
+                      <button className="gift-btn primary">
+                        View Gift
+                      </button>
+                    </Link>
+
+                    <button
+                      className="gift-btn secondary"
+                      disabled={addingId === p._id}
+                      onClick={() => addToCart(p)}
+                    >
+                      {addingId === p._id ? "Adding..." : "Add to Cart"}
                     </button>
-                  </Link>
+                  </div>
                 </div>
 
               </div>
