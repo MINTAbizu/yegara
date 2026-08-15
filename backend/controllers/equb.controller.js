@@ -57,6 +57,31 @@ export const createEqubChallenge = async (req, res) => {
   }
 };
 
+export const getActiveChallenges = async (req, res) => {
+  try {
+    const challenges = await EqubChallenge.find({
+      status: "PENDING",
+      expiresAt: { $gt: new Date() },
+    })
+      .populate("creatorId", "name email")
+      .populate("vendorId", "name email")
+      .sort({ createdAt: -1 })
+      .limit(12);
+
+    if (!Array.isArray(challenges)) {
+      return res.status(200).json([]);
+    }
+
+    return res.status(200).json(challenges);
+  } catch (error) {
+    console.error("getActiveChallenges error:", error);
+    return res.status(500).json({
+      message: error?.message || "Unable to fetch active challenges.",
+      challenges: [],
+    });
+  }
+};
+
 export const joinEqubChallenge = async (req, res) => {
   const userId = req.user?._id || req.user?.id;
   const { challengeId, paymentRef } = req.body;
