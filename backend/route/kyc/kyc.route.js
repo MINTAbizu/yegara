@@ -41,10 +41,23 @@ router.post(
 
       await kyc.save();
 
-      // Update user KYC status
-      await User.findByIdAndUpdate(req.user._id, { kycSubmitted: true });
+      // Update user KYC status (persistent - once verified, stays verified)
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { kycSubmitted: true },
+        { new: true }
+      );
 
-      return res.status(201).json({ message: "KYC submitted successfully", data: kyc });
+      return res.status(201).json({
+        message: "KYC submitted successfully. You now have full access as a verified user.",
+        data: kyc,
+        user: {
+          _id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          kycSubmitted: updatedUser.kycSubmitted,
+        },
+      });
     } catch (err) {
       console.error("submitKYC error:", err);
       return res.status(500).json({ message: "Server Error", error: err.message });

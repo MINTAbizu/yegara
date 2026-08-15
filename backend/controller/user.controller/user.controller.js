@@ -224,6 +224,7 @@ export const createUser = async (req, res) => {
         email: user.email,
         role: user.role,
         coins: user.wallet?.coins || 0,
+        kycSubmitted: user.kycSubmitted || false,
       },
       token,
     });
@@ -266,7 +267,8 @@ export const loginUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,       // <<< FIX HERE
+        role: user.role,
+        kycSubmitted: user.kycSubmitted || false,
       },
       token,
     });

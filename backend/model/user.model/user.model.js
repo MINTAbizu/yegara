@@ -67,6 +67,9 @@ const userSchema = new mongoose.Schema(
 
     role: { type: String, enum: ["seller", "buyer", "pro", "admin"], default: "buyer" },
 
+    // KYC verification status (persistent - once verified, always verified)
+    kycSubmitted: { type: Boolean, default: false, index: true },
+
     // Coins for rewards
     coins: { type: Number, default: 0 },
 
