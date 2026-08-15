@@ -52,6 +52,7 @@ import Addgiftproduct from './component/Shope/userprofilepage/Addgiftproduct';
 import Admingiftproduct from './Admin/products/Admingiftproduct';
 import UpgradePro from './kyc/UpgradePro';
 import Giftproduct from './ProductDetails/Giftproduct';
+import EqubChallengeDemo from './component/Equb/EqubChallengeDemo';
 
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
           <Route path="/UserExample" element={<UserExample />} />
           <Route path="/Userprofiless" element={<Userprofile />} />
           <Route path="/UpgradePro" element={<UpgradePro  />} />
+          <Route path="/equb-demo" element={<EqubChallengeDemo />} />
 
 
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />

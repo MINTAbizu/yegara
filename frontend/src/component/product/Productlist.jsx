@@ -7,9 +7,9 @@ import product5 from '../../assets/image/test5.png';
 
 const products = [
   { id: 1, name: 'Office Table', image: product1 },
-  { id: 2, name: ' Handmade Crafts', image: product2},
+  { id: 2, name: ' Handmade Crafts', image: product2 },
   { id: 3, name: 'Home Craft Products ', image: product4 },
-  { id: 3, name: 'Digital Product ', image: product5 },
+  { id: 4, name: 'Digital Product ', image: product5 },
   // { id: 4, name: 'Digital Product 4', image: "" },
   // { id: 5, name: 'Digital Product 5', image:"" },
 ];

@@ -24,6 +24,8 @@ import giftproduct from ".//route/giftproduct-route/giftproductroute.js";
 import taskRoutes from "./route/reward/taskRoutes.js";
 import referralRoutes from "./route/reward/referralRoutes.js";
 import walletRoutes from "./route/reward/walletRoutes.js";
+import equbRoutes from "./routes/equb.route.js";
+import { startEqubSettlementService } from "./services/equbSettlement.service.js";
 
 // import telegeram from './route/telegram.routes.js'
 
@@ -112,14 +114,9 @@ app.use("/api/payment", chapapayment);
 app.use("/api", taskRoutes); // ✅ Now /api/tasks works
 app.use("/api/referral", referralRoutes);
 app.use("/api/wallet", walletRoutes);
+app.use("/api/equb", equbRoutes);
 
-
-
-
-
-
-
-
+startEqubSettlementService(60000);
 
 // Error handler (return JSON for API errors)
 app.use((err, req, res, next) => {

@@ -1,9 +1,9 @@
 import { completeTask } from "../../services/taskService.js";
-import UserTask from "../../model/user.model/reward/UserTask.js"; // ✅ THIS WAS MISSING
+import UserTask from "../../model/user.model/reward/UserTask.js";
 
 import Task from "../../model/user.model/reward/Task.js"; // Task schema
 // import User from "../../model/user.model/user.model.js";
-import Review from "../../model/reward/review.model.js";
+import Review from "../../model/user.model/reward/review.model.js";
 
 import User from "../../model/user.model/user.model.js";
 // export async function completeTaskController(req, res) {

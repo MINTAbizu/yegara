@@ -6,6 +6,13 @@ import "./Gift.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+const asArray = (value) => {
+  if (Array.isArray(value)) return value;
+  if (Array.isArray(value?.products)) return value.products;
+  if (Array.isArray(value?.data)) return value.data;
+  return [];
+};
+
 function Giftproducts() {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -38,12 +45,13 @@ function Giftproducts() {
       try {
         if (navigator.onLine) {
           const res = await axios.get(`${API_URL}/api/giftproduct/`);
-          setProducts(res.data);
-          setFiltered(res.data);
-          localStorage.setItem("cachedGifts", JSON.stringify(res.data));
+          const payload = asArray(res.data);
+          setProducts(payload);
+          setFiltered(payload);
+          localStorage.setItem("cachedGifts", JSON.stringify(payload));
         } else {
-          const cached = JSON.parse(localStorage.getItem("cachedGifts"));
-          if (cached) {
+          const cached = asArray(JSON.parse(localStorage.getItem("cachedGifts") || "[]"));
+          if (cached.length > 0) {
             setProducts(cached);
             setFiltered(cached);
           }
@@ -61,12 +69,13 @@ function Giftproducts() {
   /* ================= FILTER ================= */
   const handleFilter = (occasion) => {
     setActiveOccasion(occasion);
+    const safeProducts = asArray(products);
 
     if (occasion === "All") {
-      setFiltered(products);
+      setFiltered(safeProducts);
     } else {
       setFiltered(
-        products.filter((p) =>
+        safeProducts.filter((p) =>
           p.category?.toLowerCase().includes(occasion.toLowerCase())
         )
       );

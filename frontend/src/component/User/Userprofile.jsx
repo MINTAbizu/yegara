@@ -12,6 +12,13 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+const normalizeProfiles = (value) => {
+  if (Array.isArray(value)) return value;
+  if (Array.isArray(value?.profiles)) return value.profiles;
+  if (Array.isArray(value?.data)) return value.data;
+  return [];
+};
+
 const CombinedUsers = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,9 +28,10 @@ const CombinedUsers = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_URL}/api/profile/approved`);
-      setProfiles(res.data || []);
+      setProfiles(normalizeProfiles(res.data));
     } catch (err) {
       console.error("Fetch error:", err);
+      setProfiles([]);
     } finally {
       setLoading(false);
     }
@@ -41,6 +49,8 @@ const CombinedUsers = () => {
     );
   }
 
+  const safeProfiles = normalizeProfiles(profiles);
+
   return (
     <>
       <h1 style={{ textAlign: "center", marginBottom: 20 }}>
@@ -56,7 +66,7 @@ const CombinedUsers = () => {
           justifyContent: "center",
         }}
       >
-        {profiles.map((p) => (
+        {safeProfiles.map((p) => (
           <div
             key={p._id}
             style={{

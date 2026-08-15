@@ -22,6 +22,8 @@ import StepsAnimated from './StepsAnimated/StepsAnimated'
 import Giftproducts from './giftproduct/Giftproducts'
 import BuyerProducts from '../nearproducts/BuyerProducts'
 import HowPlatformWorks from '../nearproducts/HowPlatformWorks'
+import PhysicalProductsHome from './PhysicalProducts/PhysicalProductsHome'
+
 function Landingpage() {
   return (
     <div>
@@ -34,6 +36,7 @@ function Landingpage() {
                     <HorizontalProductList/>
                     <Productlist/>
                     <Giftproducts/>
+                    <PhysicalProductsHome/>
                     {/* <RewardsList/> */}
                     {/* <Handmadeproduct/> */}
 

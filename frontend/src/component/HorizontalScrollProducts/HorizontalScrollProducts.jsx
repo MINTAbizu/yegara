@@ -12,6 +12,13 @@ import "./HorizontalScrollProducts.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+const asArray = (value) => {
+  if (Array.isArray(value)) return value;
+  if (Array.isArray(value?.products)) return value.products;
+  if (Array.isArray(value?.data)) return value.data;
+  return [];
+};
+
 function HorizontalProductList() {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -47,11 +54,11 @@ function HorizontalProductList() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/digital-products/`);
-        setProducts(res.data);
-        setFiltered(res.data);
+        const payload = asArray((await axios.get(`${API_URL}/api/digital-products/`)).data);
+        setProducts(payload);
+        setFiltered(payload);
 
-        const sorted = [...res.data].sort(
+        const sorted = [...payload].sort(
           (a, b) => (b.averageRating || 0) - (a.averageRating || 0)
         );
         setFeaturedProduct(sorted[0]);
@@ -67,12 +74,13 @@ function HorizontalProductList() {
   /* ================= FILTER ================= */
   const handleFilter = (category) => {
     setActiveCategory(category);
+    const safeProducts = asArray(products);
 
     if (category === "All") {
-      setFiltered(products);
+      setFiltered(safeProducts);
     } else {
       setFiltered(
-        products.filter((p) =>
+        safeProducts.filter((p) =>
           p.category?.toLowerCase().includes(category.toLowerCase())
         )
       );
