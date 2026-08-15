@@ -10,6 +10,7 @@ const ListingsDashboard = () => {
     { name: "Physical Product", buttonText: "Add Product", link: "/ADDphysicalproducts" },
     { name: "Digital Product", buttonText: "Add Product", link: "/digitalproduct" },
     { name: "Gift Product", buttonText: "Add Product", link: "/Giftproduct" },
+    { name: "Crowdfunded Product", buttonText: "Create Challenge", link: "/equb-create" },
     { name: "Book", buttonText: "Add Book", link: "/addbook" },
     { name: "Social Media Axxount", buttonText: "Add Account", link: "/socialmediaaccount" },
   ];

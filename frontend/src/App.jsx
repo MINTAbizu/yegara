@@ -53,6 +53,7 @@ import Admingiftproduct from './Admin/products/Admingiftproduct';
 import UpgradePro from './kyc/UpgradePro';
 import Giftproduct from './ProductDetails/Giftproduct';
 import EqubChallengeDemo from './component/Equb/EqubChallengeDemo';
+import CreateEqubChallenge from './component/Equb/CreateEqubChallenge';
 
 
 function App() {
@@ -247,7 +248,14 @@ function App() {
                 </DashboardLayout>
               // </ProtectedRoute>
             }
-          />  
+          />
+
+          <Route
+            path="/equb-create"
+            element={
+              <CreateEqubChallenge />
+            }
+          />
                         <Route
                   path="/AdminKYCList"
                   element={
