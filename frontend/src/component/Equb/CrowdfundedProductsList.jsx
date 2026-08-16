@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import CrowdfundTimer from "./CrowdfundTimer";
 import EqubSlotProgress from "./EqubSlotProgress";
+import JoinEqubChallengeModal from "./JoinEqubChallengeModal";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,6 +11,8 @@ const CrowdfundedProductsList = () => {
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedChallenge, setSelectedChallenge] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -144,6 +147,10 @@ const CrowdfundedProductsList = () => {
                   <button
                     className="btn btn-primary w-100 rounded-2"
                     disabled={filledCount >= challenge.totalSlots}
+                    onClick={() => {
+                      setSelectedChallenge(challenge);
+                      setModalOpen(true);
+                    }}
                   >
                     {filledCount >= challenge.totalSlots
                       ? "Slots Full"
