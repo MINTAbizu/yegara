@@ -1,3 +1,4 @@
+import axios from "axios";
 import mongoose from "mongoose";
 import EqubChallenge from "../models/EqubChallenge.model.js";
 import PhysicalProduct from "../model/physicalproduct/physicalprosuct.model.js";
@@ -128,6 +129,165 @@ export const getEqubChallengeById = async (req, res) => {
   }
 };
 
+export const initializeEqubPayment = async (req, res) => {
+  const userId = req.user?._id || req.user?.id;
+  const { challengeId, returnUrl } = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Authentication required." });
+  }
+
+  if (!challengeId || !mongoose.Types.ObjectId.isValid(challengeId)) {
+    return res.status(400).json({ message: "Valid challengeId is required." });
+  }
+
+  if (!process.env.CHAPA_SECRET_KEY) {
+    return res.status(500).json({ message: "Payment gateway is not configured." });
+  }
+
+  try {
+    const challenge = await EqubChallenge.findOne({
+      _id: challengeId,
+      status: "PENDING",
+      expiresAt: { $gt: new Date() },
+    }).lean();
+
+    if (!challenge) {
+      return res.status(404).json({ message: "This challenge is no longer active." });
+    }
+
+    const participantIds = challenge.filledSlots.map((id) => id.toString());
+    if (participantIds.includes(userId.toString())) {
+      return res.status(409).json({ message: "You already joined this challenge." });
+    }
+
+    if (challenge.filledSlots.length >= challenge.totalSlots) {
+      return res.status(409).json({ message: "This challenge has no remaining slots." });
+    }
+
+    const txRef = `equb_${challenge._id}_${userId}_${Date.now()}`;
+    const userName = req.user?.name || "Yegara User";
+    const [firstName, ...lastNameParts] = userName.split(" ");
+    const callbackUrl = returnUrl || `${req.protocol}://${req.get("host")}/equb/payment-callback`;
+    const callbackWithParams = `${callbackUrl}?challengeId=${challenge._id}&tx_ref=${txRef}`;
+
+    const paymentData = {
+      amount: challenge.slotPrice,
+      currency: "ETB",
+      email: req.user?.email,
+      tx_ref: txRef,
+      first_name: firstName || "Yegara",
+      last_name: lastNameParts.join(" ") || "Customer",
+      title: `Join Equb Challenge: ${challenge.title}`,
+      description: `Slot Price: ${challenge.slotPrice} ETB`,
+      callback_url: callbackWithParams,
+      return_url: callbackWithParams,
+      meta: {
+        challengeId: challenge._id.toString(),
+        userId: userId.toString(),
+      },
+    };
+
+    const chapaRes = await axios.post(
+      "https://api.chapa.co/v1/transaction/initialize",
+      paymentData,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}`,
+          "Content-Type": "application/json",
+        },
+        timeout: 20000,
+      }
+    );
+
+    const checkoutUrl = chapaRes.data?.data?.checkout_url;
+    if (!checkoutUrl) {
+      return res.status(502).json({ message: "Payment gateway did not return a checkout URL." });
+    }
+
+    return res.status(200).json({ checkout_url: checkoutUrl, tx_ref: txRef });
+  } catch (error) {
+    console.error("initializeEqubPayment error:", error.response?.data || error.message);
+    return res.status(502).json({
+      message: error.response?.data?.message || "Unable to start payment. Please try again.",
+    });
+  }
+};
+
+export const verifyEqubPayment = async (req, res) => {
+  const userId = req.user?._id || req.user?.id;
+  const { challengeId, tx_ref: txRef } = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Authentication required." });
+  }
+
+  if (!txRef || !challengeId || !mongoose.Types.ObjectId.isValid(challengeId)) {
+    return res.status(400).json({ message: "challengeId and tx_ref are required." });
+  }
+
+  if (!process.env.CHAPA_SECRET_KEY) {
+    return res.status(500).json({ message: "Payment gateway is not configured." });
+  }
+
+  try {
+    const chapaRes = await axios.get(
+      `https://api.chapa.co/v1/transaction/verify/${txRef}`,
+      {
+        headers: { Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}` },
+        timeout: 20000,
+      }
+    );
+
+    const payment = chapaRes.data?.data;
+    if (payment?.status !== "success") {
+      return res.status(400).json({ message: "Payment was not successful.", payment });
+    }
+
+    const session = await mongoose.startSession();
+    let challenge;
+
+    try {
+      await session.withTransaction(async () => {
+        challenge = await EqubChallenge.findOne({
+          _id: challengeId,
+          status: "PENDING",
+          expiresAt: { $gt: new Date() },
+        }).session(session);
+
+        if (!challenge) {
+          throw Object.assign(new Error("This challenge is no longer active or was not found."), { status: 400 });
+        }
+
+        const participantIds = challenge.filledSlots.map((id) => id.toString());
+        if (participantIds.includes(userId.toString())) {
+          return;
+        }
+
+        if (challenge.filledSlots.length >= challenge.totalSlots) {
+          throw Object.assign(new Error("This challenge has no remaining slots."), { status: 409 });
+        }
+
+        challenge.filledSlots.push(userId);
+        challenge.paymentRef = txRef;
+        await challenge.save({ session });
+      });
+    } finally {
+      await session.endSession();
+    }
+
+    return res.status(200).json({
+      message: "Payment confirmed and slot reserved.",
+      challenge,
+      remainingSlots: challenge.totalSlots - challenge.filledSlots.length,
+    });
+  } catch (error) {
+    console.error("verifyEqubPayment error:", error.response?.data || error.message);
+    return res.status(error.status || 502).json({
+      message: error.message || "Unable to verify payment.",
+    });
+  }
+};
 export const joinEqubChallenge = async (req, res) => {
   const userId = req.user?._id || req.user?.id;
   const { challengeId, paymentRef } = req.body;
@@ -179,3 +339,4 @@ export const joinEqubChallenge = async (req, res) => {
     await session.endSession();
   }
 };
+
