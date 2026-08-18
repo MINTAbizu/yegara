@@ -14,9 +14,10 @@ const router = express.Router();
 
 router.post("/create", protect, upload.single("image"), addphyshicalProduct);
 router.get("/", getApprovedProducts);
-router.get("/admin", getAllProductsAdmin);
+router.get("/admin", protect, getAllProductsAdmin);
 router.patch("/toggle-status/:id", protect, toggleStatus);
 router.get("/:id/stats", getproductProductWithSellerStats);
 router.get("/:id", getphysicalProductById);
 
 export default router;
+

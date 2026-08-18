@@ -1,143 +1,115 @@
-import physicalProduct from "../../model/physicalproduct/physicalprosuct.model.js"
+import physicalProduct from "../../model/physicalproduct/physicalprosuct.model.js";
 
 export const addphyshicalProduct = async (req, res) => {
   try {
     const { productName, price, description, telegram, drive, dropbox, productLink } = req.body;
- const imageUrl = req.file?.path; 
-    if (!req.file) return res.status(400).json({ message: "Product image is required" });
+    const imageUrl = req.file?.path;
 
-    
-    // const image = `/uploads/digitalProducts/${req.file.filename}`; // store relative path
+    if (!req.file) {
+      return res.status(400).json({ message: "Product image is required" });
+    }
 
     const newProduct = new physicalProduct({
       productName,
       price,
       description,
-      image:imageUrl,
+      image: imageUrl,
       telegram,
       drive,
-       seller: req.user._id, // get seller ID from auth
+      seller: req.user._id,
       dropbox,
       productLink,
     });
 
-    // await newProduct.save();
-
     const saved = await newProduct.save();
-    res.status(201).json({ message: "physical product added successfully", product: saved });
+    return res.status(201).json({ message: "physical product added successfully", product: saved });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error", error });
+    return res.status(500).json({ message: "Server Error", error });
   }
 };
 
 export const getApprovedProducts = async (req, res) => {
   try {
     const products = await physicalProduct.find({ status: "approved" }).populate("seller", "name email");
-    res.status(200).json(products);
+    return res.status(200).json(products);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error", error });
+    return res.status(500).json({ message: "Server Error", error });
   }
 };
-
 
 export const toggleStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await physicalProduct.findById(id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    const { status } = req.body;
+    const allowedStatuses = ["pending", "approved", "rejected"];
 
-    // Simple toggle: pending → approved, approved → rejected, rejected → approved
-    if (product.status === "pending" || product.status === "rejected") {
-      product.status = "approved";
-    } else if (product.status === "approved") {
-      product.status = "rejected";
+    if (status && !allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid product status" });
     }
 
+    const product = await physicalProduct.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.status = status || (product.status === "approved" ? "rejected" : "approved");
     await product.save();
-    res.status(200).json({ message: "Status updated successfully", product });
+
+    return res.status(200).json({ message: "Status updated successfully", product });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error", error });
+    return res.status(500).json({ message: "Server Error", error });
   }
 };
-
 
 export const getAllProductsAdmin = async (req, res) => {
   try {
     const products = await physicalProduct.find().populate("seller", "name email");
-    res.status(200).json(products);
+    return res.status(200).json(products);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error", error });
+    return res.status(500).json({ message: "Server Error", error });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 export const getSingleProduct = async (req, res) => {
   try {
-    const product = await physicalProduct.findById(req.params.id)
-      .populate("seller", "name email");
-
-    res.json(product);
+    const product = await physicalProduct.findById(req.params.id).populate("seller", "name email");
+    return res.json(product);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const getphysicalProductById = async (req, res) => {
   try {
-    const product = await physicalProduct.findById(req.params.id)
-      .populate("seller", "name email"); // populate seller info
+    const product = await physicalProduct.findById(req.params.id).populate("seller", "name email");
 
-    if (!product) return res.status(404).json({ message: "Product not found" });
-    res.json(product);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    return res.json(product);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-// controllers/digitalProduct.controller/digitalProductDetail.controller.js
-
-// Get single digital product with seller stats
 export const getproductProductWithSellerStats = async (req, res) => {
   try {
     const product = await physicalProduct.findById(req.params.id).populate("seller", "name email");
 
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
 
-    // Count total products uploaded by seller
     const totalProducts = await physicalProduct.countDocuments({ seller: product.seller._id, status: "approved" });
+    const soldProducts = await physicalProduct.countDocuments({ seller: product.seller._id, status: "sold" });
 
-    // Count sold products (adjust according to your schema)
-    const soldProducts = await physicalProduct.countDocuments({ seller: product.seller._id, status: "sold" }); 
-
-    res.json({ product, sellerStats: { totalProducts, soldProducts } });
+    return res.json({ product, sellerStats: { totalProducts, soldProducts } });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
-
