@@ -51,9 +51,10 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        setUser(res.data.user);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        if (res.data.user?.role) localStorage.setItem("role", res.data.user.role);
+        const currentUser = res.data.user || res.data;
+        setUser(currentUser);
+        localStorage.setItem("user", JSON.stringify(currentUser));
+        if (currentUser?.role) localStorage.setItem("role", currentUser.role);
       })
       .catch((err) => {
         if (err.response?.status === 401) logout();
@@ -96,10 +97,11 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.get(`${API_URL}/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUser(res.data.user);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      if (res.data.user?.role) localStorage.setItem("role", res.data.user.role);
-      return res.data.user;
+      const currentUser = res.data.user || res.data;
+      setUser(currentUser);
+      localStorage.setItem("user", JSON.stringify(currentUser));
+      if (currentUser?.role) localStorage.setItem("role", currentUser.role);
+      return currentUser;
     } catch (err) {
       console.error(err);
       if (err.response?.status === 401) logout();
@@ -116,3 +118,4 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => useContext(AuthContext);
 export default AuthProvider;
+
