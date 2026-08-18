@@ -10,7 +10,7 @@ import { ClipLoader } from "react-spinners";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const FullMultiStepKYC = () => {
-  const { currentUser, refreshUser } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
@@ -35,15 +35,15 @@ const FullMultiStepKYC = () => {
   });
 
   const [verificationStatus, setVerificationStatus] = useState(
-    currentUser?.verificationStatus || "Pending"
+    user?.verificationStatus || "Pending"
   );
 
   // Sync verification status
   useEffect(() => {
-    if (currentUser?.verificationStatus) {
-      setVerificationStatus(currentUser.verificationStatus);
+    if (user?.verificationStatus) {
+      setVerificationStatus(user.verificationStatus);
     }
-  }, [currentUser]);
+  }, [user]);
 
   // Auto refresh every 30s
   useEffect(() => {
@@ -113,7 +113,8 @@ const FullMultiStepKYC = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("Please login first");
-      return navigate("/login");
+      logout?.();
+      return navigate("/login", { replace: true });
     }
 
     const data = new FormData();
@@ -137,10 +138,21 @@ const FullMultiStepKYC = () => {
       toast.dismiss(loadingToast);
 
       if (res.ok) {
-        toast.success("KYC submitted successfully 🎉");
-        await refreshUser();
+        toast.success("KYC submitted successfully");
+        const refreshedUser = await refreshUser();
+        if (!refreshedUser) {
+          toast.error("Your session expired. Please login again.");
+          navigate("/login", { replace: true });
+          return;
+        }
         navigate("/orders", { replace: true });
       } else {
+        if (res.status === 401) {
+          logout?.();
+          toast.error("Your session expired. Please login again.");
+          navigate("/login", { replace: true });
+          return;
+        }
         toast.error(result.message || "KYC submission failed");
       }
     } catch (error) {
@@ -267,3 +279,4 @@ const FullMultiStepKYC = () => {
 };
 
 export default FullMultiStepKYC;
+
