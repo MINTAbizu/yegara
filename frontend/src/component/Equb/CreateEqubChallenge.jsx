@@ -12,10 +12,7 @@ const initialFormData = {
   description: "",
   fundingType: "FLEXIBLE",
   productId: "",
-  productName: "",
-  productPrice: "",
-  productImage: "",
-  totalSlots: "",
+    totalSlots: "",
   slotPrice: "",
   expiresAt: "",
 };
@@ -49,15 +46,11 @@ const CreateEqubChallenge = () => {
         ...formData,
         totalSlots: Number(formData.totalSlots),
         slotPrice: Number(formData.slotPrice),
-        productPrice: formData.productPrice ? Number(formData.productPrice) : undefined,
-      };
+              };
 
       if (!isProductLocked) {
         payload.productId = undefined;
-        payload.productName = undefined;
-        payload.productPrice = undefined;
-        payload.productImage = undefined;
-      }
+              }
 
       const res = await axios.post(`${API_URL}/api/equb/create`, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -122,26 +115,7 @@ const CreateEqubChallenge = () => {
 
                     {isProductLocked && (
                       <div className="border rounded-3 p-3 mb-3 bg-light">
-                        <h6 className="fw-bold mb-3">Specific product billing</h6>
-                        <div className="row">
-                          <div className="col-md-6 mb-3">
-                            <label className="form-label">Product name</label>
-                            <input type="text" className="form-control" name="productName" value={formData.productName} onChange={handleChange} placeholder="MacBook Pro M3" required={isProductLocked} />
-                          </div>
-                          <div className="col-md-6 mb-3">
-                            <label className="form-label">Product price</label>
-                            <input type="number" className="form-control" name="productPrice" min="1" value={formData.productPrice} onChange={handleChange} required={isProductLocked} />
-                          </div>
-                          <div className="col-12 mb-1">
-                            <label className="form-label">Existing product ID or image URL</label>
-                            <div className="row g-2">
-                              <div className="col-md-6"><input type="text" className="form-control" name="productId" value={formData.productId} onChange={handleChange} placeholder="Optional approved product ID" /></div>
-                              <div className="col-md-6"><input type="url" className="form-control" name="productImage" value={formData.productImage} onChange={handleChange} placeholder="Optional product image URL" /></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                        <h6 className="fw-bold mb-3">Specific product billing</h6>`r`n                        <label className="form-label">Approved product ID</label>`r`n                        <input type="text" className="form-control" name="productId" value={formData.productId} onChange={handleChange} placeholder="Paste the approved physical product ID" required={isProductLocked} />`r`n                        <small className="text-muted d-block mt-2">The winner checkout will be locked to this product only.</small>`r`n                      </div>`r`n                    )}
 
                     <div className="row">
                       <div className="col-md-6 mb-3">
@@ -179,3 +153,4 @@ const CreateEqubChallenge = () => {
 };
 
 export default CreateEqubChallenge;
+

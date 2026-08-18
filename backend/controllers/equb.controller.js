@@ -3,30 +3,19 @@ import EqubChallenge from "../models/EqubChallenge.model.js";
 import PhysicalProduct from "../model/physicalproduct/physicalprosuct.model.js";
 
 const FUNDING_TYPES = ["FLEXIBLE", "PRODUCT_LOCKED"];
+const productFields = "productName price image status";
+const userFields = "name email";
 
 export const createEqubChallenge = async (req, res) => {
   const userId = req.user?._id || req.user?.id;
-  const {
-    title,
-    description,
-    fundingType = "FLEXIBLE",
-    productId,
-    productName,
-    productPrice,
-    productImage,
-    totalSlots,
-    slotPrice,
-    expiresAt,
-  } = req.body;
+  const { title, description, fundingType = "FLEXIBLE", productId, totalSlots, slotPrice, expiresAt } = req.body;
 
   if (!userId) {
     return res.status(401).json({ message: "Authentication required." });
   }
 
   if (!title || !description || !totalSlots || !slotPrice || !expiresAt) {
-    return res.status(400).json({
-      message: "title, description, totalSlots, slotPrice, and expiresAt are required.",
-    });
+    return res.status(400).json({ message: "title, description, totalSlots, slotPrice, and expiresAt are required." });
   }
 
   const normalizedFundingType = FUNDING_TYPES.includes(fundingType) ? fundingType : "FLEXIBLE";
@@ -46,7 +35,9 @@ export const createEqubChallenge = async (req, res) => {
     return res.status(400).json({ message: "expiresAt must be a future date." });
   }
 
-  if (normalizedFundingType === "PRODUCT_LOCKED" && !productId) {`r`n    return res.status(400).json({ message: "An approved productId is required for crowdfunding billing challenges." });`r`n  }
+  if (normalizedFundingType === "PRODUCT_LOCKED" && !productId) {
+    return res.status(400).json({ message: "An approved productId is required for crowdfunding billing challenges." });
+  }
 
   try {
     let product = null;
@@ -57,23 +48,21 @@ export const createEqubChallenge = async (req, res) => {
       }
 
       product = await PhysicalProduct.findById(productId).lean();
-      if (normalizedFundingType === "PRODUCT_LOCKED" && !product) {
+      if (!product) {
         return res.status(404).json({ message: "Selected product was not found." });
       }
     }
-
-    const snapshot = {
-      name: product?.productName || productName || null,
-      price: product?.price ?? (productPrice ? Number(productPrice) : null),
-      image: product?.image || productImage || null,
-    };
 
     const challenge = await EqubChallenge.create({
       title: title.trim(),
       description: description.trim(),
       fundingType: normalizedFundingType,
-      productId: product?._id || (normalizedFundingType === "PRODUCT_LOCKED" ? null : productId || null),
-      productSnapshot: snapshot,
+      productId: product?._id || null,
+      productSnapshot: {
+        name: product?.productName || null,
+        price: product?.price ?? null,
+        image: product?.image || null,
+      },
       creatorId: userId,
       vendorId: product?.seller || userId,
       totalSlots: parsedSlots,
@@ -84,42 +73,32 @@ export const createEqubChallenge = async (req, res) => {
       winnerRedemption: {
         type: normalizedFundingType === "PRODUCT_LOCKED" ? "PRODUCT_CHECKOUT" : "MARKETPLACE_CREDIT",
         amount: parsedSlots * parsedPrice,
-        productId: product?._id || null,
+        productId: normalizedFundingType === "PRODUCT_LOCKED" ? product._id : null,
         status: "NOT_READY",
       },
     });
 
-    return res.status(201).json({
-      message: "Crowdfunded challenge created successfully.",
-      challenge,
-    });
+    return res.status(201).json({ message: "Crowdfunded challenge created successfully.", challenge });
   } catch (error) {
     console.error("createEqubChallenge error:", error);
-    return res.status(500).json({
-      message: error?.message || "Unable to create crowdfunded challenge.",
-    });
+    return res.status(500).json({ message: error?.message || "Unable to create crowdfunded challenge." });
   }
 };
 
 export const getActiveChallenges = async (req, res) => {
   try {
-    const challenges = await EqubChallenge.find({
-      status: "PENDING",
-      expiresAt: { $gt: new Date() },
-    })
-      .populate("creatorId", "name email")
-      .populate("vendorId", "name email")
-      .populate("productId", "productName price image status")`r`n      .populate("filledSlots", "name email")
+    const challenges = await EqubChallenge.find({ status: "PENDING", expiresAt: { $gt: new Date() } })
+      .populate("creatorId", userFields)
+      .populate("vendorId", userFields)
+      .populate("productId", productFields)
+      .populate("filledSlots", userFields)
       .sort({ createdAt: -1 })
       .limit(12);
 
     return res.status(200).json(Array.isArray(challenges) ? challenges : []);
   } catch (error) {
     console.error("getActiveChallenges error:", error);
-    return res.status(500).json({
-      message: error?.message || "Unable to fetch active challenges.",
-      challenges: [],
-    });
+    return res.status(500).json({ message: error?.message || "Unable to fetch active challenges.", challenges: [] });
   }
 };
 
@@ -132,11 +111,11 @@ export const getEqubChallengeById = async (req, res) => {
 
   try {
     const challenge = await EqubChallenge.findById(challengeId)
-      .populate("creatorId", "name email")
-      .populate("vendorId", "name email")
-      .populate("productId", "productName price image status")
-      .populate("filledSlots", "name email")
-      .populate("winnerId", "name email");
+      .populate("creatorId", userFields)
+      .populate("vendorId", userFields)
+      .populate("productId", productFields)
+      .populate("filledSlots", userFields)
+      .populate("winnerId", userFields);
 
     if (!challenge) {
       return res.status(404).json({ message: "Challenge was not found." });
@@ -148,6 +127,7 @@ export const getEqubChallengeById = async (req, res) => {
     return res.status(500).json({ message: error?.message || "Unable to fetch challenge." });
   }
 };
+
 export const joinEqubChallenge = async (req, res) => {
   const userId = req.user?._id || req.user?.id;
   const { challengeId, paymentRef } = req.body;
@@ -170,11 +150,7 @@ export const joinEqubChallenge = async (req, res) => {
     let challenge;
 
     await session.withTransaction(async () => {
-      challenge = await EqubChallenge.findOne({
-        _id: challengeId,
-        status: "PENDING",
-        expiresAt: { $gt: new Date() },
-      }).session(session);
+      challenge = await EqubChallenge.findOne({ _id: challengeId, status: "PENDING", expiresAt: { $gt: new Date() } }).session(session);
 
       if (!challenge) {
         throw Object.assign(new Error("This challenge is no longer active or was not found."), { status: 400 });
@@ -195,18 +171,11 @@ export const joinEqubChallenge = async (req, res) => {
       await challenge.save({ session });
     });
 
-    return res.status(200).json({
-      message: "Slot reserved successfully.",
-      challenge,
-      remainingSlots: challenge.totalSlots - challenge.filledSlots.length,
-    });
+    return res.status(200).json({ message: "Slot reserved successfully.", challenge, remainingSlots: challenge.totalSlots - challenge.filledSlots.length });
   } catch (error) {
     const statusCode = error?.status || 500;
-    return res.status(statusCode).json({
-      message: error?.message || "Unable to process Equb slot reservation.",
-    });
+    return res.status(statusCode).json({ message: error?.message || "Unable to process Equb slot reservation." });
   } finally {
     await session.endSession();
   }
 };
-

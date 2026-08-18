@@ -77,7 +77,7 @@ function App() {
           <Route path="/UpgradePro" element={<UpgradePro  />} />
           <Route path="/equb-demo" element={<EqubChallengeDemo />} />
           <Route path="/equb/payment-callback" element={<EqubPaymentCallback />} />
-          <Route path="/AdvancedEqubWheel" element={
+          <Route path="/AdvancedEqubWheel/:challengeId?" element={
 
             <AdvancedEqubWheel  
             // particepants={apidata.particepants}
@@ -352,5 +352,6 @@ function App() {
 }
 
 export default App;
+
 
 
