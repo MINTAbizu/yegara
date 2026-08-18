@@ -9,7 +9,7 @@ import fs from "fs";
 import path from "path";
 
 import digitalProductRoutes from "./route/digitalProduct.route/digitalProduct.route.js";
-// import physicalProductRoutes from "./route/physhicalproduct/phshicalproduct.js";
+import physicalProductRoutes from "./route/physhicalproduct/phshicalproduct.js";
 import userregister from "./route/user.route/user.route.js";
 import chapapayment from "./route/payments/payment.route.js";
 // kyc
@@ -86,7 +86,7 @@ app.use("/uploads/bookProducts", express.static(booksProductUploadPath));
 
 // Routes
 app.use("/api/digital-products", digitalProductRoutes);
-// app.use("/api/physical-products", physicalProductRoutes);
+app.use("/api/physical-products", physicalProductRoutes);
 app.use("/api/users", userregister);
 // app.use('/api',socialmedia)
 // kyc
@@ -127,3 +127,4 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+

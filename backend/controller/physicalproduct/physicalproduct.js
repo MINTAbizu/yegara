@@ -24,8 +24,6 @@ export const addphyshicalProduct = async (req, res) => {
     // await newProduct.save();
 
     const saved = await newProduct.save();
-    res.status(201).json(saved);
-
     res.status(201).json({ message: "physical product added successfully", product: saved });
   } catch (error) {
     console.error(error);
@@ -142,3 +140,4 @@ export const getproductProductWithSellerStats = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+

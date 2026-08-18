@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -20,18 +20,53 @@ const initialFormData = {
 const CreateEqubChallenge = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialFormData);
+  const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const isProductLocked = formData.fundingType === "PRODUCT_LOCKED";
+  const selectedProduct = products.find((product) => product._id === formData.productId);
   const projectedPool = Number(formData.totalSlots || 0) * Number(formData.slotPrice || 0);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setProductsLoading(true);
+        const res = await axios.get(`${API_URL}/api/physical-products`);
+        setProducts(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error(err);
+        toast.error("Unable to load approved products.");
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFundingTypeChange = (e) => {
+    const fundingType = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      fundingType,
+      productId: fundingType === "PRODUCT_LOCKED" ? prev.productId : "",
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isProductLocked && !formData.productId) {
+      toast.error("Please select the product for crowdfunding billing.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -44,13 +79,10 @@ const CreateEqubChallenge = () => {
 
       const payload = {
         ...formData,
+        productId: isProductLocked ? formData.productId : undefined,
         totalSlots: Number(formData.totalSlots),
         slotPrice: Number(formData.slotPrice),
       };
-
-      if (!isProductLocked) {
-        payload.productId = undefined;
-      }
 
       const res = await axios.post(`${API_URL}/api/equb/create`, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -78,7 +110,7 @@ const CreateEqubChallenge = () => {
                   <div className="mb-4">
                     <h3 className="fw-bold mb-1">Create Crowdfunding Round</h3>
                     <p className="text-muted mb-0">
-                      Choose open crowdfunding for flexible winner purchases, or crowdfunding billing for one specific approved product.
+                      Choose open crowdfunding, or lock the winner checkout to one approved marketplace product.
                     </p>
                   </div>
 
@@ -88,14 +120,14 @@ const CreateEqubChallenge = () => {
                       <div className="row g-3">
                         <div className="col-md-6">
                           <label className={`border rounded-3 p-3 h-100 d-block ${!isProductLocked ? "border-primary bg-primary-subtle" : ""}`}>
-                            <input type="radio" name="fundingType" value="FLEXIBLE" checked={!isProductLocked} onChange={handleChange} className="form-check-input me-2" />
+                            <input type="radio" name="fundingType" value="FLEXIBLE" checked={!isProductLocked} onChange={handleFundingTypeChange} className="form-check-input me-2" />
                             <strong>Crowdfunding</strong>
                             <small className="d-block text-muted mt-1">Winner can buy any eligible product after settlement.</small>
                           </label>
                         </div>
                         <div className="col-md-6">
                           <label className={`border rounded-3 p-3 h-100 d-block ${isProductLocked ? "border-primary bg-primary-subtle" : ""}`}>
-                            <input type="radio" name="fundingType" value="PRODUCT_LOCKED" checked={isProductLocked} onChange={handleChange} className="form-check-input me-2" />
+                            <input type="radio" name="fundingType" value="PRODUCT_LOCKED" checked={isProductLocked} onChange={handleFundingTypeChange} className="form-check-input me-2" />
                             <strong>Crowdfunding Billing</strong>
                             <small className="d-block text-muted mt-1">Winner checkout is locked to one approved product.</small>
                           </label>
@@ -116,8 +148,28 @@ const CreateEqubChallenge = () => {
                     {isProductLocked && (
                       <div className="border rounded-3 p-3 mb-3 bg-light">
                         <h6 className="fw-bold mb-3">Specific product billing</h6>
-                        <label className="form-label">Approved product ID</label>
-                        <input type="text" className="form-control" name="productId" value={formData.productId} onChange={handleChange} placeholder="Paste the approved physical product ID" required={isProductLocked} />
+                        <label className="form-label">Select approved product</label>
+                        <select className="form-select" name="productId" value={formData.productId} onChange={handleChange} required disabled={productsLoading}>
+                          <option value="">{productsLoading ? "Loading products..." : "Choose a product"}</option>
+                          {products.map((product) => (
+                            <option key={product._id} value={product._id}>
+                              {product.productName} - {Number(product.price || 0).toLocaleString()} ETB
+                            </option>
+                          ))}
+                        </select>
+                        {!productsLoading && products.length === 0 && (
+                          <small className="text-danger d-block mt-2">No approved physical products are available yet.</small>
+                        )}
+                        {selectedProduct && (
+                          <div className="d-flex gap-3 align-items-center mt-3 p-2 bg-white border rounded-3">
+                            {selectedProduct.image && <img src={selectedProduct.image} alt={selectedProduct.productName} style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 8 }} />}
+                            <div>
+                              <strong className="d-block">{selectedProduct.productName}</strong>
+                              <small className="text-muted d-block">Price: {Number(selectedProduct.price || 0).toLocaleString()} ETB</small>
+                              <small className="text-muted d-block">Seller: {selectedProduct.seller?.name || "Marketplace seller"}</small>
+                            </div>
+                          </div>
+                        )}
                         <small className="text-muted d-block mt-2">The winner checkout will be locked to this product only.</small>
                       </div>
                     )}
@@ -143,7 +195,7 @@ const CreateEqubChallenge = () => {
                       <input type="datetime-local" className="form-control" name="expiresAt" value={formData.expiresAt} onChange={handleChange} required />
                     </div>
 
-                    <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+                    <button type="submit" className="btn btn-primary w-100" disabled={loading || (isProductLocked && products.length === 0)}>
                       {loading ? "Creating..." : "Create Crowdfunding Round"}
                     </button>
                   </form>
