@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/Authcontext";
 import DashboardLayout from "./DashboardLayout";
@@ -10,12 +10,11 @@ import { ClipLoader } from "react-spinners";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const FullMultiStepKYC = () => {
-  const { user, refreshUser, logout } = useAuth();
+  const { user, loading: authLoading, refreshUser, logout } = useAuth();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [formData, setFormData] = useState({
     fullName: "",
     dob: "",
@@ -33,19 +32,29 @@ const FullMultiStepKYC = () => {
     phone: "",
     email: "",
   });
+  const [verificationStatus, setVerificationStatus] = useState(user?.verificationStatus || "Pending");
 
-  const [verificationStatus, setVerificationStatus] = useState(
-    user?.verificationStatus || "Pending"
-  );
+  useEffect(() => {
+    if (authLoading) return;
 
-  // Sync verification status
+    const token = localStorage.getItem("token");
+    if (!token || !user) {
+      logout?.();
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    if (user.kycSubmitted === true) {
+      navigate("/orders", { replace: true });
+    }
+  }, [authLoading, user, navigate, logout]);
+
   useEffect(() => {
     if (user?.verificationStatus) {
       setVerificationStatus(user.verificationStatus);
     }
   }, [user]);
 
-  // Auto refresh every 30s
   useEffect(() => {
     const interval = setInterval(async () => {
       await refreshUser();
@@ -55,10 +64,7 @@ const FullMultiStepKYC = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: files ? files[0] : value }));
   };
 
   const validateStep = () => {
@@ -71,25 +77,8 @@ const FullMultiStepKYC = () => {
     }
 
     if (step === 2) {
-      const {
-        faceId,
-        idType,
-        idFront,
-        idBack,
-        idNumber,
-        issueDate,
-        expireDate,
-      } = formData;
-
-      if (
-        !faceId ||
-        !idType ||
-        !idFront ||
-        !idBack ||
-        !idNumber ||
-        !issueDate ||
-        !expireDate
-      ) {
+      const { faceId, idType, idFront, idBack, idNumber, issueDate, expireDate } = formData;
+      if (!faceId || !idType || !idFront || !idBack || !idNumber || !issueDate || !expireDate) {
         toast.warning("Please fill all fields in Step 2");
         return false;
       }
@@ -103,8 +92,8 @@ const FullMultiStepKYC = () => {
     return true;
   };
 
-  const nextStep = () => validateStep() && setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
+  const nextStep = () => validateStep() && setStep((prev) => prev + 1);
+  const prevStep = () => setStep((prev) => prev - 1);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -114,26 +103,21 @@ const FullMultiStepKYC = () => {
     if (!token) {
       toast.error("Please login first");
       logout?.();
-      return navigate("/login", { replace: true });
+      navigate("/login", { replace: true });
+      return;
     }
 
     const data = new FormData();
-    Object.keys(formData).forEach((key) =>
-      data.append(key, formData[key])
-    );
+    Object.keys(formData).forEach((key) => data.append(key, formData[key]));
 
     try {
       setIsSubmitting(true);
       const loadingToast = toast.loading("Submitting KYC, please wait...");
-
       const res = await fetch(`${API_URL}/api/kyc/submit-kyc`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: data,
       });
-
       const result = await res.json();
       toast.dismiss(loadingToast);
 
@@ -146,15 +130,17 @@ const FullMultiStepKYC = () => {
           return;
         }
         navigate("/orders", { replace: true });
-      } else {
-        if (res.status === 401) {
-          logout?.();
-          toast.error("Your session expired. Please login again.");
-          navigate("/login", { replace: true });
-          return;
-        }
-        toast.error(result.message || "KYC submission failed");
+        return;
       }
+
+      if (res.status === 401) {
+        logout?.();
+        toast.error("Your session expired. Please login again.");
+        navigate("/login", { replace: true });
+        return;
+      }
+
+      toast.error(result.message || "KYC submission failed");
     } catch (error) {
       console.error(error);
       toast.error("Server error");
@@ -163,21 +149,23 @@ const FullMultiStepKYC = () => {
     }
   };
 
+  if (authLoading || user?.kycSubmitted === true) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <DashboardLayout>
       <ToastContainer position="top-right" autoClose={3000} />
 
-      {/* Status */}
       <div className="text-center mb-3">
-        <span style={{ color: "red", marginRight: 10 }}>
-          Complete all KYC steps to access your dashboard
-        </span>
-        <span
-          style={{
-            color: verificationStatus === "Verified" ? "green" : "orange",
-            fontWeight: "bold",
-          }}
-        >
+        <span style={{ color: "red", marginRight: 10 }}>Complete all KYC steps to access your dashboard</span>
+        <span style={{ color: verificationStatus === "Verified" ? "green" : "orange", fontWeight: "bold" }}>
           <FaCheckCircle className="me-1" />
           {verificationStatus}
         </span>
@@ -187,11 +175,7 @@ const FullMultiStepKYC = () => {
         <div className="card shadow p-3" style={{ maxWidth: 500, width: "100%" }}>
           <div className="card-body">
             <h4 className="text-center mb-4">
-              {step === 1
-                ? "KYC Profile"
-                : step === 2
-                ? "Identity Verification"
-                : "Contact Information"}
+              {step === 1 ? "KYC Profile" : step === 2 ? "Identity Verification" : "Contact Information"}
             </h4>
 
             <form onSubmit={handleSubmit}>
@@ -241,32 +225,11 @@ const FullMultiStepKYC = () => {
               )}
 
               <div className="d-flex justify-content-between mt-3">
-                {step > 1 && (
-                  <button type="button" className="btn btn-secondary" onClick={prevStep}>
-                    Previous
-                  </button>
-                )}
-
-                {step < 3 && (
-                  <button type="button" className="btn btn-primary ms-auto" onClick={nextStep}>
-                    Next
-                  </button>
-                )}
-
+                {step > 1 && <button type="button" className="btn btn-secondary" onClick={prevStep}>Previous</button>}
+                {step < 3 && <button type="button" className="btn btn-primary ms-auto" onClick={nextStep}>Next</button>}
                 {step === 3 && (
-                  <button
-                    type="submit"
-                    className="btn btn-success ms-auto d-flex align-items-center"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <ClipLoader size={18} />
-                        <span className="ms-2">Submitting...</span>
-                      </>
-                    ) : (
-                      "Submit"
-                    )}
+                  <button type="submit" className="btn btn-success ms-auto d-flex align-items-center" disabled={isSubmitting}>
+                    {isSubmitting ? <><ClipLoader size={18} /><span className="ms-2">Submitting...</span></> : "Submit"}
                   </button>
                 )}
               </div>
@@ -279,4 +242,3 @@ const FullMultiStepKYC = () => {
 };
 
 export default FullMultiStepKYC;
-
