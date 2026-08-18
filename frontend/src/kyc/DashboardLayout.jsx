@@ -13,6 +13,7 @@ import {
   FaQuestionCircle,
   FaBars,
   FaTimes,
+  FaGift,
 } from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
@@ -34,6 +35,7 @@ const DashboardLayout = ({ children }) => {
     { name: "View Page", path: "/Viewpage", icon: <FaEye /> },
     { name: "Shope(ሱቅ ክፈት)", path: "/orders", icon: <FaEye /> },
     { name: "Setting", path: "/Settings", icon: <FaCog /> },
+    { name: "Bounty Link", path: "/referral-bounty", icon: <FaGift /> },
     { name: "Bank", path: "/Bank", icon: <FaUniversity /> },
     { name: "Payments", path: "/payments", icon: <FaMoneyCheckAlt /> },
     { name: "Help", path: "/help", icon: <FaQuestionCircle /> },

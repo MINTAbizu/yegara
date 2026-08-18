@@ -41,6 +41,12 @@ const Register = () => {
 
     try {
       let payload = { ...formData };
+      const searchParams = new URLSearchParams(location.search);
+      const referralCode = searchParams.get("ref") || localStorage.getItem("referralCode");
+
+      if (referralCode) {
+        payload.referralCode = referralCode;
+      }
 
       const adminEmails = [
         "aminteadminsseesss12@yegna.com",
@@ -60,7 +66,7 @@ const Register = () => {
       toast.success("Registration successful! 🎉");
 
       // Handle redirect logic
-      const searchParams = new URLSearchParams(location.search);
+      if (referralCode) localStorage.removeItem("referralCode");
       const redirectTo = searchParams.get("redirect");
       const rateProductId = searchParams.get("rate");
 

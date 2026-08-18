@@ -57,6 +57,8 @@ import CreateEqubChallenge from './component/Equb/CreateEqubChallenge';
 import AdvancedEqubWheel from './component/Equb/AdvancedEqubWheel/AdvancedEqubWheel';
 import EqubPaymentCallback from './component/Equb/EqubPaymentCallback';
 import CrowdfundedProductsList from './component/Equb/CrowdfundedProductsList';
+import ReferralLanding from './pages/ReferralLanding';
+import ReferralBounty from './component/Rewardcard/ReferralBounty';
 
 
 function App() {
@@ -69,6 +71,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Landingpage />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/r/:code" element={<ReferralLanding />} />
           <Route path="/login" element={<Login />} />
           <Route path="/TelegeramLanding" element={<TelegeramLanding />} />
           <Route path="/Telegram" element={<Telegram />} />
@@ -76,7 +79,8 @@ function App() {
           <Route path="/UserExample" element={<UserExample />} />
           <Route path="/Userprofiless" element={<Userprofile />} />
           <Route path="/UpgradePro" element={<UpgradePro  />} />
-          <Route path="/equb-demo" element={<EqubChallengeDemo />} />`r`n          <Route path="/crowdfunding" element={<CrowdfundedProductsList />} />
+          <Route path="/equb-demo" element={<EqubChallengeDemo />} />
+          <Route path="/crowdfunding" element={<CrowdfundedProductsList />} />
           <Route path="/equb/payment-callback" element={<EqubPaymentCallback />} />
           <Route path="/AdvancedEqubWheel/:challengeId?" element={
 
@@ -165,6 +169,16 @@ function App() {
               // </ProtectedRoute>
             }   
           />   
+            <Route
+            path="/referral-bounty"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <ReferralBounty />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
             <Route
             path="/Bank"
             element={
