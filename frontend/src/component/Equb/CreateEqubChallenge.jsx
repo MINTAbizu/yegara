@@ -12,7 +12,7 @@ const initialFormData = {
   description: "",
   fundingType: "FLEXIBLE",
   productId: "",
-    totalSlots: "",
+  totalSlots: "",
   slotPrice: "",
   expiresAt: "",
 };
@@ -46,11 +46,11 @@ const CreateEqubChallenge = () => {
         ...formData,
         totalSlots: Number(formData.totalSlots),
         slotPrice: Number(formData.slotPrice),
-              };
+      };
 
       if (!isProductLocked) {
         payload.productId = undefined;
-              }
+      }
 
       const res = await axios.post(`${API_URL}/api/equb/create`, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -78,7 +78,7 @@ const CreateEqubChallenge = () => {
                   <div className="mb-4">
                     <h3 className="fw-bold mb-1">Create Crowdfunding Round</h3>
                     <p className="text-muted mb-0">
-                      Choose open crowdfunding for flexible winner purchases, or crowdfunding billing for one specific product.
+                      Choose open crowdfunding for flexible winner purchases, or crowdfunding billing for one specific approved product.
                     </p>
                   </div>
 
@@ -90,14 +90,14 @@ const CreateEqubChallenge = () => {
                           <label className={`border rounded-3 p-3 h-100 d-block ${!isProductLocked ? "border-primary bg-primary-subtle" : ""}`}>
                             <input type="radio" name="fundingType" value="FLEXIBLE" checked={!isProductLocked} onChange={handleChange} className="form-check-input me-2" />
                             <strong>Crowdfunding</strong>
-                            <small className="d-block text-muted mt-1">Winner can buy any eligible product after the round closes.</small>
+                            <small className="d-block text-muted mt-1">Winner can buy any eligible product after settlement.</small>
                           </label>
                         </div>
                         <div className="col-md-6">
                           <label className={`border rounded-3 p-3 h-100 d-block ${isProductLocked ? "border-primary bg-primary-subtle" : ""}`}>
                             <input type="radio" name="fundingType" value="PRODUCT_LOCKED" checked={isProductLocked} onChange={handleChange} className="form-check-input me-2" />
                             <strong>Crowdfunding Billing</strong>
-                            <small className="d-block text-muted mt-1">Winner checkout is locked to a specific product.</small>
+                            <small className="d-block text-muted mt-1">Winner checkout is locked to one approved product.</small>
                           </label>
                         </div>
                       </div>
@@ -115,7 +115,12 @@ const CreateEqubChallenge = () => {
 
                     {isProductLocked && (
                       <div className="border rounded-3 p-3 mb-3 bg-light">
-                        <h6 className="fw-bold mb-3">Specific product billing</h6>`r`n                        <label className="form-label">Approved product ID</label>`r`n                        <input type="text" className="form-control" name="productId" value={formData.productId} onChange={handleChange} placeholder="Paste the approved physical product ID" required={isProductLocked} />`r`n                        <small className="text-muted d-block mt-2">The winner checkout will be locked to this product only.</small>`r`n                      </div>`r`n                    )}
+                        <h6 className="fw-bold mb-3">Specific product billing</h6>
+                        <label className="form-label">Approved product ID</label>
+                        <input type="text" className="form-control" name="productId" value={formData.productId} onChange={handleChange} placeholder="Paste the approved physical product ID" required={isProductLocked} />
+                        <small className="text-muted d-block mt-2">The winner checkout will be locked to this product only.</small>
+                      </div>
+                    )}
 
                     <div className="row">
                       <div className="col-md-6 mb-3">
@@ -153,4 +158,3 @@ const CreateEqubChallenge = () => {
 };
 
 export default CreateEqubChallenge;
-

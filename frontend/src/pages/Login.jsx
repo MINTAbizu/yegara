@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { useAuth } from "../Context/Authcontext";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,33 +19,20 @@ const Login = () => {
     setMessage("");
 
     try {
-       const adminEmails = ["aminteadmin@yegna.com", "superadminss@yegna.com"];
-       if (adminEmails.includes(formData.email)) {
-        payload.secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
-      }
-      const res = await axios.post(`${API_URL}/api/users/login`, formData);
-                  // const res = await axios.post('http://localhost:5000/api/users/login', formData);
+      const res = await login(formData);
+      const user = res.data.user;
 
-      const { token, user } = res.data;
-console.log("LOGIN RESPONSE:", res.data);
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", user.role);
-
-console.log("LOGIN RESPONSE:", res.data);
-
-      // Redirect based on role
-       if (adminEmails.includes(formData.email)) {
-        navigate("/AdminKYCList");
-      } else {
-        navigate("/RecognitionForm");
+      if (user?.role === "admin") {
+        navigate("/AdminKYCList", { replace: true });
+        return;
       }
 
+      navigate(user?.kycSubmitted ? "/orders" : "/RecognitionForm", { replace: true });
     } catch (err) {
       setMessage(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -59,28 +44,12 @@ console.log("LOGIN RESPONSE:", res.data);
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="form-control"
-              placeholder="Enter your email"
-              required
-            />
+            <input type="email" name="email" value={formData.email} onChange={handleChange} className="form-control" placeholder="Enter your email" required />
           </div>
 
           <div className="mb-3">
             <label className="form-label">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="form-control"
-              placeholder="Enter your password"
-              required
-            />
+            <input type="password" name="password" value={formData.password} onChange={handleChange} className="form-control" placeholder="Enter your password" required />
           </div>
 
           <button type="submit" className="btn btn-primary w-100" disabled={loading}>

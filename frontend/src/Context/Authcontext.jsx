@@ -1,11 +1,25 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const AuthContext = createContext();
 
+const clearStoredAuth = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("role");
+};
+
+const isJwtExpired = (token) => {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp ? payload.exp * 1000 <= Date.now() : false;
+  } catch {
+    return true;
+  }
+};
+
 export const AuthProvider = ({ children }) => {
-  // ✅ Safe initialization from localStorage
   const [user, setUser] = useState(() => {
     try {
       const storedUser = localStorage.getItem("user");
@@ -19,10 +33,15 @@ export const AuthProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(true);
 
-  // Load user on app start
+  const logout = () => {
+    setUser(null);
+    clearStoredAuth();
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
+    if (!token || isJwtExpired(token)) {
+      logout();
       setLoading(false);
       return;
     }
@@ -34,52 +53,44 @@ export const AuthProvider = ({ children }) => {
       .then((res) => {
         setUser(res.data.user);
         localStorage.setItem("user", JSON.stringify(res.data.user));
+        if (res.data.user?.role) localStorage.setItem("role", res.data.user.role);
       })
-      .catch(() => {
-        setUser(null);
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
+      .catch((err) => {
+        if (err.response?.status === 401) logout();
       })
       .finally(() => setLoading(false));
   }, []);
 
-  // Register
   const register = async (data) => {
-    let payload = { ...data };
+    const payload = { ...data };
     const adminEmails = ["adminm@yegara.com", "owner@yegara.com"];
     if (adminEmails.includes(data.email)) {
       payload.secret = "MY_SUPER_SECRET_KEY_2025";
     }
 
     const res = await axios.post(`${API_URL}/api/users/register`, payload);
-
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("user", JSON.stringify(res.data.user));
+    if (res.data.user?.role) localStorage.setItem("role", res.data.user.role);
     setUser(res.data.user);
-
     return res;
   };
 
-  // Login
   const login = async (data) => {
     const res = await axios.post(`${API_URL}/api/users/login`, data);
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("user", JSON.stringify(res.data.user));
+    if (res.data.user?.role) localStorage.setItem("role", res.data.user.role);
     setUser(res.data.user);
     return res;
   };
 
-  // Logout
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  };
-
-  // Refresh user (use after KYC/profile update)
   const refreshUser = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return null;
+    if (!token || isJwtExpired(token)) {
+      logout();
+      return null;
+    }
 
     try {
       const res = await axios.get(`${API_URL}/api/users/me`, {
@@ -87,12 +98,11 @@ export const AuthProvider = ({ children }) => {
       });
       setUser(res.data.user);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (res.data.user?.role) localStorage.setItem("role", res.data.user.role);
       return res.data.user;
     } catch (err) {
       console.error(err);
-      setUser(null);
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      if (err.response?.status === 401) logout();
       return null;
     }
   };
