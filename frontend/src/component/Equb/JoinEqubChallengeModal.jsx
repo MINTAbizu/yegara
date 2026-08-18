@@ -121,6 +121,8 @@ const JoinEqubChallengeModal = ({
     : 0;
   const remainingSlots = challenge.totalSlots - filledCount;
   const creatorName = challenge.creatorId?.name || "Seller";
+  const isProductLocked = challenge.fundingType === "PRODUCT_LOCKED";
+  const productName = challenge.productSnapshot?.name || challenge.productId?.productName || "Selected product";
 
   return (
     <div className="equb-modal-overlay" onClick={onClose}>
@@ -130,7 +132,7 @@ const JoinEqubChallengeModal = ({
       >
         {/* Header */}
         <div className="equb-modal-header">
-          <h5 className="fw-bold mb-0">Join Crowdfunded Challenge</h5>
+          <h5 className="fw-bold mb-0">Join {isProductLocked ? "Crowdfunding Billing" : "Crowdfunding"}</h5>
           <button
             type="button"
             className="btn-close"
@@ -173,12 +175,7 @@ const JoinEqubChallengeModal = ({
                 </span>
               </div>
 
-              <div className="info-row">
-                <span className="info-label">Total Prize Pool</span>
-                <span className="info-value text-primary fw-bold">
-                  {(challenge.slotPrice * challenge.totalSlots).toLocaleString()} ETB
-                </span>
-              </div>
+              <div className="info-row"><span className="info-label">Total Prize Pool</span><span className="info-value text-primary fw-bold">{(challenge.slotPrice * challenge.totalSlots).toLocaleString()} ETB</span></div>{isProductLocked && (<div className="info-row"><span className="info-label">Winner can buy</span><span className="info-value fw-bold text-dark">{productName}</span></div>)}
             </div>
           </div>
 
@@ -204,7 +201,7 @@ const JoinEqubChallengeModal = ({
           <div className="alert alert-info border-0 mb-4">
             <strong>Ready to join?</strong>
             <p className="mb-0 small mt-2">
-              Clicking "Proceed to Payment" will redirect you to our secure payment gateway (Chapa) to complete your {challenge.slotPrice} ETB slot payment. Your participation will be confirmed immediately after successful payment.
+              Clicking "Proceed to Payment" will redirect you to our secure payment gateway (Chapa) to complete your {challenge.slotPrice} ETB slot payment. Your participation will be confirmed immediately after successful payment. The winner will receive {isProductLocked ? `checkout access for ${productName}` : "marketplace purchasing credit"}.
             </p>
           </div>
         </div>
@@ -247,3 +244,5 @@ const JoinEqubChallengeModal = ({
 };
 
 export default JoinEqubChallengeModal;
+
+

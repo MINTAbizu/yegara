@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import CrowdfundTimer from "./CrowdfundTimer";
 import EqubSlotProgress from "./EqubSlotProgress";
 import JoinEqubChallengeModal from "./JoinEqubChallengeModal";
@@ -65,7 +64,7 @@ const CrowdfundedProductsList = () => {
     <div className="container my-5">
       <h3 className="text-center mb-4 fw-bold">Crowdfunded Products</h3>
       <p className="text-center text-muted mb-4">
-        Join hourly Equb challenges to win premium products at group rates.
+        Join flexible crowdfunding rounds or product-specific crowdfunding billing challenges.
       </p>
 
       <div className="row g-4">
@@ -87,9 +86,7 @@ const CrowdfundedProductsList = () => {
                     borderRadius: "12px 12px 0 0",
                   }}
                 >
-                  <span className="badge bg-white text-dark me-2">
-                    Equb Challenge
-                  </span>
+                  <span className="badge bg-white text-dark me-2">{challenge.fundingType === "PRODUCT_LOCKED" ? "Crowdfunding Billing" : "Crowdfunding"}</span>
                   <span className="text-white small">
                     {challenge.status === "PENDING" ? "Active" : challenge.status}
                   </span>
@@ -106,12 +103,7 @@ const CrowdfundedProductsList = () => {
                       : "No description"}
                   </p>
 
-                  <div className="mb-3">
-                    <div className="d-flex justify-content-between mb-2">
-                      <small className="text-muted">Created by</small>
-                      <small className="fw-bold text-dark">{creatorName}</small>
-                    </div>
-                  </div>
+                  <div className="mb-3"><div className="d-flex justify-content-between mb-2"><small className="text-muted">Created by</small><small className="fw-bold text-dark">{creatorName}</small></div>{challenge.fundingType === "PRODUCT_LOCKED" && (<div className="d-flex justify-content-between mb-2"><small className="text-muted">Locked product</small><small className="fw-bold text-dark text-end">{challenge.productSnapshot?.name || challenge.productId?.productName || "Selected product"}</small></div>)}</div>
 
                   <div className="mb-3">
                     <EqubSlotProgress
@@ -167,3 +159,5 @@ const CrowdfundedProductsList = () => {
 };
 
 export default CrowdfundedProductsList;
+
+

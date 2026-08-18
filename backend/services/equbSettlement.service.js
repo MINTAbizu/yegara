@@ -48,6 +48,13 @@ export const settleExpiredEqubChallenges = async () => {
 
           latestChallenge.status = "SUCCESS";
           latestChallenge.winnerId = winnerId;
+          latestChallenge.winnerRedemption = {
+            type: latestChallenge.fundingType === "PRODUCT_LOCKED" ? "PRODUCT_CHECKOUT" : "MARKETPLACE_CREDIT",
+            amount: latestChallenge.slotPrice * latestChallenge.totalSlots,
+            productId: latestChallenge.fundingType === "PRODUCT_LOCKED" ? latestChallenge.productId : null,
+            status: "READY",
+            readyAt: new Date(),
+          };
           await latestChallenge.save({ session });
 
           const losers = filledUserIds.filter((userId) => userId !== winnerId);

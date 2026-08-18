@@ -54,6 +54,8 @@ import UpgradePro from './kyc/UpgradePro';
 import Giftproduct from './ProductDetails/Giftproduct';
 import EqubChallengeDemo from './component/Equb/EqubChallengeDemo';
 import CreateEqubChallenge from './component/Equb/CreateEqubChallenge';
+import AdvancedEqubWheel from './component/Equb/AdvancedEqubWheel/AdvancedEqubWheel';
+import EqubPaymentCallback from './component/Equb/EqubPaymentCallback';
 
 
 function App() {
@@ -74,6 +76,19 @@ function App() {
           <Route path="/Userprofiless" element={<Userprofile />} />
           <Route path="/UpgradePro" element={<UpgradePro  />} />
           <Route path="/equb-demo" element={<EqubChallengeDemo />} />
+          <Route path="/equb/payment-callback" element={<EqubPaymentCallback />} />
+          <Route path="/AdvancedEqubWheel" element={
+
+            <AdvancedEqubWheel  
+            // particepants={apidata.particepants}
+            //                     winnerindex={apidata.winnerindex}
+                                onAnimationComplete={(winner)=>alert("enkwan dess alalchu")}
+
+                                
+                        />
+            
+            } />
+          
 
 
           <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />
@@ -337,3 +352,5 @@ function App() {
 }
 
 export default App;
+
+

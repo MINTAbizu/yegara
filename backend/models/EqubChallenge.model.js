@@ -14,11 +14,22 @@ const equbChallengeSchema = new mongoose.Schema(
       trim: true,
       maxlength: 2000,
     },
+    fundingType: {
+      type: String,
+      enum: ["FLEXIBLE", "PRODUCT_LOCKED"],
+      default: "FLEXIBLE",
+      index: true,
+    },
     productId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
+      ref: "PhysicalProduct",
       default: null,
       index: true,
+    },
+    productSnapshot: {
+      name: { type: String, trim: true, default: null },
+      price: { type: Number, min: 0, default: null },
+      image: { type: String, trim: true, default: null },
     },
     creatorId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -64,6 +75,21 @@ const equbChallengeSchema = new mongoose.Schema(
       ref: "User",
       default: null,
       index: true,
+    },
+    winnerRedemption: {
+      type: {
+        type: String,
+        enum: ["MARKETPLACE_CREDIT", "PRODUCT_CHECKOUT"],
+        default: "MARKETPLACE_CREDIT",
+      },
+      amount: { type: Number, min: 0, default: 0 },
+      productId: { type: mongoose.Schema.Types.ObjectId, ref: "PhysicalProduct", default: null },
+      status: {
+        type: String,
+        enum: ["NOT_READY", "READY", "CLAIMED", "EXPIRED"],
+        default: "NOT_READY",
+      },
+      readyAt: { type: Date, default: null },
     },
     paymentRef: {
       type: String,

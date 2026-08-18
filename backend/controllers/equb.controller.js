@@ -1,9 +1,23 @@
 import mongoose from "mongoose";
 import EqubChallenge from "../models/EqubChallenge.model.js";
+import PhysicalProduct from "../model/physicalproduct/physicalprosuct.model.js";
+
+const FUNDING_TYPES = ["FLEXIBLE", "PRODUCT_LOCKED"];
 
 export const createEqubChallenge = async (req, res) => {
   const userId = req.user?._id || req.user?.id;
-  const { title, description, productId, totalSlots, slotPrice, expiresAt } = req.body;
+  const {
+    title,
+    description,
+    fundingType = "FLEXIBLE",
+    productId,
+    productName,
+    productPrice,
+    productImage,
+    totalSlots,
+    slotPrice,
+    expiresAt,
+  } = req.body;
 
   if (!userId) {
     return res.status(401).json({ message: "Authentication required." });
@@ -15,12 +29,13 @@ export const createEqubChallenge = async (req, res) => {
     });
   }
 
+  const normalizedFundingType = FUNDING_TYPES.includes(fundingType) ? fundingType : "FLEXIBLE";
   const parsedSlots = Number(totalSlots);
   const parsedPrice = Number(slotPrice);
   const expiryDate = new Date(expiresAt);
 
-  if (!Number.isFinite(parsedSlots) || parsedSlots < 1) {
-    return res.status(400).json({ message: "totalSlots must be a number greater than 0." });
+  if (!Number.isInteger(parsedSlots) || parsedSlots < 1) {
+    return res.status(400).json({ message: "totalSlots must be a whole number greater than 0." });
   }
 
   if (!Number.isFinite(parsedPrice) || parsedPrice < 1) {
@@ -31,18 +46,47 @@ export const createEqubChallenge = async (req, res) => {
     return res.status(400).json({ message: "expiresAt must be a future date." });
   }
 
+  if (normalizedFundingType === "PRODUCT_LOCKED" && !productId) {`r`n    return res.status(400).json({ message: "An approved productId is required for crowdfunding billing challenges." });`r`n  }
+
   try {
+    let product = null;
+
+    if (productId) {
+      if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return res.status(400).json({ message: "Invalid productId." });
+      }
+
+      product = await PhysicalProduct.findById(productId).lean();
+      if (normalizedFundingType === "PRODUCT_LOCKED" && !product) {
+        return res.status(404).json({ message: "Selected product was not found." });
+      }
+    }
+
+    const snapshot = {
+      name: product?.productName || productName || null,
+      price: product?.price ?? (productPrice ? Number(productPrice) : null),
+      image: product?.image || productImage || null,
+    };
+
     const challenge = await EqubChallenge.create({
       title: title.trim(),
       description: description.trim(),
-      productId: productId || null,
+      fundingType: normalizedFundingType,
+      productId: product?._id || (normalizedFundingType === "PRODUCT_LOCKED" ? null : productId || null),
+      productSnapshot: snapshot,
       creatorId: userId,
-      vendorId: userId,
+      vendorId: product?.seller || userId,
       totalSlots: parsedSlots,
       slotPrice: parsedPrice,
       filledSlots: [],
       expiresAt: expiryDate,
       status: "PENDING",
+      winnerRedemption: {
+        type: normalizedFundingType === "PRODUCT_LOCKED" ? "PRODUCT_CHECKOUT" : "MARKETPLACE_CREDIT",
+        amount: parsedSlots * parsedPrice,
+        productId: product?._id || null,
+        status: "NOT_READY",
+      },
     });
 
     return res.status(201).json({
@@ -65,14 +109,11 @@ export const getActiveChallenges = async (req, res) => {
     })
       .populate("creatorId", "name email")
       .populate("vendorId", "name email")
+      .populate("productId", "productName price image status")`r`n      .populate("filledSlots", "name email")
       .sort({ createdAt: -1 })
       .limit(12);
 
-    if (!Array.isArray(challenges)) {
-      return res.status(200).json([]);
-    }
-
-    return res.status(200).json(challenges);
+    return res.status(200).json(Array.isArray(challenges) ? challenges : []);
   } catch (error) {
     console.error("getActiveChallenges error:", error);
     return res.status(500).json({
@@ -82,12 +123,41 @@ export const getActiveChallenges = async (req, res) => {
   }
 };
 
+export const getEqubChallengeById = async (req, res) => {
+  const { challengeId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(challengeId)) {
+    return res.status(400).json({ message: "Invalid challengeId." });
+  }
+
+  try {
+    const challenge = await EqubChallenge.findById(challengeId)
+      .populate("creatorId", "name email")
+      .populate("vendorId", "name email")
+      .populate("productId", "productName price image status")
+      .populate("filledSlots", "name email")
+      .populate("winnerId", "name email");
+
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge was not found." });
+    }
+
+    return res.status(200).json(challenge);
+  } catch (error) {
+    console.error("getEqubChallengeById error:", error);
+    return res.status(500).json({ message: error?.message || "Unable to fetch challenge." });
+  }
+};
 export const joinEqubChallenge = async (req, res) => {
   const userId = req.user?._id || req.user?.id;
   const { challengeId, paymentRef } = req.body;
 
   if (!challengeId) {
     return res.status(400).json({ message: "challengeId is required." });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(challengeId)) {
+    return res.status(400).json({ message: "Invalid challengeId." });
   }
 
   if (!userId) {
@@ -107,23 +177,17 @@ export const joinEqubChallenge = async (req, res) => {
       }).session(session);
 
       if (!challenge) {
-        throw Object.assign(new Error("This challenge is no longer active or was not found."), {
-          status: 400,
-        });
+        throw Object.assign(new Error("This challenge is no longer active or was not found."), { status: 400 });
       }
 
       const participantIds = challenge.filledSlots.map((id) => id.toString());
 
       if (participantIds.includes(userId.toString())) {
-        throw Object.assign(new Error("You already joined this challenge."), {
-          status: 409,
-        });
+        throw Object.assign(new Error("You already joined this challenge."), { status: 409 });
       }
 
       if (challenge.filledSlots.length >= challenge.totalSlots) {
-        throw Object.assign(new Error("This challenge has no remaining slots."), {
-          status: 409,
-        });
+        throw Object.assign(new Error("This challenge has no remaining slots."), { status: 409 });
       }
 
       challenge.filledSlots.push(userId);
@@ -145,3 +209,4 @@ export const joinEqubChallenge = async (req, res) => {
     await session.endSession();
   }
 };
+
