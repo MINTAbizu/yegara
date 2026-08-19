@@ -18,6 +18,8 @@ import kycRoutes from './route/kyc/kyc.route.js'
 // profileRoutes
 import profileRoutes from './route/profile.route/profile.route.js'
 import giftproduct from ".//route/giftproduct-route/giftproductroute.js";
+import bookRoutes from "./route/Book/Book.route.js";
+import accountRoutes from "./route/Accountsell/account.route.js";
 
 
 // reward systems routes
@@ -97,7 +99,9 @@ app.use("/api/payment", chapapayment);
 // app.use("/telegram", telegeram);
 
 // giftproduct
-   app.use("/api/giftproduct", giftproduct); 
+   app.use("/api/giftproduct", giftproduct);
+app.use("/api/books", bookRoutes);
+app.use("/api/accounts", accountRoutes); 
 
 
 

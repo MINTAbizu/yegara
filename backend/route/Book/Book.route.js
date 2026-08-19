@@ -10,7 +10,7 @@ import {
   getDigitalProductById,
   getDigitalProductWithSellerStats
 } from "../../controller/Book/Book.controller.js";
-import { protect } from "../../middleware/authMiddleware.js";
+import { protect, adminOnly } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 // CREATE PRODUCT
@@ -24,8 +24,8 @@ router.get("/:id", getSingleProduct);
 
 
 // ADMIN PAGES
-router.get("/admin/all", getAllProductsAdmin);
-router.patch("/admin/toggle/:id", toggleStatus);
+router.get("/admin/all", protect, adminOnly, getAllProductsAdmin);
+router.patch("/admin/toggle/:id", protect, adminOnly, toggleStatus);
 
 
 // details

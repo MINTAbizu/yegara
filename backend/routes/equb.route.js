@@ -2,6 +2,7 @@ import express from "express";
 import {
   createEqubChallenge,
   getActiveChallenges,
+  getAllChallengesAdmin,
   getBillingProducts,
   getEqubChallengeById,
   initializeEqubPayment,
@@ -13,6 +14,7 @@ import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.get("/active", getActiveChallenges);
+router.get("/admin/all", protect, getAllChallengesAdmin);
 router.get("/billing-products", protect, getBillingProducts);
 router.post("/create", protect, createEqubChallenge);
 router.post("/payment/initialize", protect, initializeEqubPayment);

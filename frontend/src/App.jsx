@@ -50,6 +50,9 @@ import UserExample from './component/User/UserExample';
 import Userprofile from './component/User/Userprofile';
 import Addgiftproduct from './component/Shope/userprofilepage/Addgiftproduct';
 import Admingiftproduct from './Admin/products/Admingiftproduct';
+import AdminBooksTable from './Admin/products/AdminBooksTable';
+import AdminSocialAccountsTable from './Admin/products/AdminSocialAccountsTable';
+import AdminCrowdfundingList from './Admin/products/AdminCrowdfundingList';
 import UpgradePro from './kyc/UpgradePro';
 import Giftproduct from './ProductDetails/Giftproduct';
 import EqubChallengeDemo from './component/Equb/EqubChallengeDemo';
@@ -293,6 +296,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <AdminDashboard>
+                  <AdminCrowdfundingList />
+                </AdminDashboard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/AdminCrowdfundingCreate"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard>
                   <CreateEqubChallenge embedded />
                 </AdminDashboard>
               </ProtectedRoute>
@@ -336,6 +349,27 @@ function App() {
                     <AdminDashboard>
                       <AdminPhysicalproducts />
                     </AdminDashboard>
+                  }
+                />
+
+                 <Route
+                  path="/AdminBooks"
+                  element={
+                    <ProtectedRoute>
+                      <AdminDashboard>
+                        <AdminBooksTable />
+                      </AdminDashboard>
+                    </ProtectedRoute>
+                  }
+                />
+                 <Route
+                  path="/AdminSocialAccounts"
+                  element={
+                    <ProtectedRoute>
+                      <AdminDashboard>
+                        <AdminSocialAccountsTable />
+                      </AdminDashboard>
+                    </ProtectedRoute>
                   }
                 />
                  <Route

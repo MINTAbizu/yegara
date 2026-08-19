@@ -53,3 +53,35 @@ export const markAccountSold = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+
+// Admin: list every social media account listing
+export const getAllAccountsAdmin = async (req, res) => {
+  try {
+    const accounts = await Account.find()
+      .populate("sellerId", "name email")
+      .populate("buyerId", "name email")
+      .sort({ createdAt: -1 });
+    res.status(200).json(accounts);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+// Admin: update social media account status
+export const updateAccountStatusAdmin = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const allowedStatuses = ["available", "pending", "sold"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid account status" });
+    }
+
+    const account = await Account.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    if (!account) return res.status(404).json({ message: "Account not found" });
+    res.status(200).json({ message: "Status updated successfully", account });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};

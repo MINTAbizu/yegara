@@ -24,8 +24,10 @@ const AdminDashboard = ({ children }) => {
           <Link to={'/AdminUsersTable'}><li>AdminUsersTable</li></Link>
           <Link to={'/AdminDigitalProductsTable'}><li>AdminDigitalProductsTable</li></Link>
           <Link to={'/AdminPhysicalproducts'}><li>AdminPhysicalproducts</li></Link>
-          <Link to={'/Admingiftproduct'}><li>Admingiftproduct</li></Link>
-          <Link to={'/AdminCrowdfunding'}><li>Crowdfunding</li></Link>
+          <Link to={'/Admingiftproduct'}><li>Gift Products</li></Link>
+          <Link to={'/AdminBooks'}><li>Books</li></Link>
+          <Link to={'/AdminSocialAccounts'}><li>Social Media Accounts</li></Link>
+          <Link to={'/AdminCrowdfunding'}><li>Crowdfunding List</li></Link>
           
           
         </ul>

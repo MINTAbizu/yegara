@@ -165,6 +165,27 @@ export const getBillingProducts = async (req, res) => {
   }
 };
 
+export const getAllChallengesAdmin = async (req, res) => {
+  if (!isAdmin(req.user)) {
+    return res.status(403).json({ message: "Admin only" });
+  }
+
+  try {
+    const challenges = await EqubChallenge.find()
+      .populate("creatorId", userFields)
+      .populate("vendorId", userFields)
+      .populate("productId", productFields)
+      .populate("filledSlots", userFields)
+      .populate("winnerId", userFields)
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json(challenges);
+  } catch (error) {
+    console.error("getAllChallengesAdmin error:", error);
+    return res.status(500).json({ message: error?.message || "Unable to fetch crowdfunding challenges." });
+  }
+};
+
 export const getActiveChallenges = async (req, res) => {
   try {
     const challenges = await EqubChallenge.find({ status: "PENDING", expiresAt: { $gt: new Date() } })
