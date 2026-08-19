@@ -68,6 +68,7 @@ import BookPaymentCallback from './pages/BookPaymentCallback';
 import MyPurchases from './BuyerMyPurchasesPage/MyPurchases';
 import Header from './component/Header/Header';
 import Footer from './component/footer/Footer';
+import PaymentVerify from './component/Payment/PaymentVerify';
 
 
 function App() {
@@ -85,7 +86,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/books" element={<BookMarketplace />} />
           <Route path="/books/:id" element={<BookDetails />} />
-          <Route path="/book/payment-callback" element={<BookPaymentCallback />} />
+          <Route path="/book/payment-callback" element={<BookPaymentCallback />} />`r`n          <Route path="/payment-verify" element={<PaymentVerify />} />
           <Route path="/TelegeramLanding" element={<TelegeramLanding />} />
           <Route path="/Telegram" element={<Telegram />} />
           <Route path="/SupportChat" element={<SupportChat />} />
@@ -435,6 +436,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
