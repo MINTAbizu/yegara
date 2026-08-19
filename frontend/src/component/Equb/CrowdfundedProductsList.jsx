@@ -63,9 +63,7 @@ const CrowdfundedProductsList = () => {
         <p className="text-center text-muted">
           {error ? "Unable to load crowdfunding challenges." : "No active crowdfunding challenges yet."}
         </p>
-        <div className="text-center">
-          <Link to="/equb-create" className="btn btn-primary">Create Challenge</Link>
-        </div>
+        <p className="text-center small text-muted mb-0">Crowdfunding rounds are created by the platform owner. Approved sellers can create crowdfunding billing from their dashboard.</p>
       </div>
     );
   }

@@ -20,9 +20,20 @@ const equbChallengeSchema = new mongoose.Schema(
       default: "FLEXIBLE",
       index: true,
     },
+    productType: {
+      type: String,
+      enum: ["physical", "digital", "gift", "book"],
+      default: null,
+      index: true,
+    },
+    productModel: {
+      type: String,
+      enum: ["PhysicalProduct", "Product", "giftproduct", "DigitalProduct"],
+      default: "PhysicalProduct",
+    },
     productId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "PhysicalProduct",
+      refPath: "productModel",
       default: null,
       index: true,
     },

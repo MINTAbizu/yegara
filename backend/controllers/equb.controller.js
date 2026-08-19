@@ -2,14 +2,43 @@ import axios from "axios";
 import mongoose from "mongoose";
 import EqubChallenge from "../models/EqubChallenge.model.js";
 import PhysicalProduct from "../model/physicalproduct/physicalprosuct.model.js";
+import DigitalProduct from "../model/digitalproducts/digital products.js";
+import GiftProduct from "../model/giftproduct/giftproduct.js";
+import BookProduct from "../model/Book/Book.model.js";
+import Profile from "../model/UserProfile/UserProfile.js";
 
 const FUNDING_TYPES = ["FLEXIBLE", "PRODUCT_LOCKED"];
-const productFields = "productName price image status";
+const PRODUCT_TYPES = {
+  physical: { model: PhysicalProduct, modelName: "PhysicalProduct", nameField: "productName" },
+  digital: { model: DigitalProduct, modelName: "Product", nameField: "productName" },
+  gift: { model: GiftProduct, modelName: "giftproduct", nameField: "productName" },
+  book: { model: BookProduct, modelName: "DigitalProduct", nameField: "bookName" },
+};
+const productFields = "productName bookName price image status seller";
 const userFields = "name email";
+
+const isAdmin = (user) => user?.role === "admin";
+const isApprovedSeller = async (user) => {
+  if (!user) return false;
+  if (user.kycSubmitted || ["seller", "pro", "admin"].includes(user.role)) return true;
+  const profile = await Profile.findOne({ user: user._id || user.id, status: "approved" }).select("_id").lean();
+  return Boolean(profile);
+};
+
+const normalizeProduct = (product, productType, config) => ({
+  _id: product._id,
+  productId: product._id,
+  productType,
+  productModel: config.modelName,
+  productName: product[config.nameField] || product.productName || product.bookName || "Untitled product",
+  price: product.price || 0,
+  image: product.image || null,
+  seller: product.seller || null,
+});
 
 export const createEqubChallenge = async (req, res) => {
   const userId = req.user?._id || req.user?.id;
-  const { title, description, fundingType = "FLEXIBLE", productId, totalSlots, slotPrice, expiresAt } = req.body;
+  const { title, description, fundingType = "FLEXIBLE", productId, productType = "physical", totalSlots, slotPrice, expiresAt } = req.body;
 
   if (!userId) {
     return res.status(401).json({ message: "Authentication required." });
@@ -36,21 +65,39 @@ export const createEqubChallenge = async (req, res) => {
     return res.status(400).json({ message: "expiresAt must be a future date." });
   }
 
-  if (normalizedFundingType === "PRODUCT_LOCKED" && !productId) {
-    return res.status(400).json({ message: "An approved productId is required for crowdfunding billing challenges." });
+  if (normalizedFundingType === "FLEXIBLE" && !isAdmin(req.user)) {
+    return res.status(403).json({ message: "Only admins can create general crowdfunding challenges." });
+  }
+
+  if (normalizedFundingType === "PRODUCT_LOCKED") {
+    if (!productId) {
+      return res.status(400).json({ message: "An approved productId is required for crowdfunding billing challenges." });
+    }
+
+    if (!(await isApprovedSeller(req.user))) {
+      return res.status(403).json({ message: "Only approved sellers can create crowdfunding billing challenges." });
+    }
   }
 
   try {
     let product = null;
+    const productConfig = PRODUCT_TYPES[productType];
 
     if (productId) {
+      if (!productConfig) {
+        return res.status(400).json({ message: "Invalid productType." });
+      }
+
       if (!mongoose.Types.ObjectId.isValid(productId)) {
         return res.status(400).json({ message: "Invalid productId." });
       }
 
-      product = await PhysicalProduct.findById(productId).lean();
+      const productQuery = { _id: productId, status: "approved" };
+      if (!isAdmin(req.user)) productQuery.seller = userId;
+
+      product = await productConfig.model.findOne(productQuery).lean();
       if (!product) {
-        return res.status(404).json({ message: "Selected product was not found." });
+        return res.status(404).json({ message: "Selected approved product was not found for this seller." });
       }
     }
 
@@ -58,9 +105,11 @@ export const createEqubChallenge = async (req, res) => {
       title: title.trim(),
       description: description.trim(),
       fundingType: normalizedFundingType,
+      productType: product ? productType : null,
+      productModel: product ? productConfig.modelName : "PhysicalProduct",
       productId: product?._id || null,
       productSnapshot: {
-        name: product?.productName || null,
+        name: product ? normalizeProduct(product, productType, productConfig).productName : null,
         price: product?.price ?? null,
         image: product?.image || null,
       },
@@ -74,6 +123,8 @@ export const createEqubChallenge = async (req, res) => {
       winnerRedemption: {
         type: normalizedFundingType === "PRODUCT_LOCKED" ? "PRODUCT_CHECKOUT" : "MARKETPLACE_CREDIT",
         amount: parsedSlots * parsedPrice,
+        productType: normalizedFundingType === "PRODUCT_LOCKED" ? productType : null,
+        productModel: normalizedFundingType === "PRODUCT_LOCKED" ? productConfig.modelName : "PhysicalProduct",
         productId: normalizedFundingType === "PRODUCT_LOCKED" ? product._id : null,
         status: "NOT_READY",
       },
@@ -83,6 +134,34 @@ export const createEqubChallenge = async (req, res) => {
   } catch (error) {
     console.error("createEqubChallenge error:", error);
     return res.status(500).json({ message: error?.message || "Unable to create crowdfunded challenge." });
+  }
+};
+
+export const getBillingProducts = async (req, res) => {
+  const userId = req.user?._id || req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Authentication required." });
+  }
+
+  if (!(await isApprovedSeller(req.user))) {
+    return res.status(403).json({ message: "Only approved sellers can use crowdfunding billing." });
+  }
+
+  try {
+    const baseQuery = { status: "approved" };
+    const query = isAdmin(req.user) ? baseQuery : { ...baseQuery, seller: userId };
+    const entries = await Promise.all(
+      Object.entries(PRODUCT_TYPES).map(async ([type, config]) => {
+        const products = await config.model.find(query).select(productFields).populate("seller", userFields).sort({ createdAt: -1 }).lean();
+        return products.map((product) => normalizeProduct(product, type, config));
+      })
+    );
+
+    return res.status(200).json(entries.flat());
+  } catch (error) {
+    console.error("getBillingProducts error:", error);
+    return res.status(500).json({ message: error?.message || "Unable to fetch billing products." });
   }
 };
 

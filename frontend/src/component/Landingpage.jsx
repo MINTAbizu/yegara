@@ -23,7 +23,6 @@ import Giftproducts from './giftproduct/Giftproducts'
 import BuyerProducts from '../nearproducts/BuyerProducts'
 import HowPlatformWorks from '../nearproducts/HowPlatformWorks'
 import PhysicalProductsHome from './PhysicalProducts/PhysicalProductsHome'
-import CrowdfundedProductsList from './Equb/CrowdfundedProductsList'
 
 function Landingpage() {
   return (
@@ -38,7 +37,6 @@ function Landingpage() {
                     <Productlist/>
                     <Giftproducts/>
                     <PhysicalProductsHome/>
-                    <CrowdfundedProductsList/>
                     {/* <RewardsList/> */}
                     {/* <Handmadeproduct/> */}
 

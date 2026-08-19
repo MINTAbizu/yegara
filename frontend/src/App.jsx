@@ -283,7 +283,19 @@ function App() {
           <Route
             path="/equb-create"
             element={
-              <CreateEqubChallenge />
+              <ProtectedRoute>
+                <CreateEqubChallenge />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/AdminCrowdfunding"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard>
+                  <CreateEqubChallenge embedded />
+                </AdminDashboard>
+              </ProtectedRoute>
             }
           />
                         <Route
