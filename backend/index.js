@@ -51,7 +51,11 @@ const PORT = process.env.PORT || 5000;
 // Express example
 app.use(cors({ origin: '*' }));
 
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    if (req.originalUrl === "/api/payments/webhook") req.rawBody = buf.toString("utf8");
+  },
+}));
 
 // MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -133,6 +137,7 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
 
 
 

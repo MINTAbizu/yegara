@@ -17,6 +17,7 @@ const PURPOSES = ["DIRECT_PURCHASE", "CROWDFUND_JOIN"];
 
 const frontendUrl = () => (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
 const backendUrl = () => (process.env.BACKEND_URL || "http://localhost:5000").replace(/\/$/, "");
+const moneyMatches = (left, right) => Number(left).toFixed(2) === Number(right).toFixed(2);
 
 const safeCompare = (expected, received) => {
   if (!expected || !received) return false;
@@ -25,12 +26,14 @@ const safeCompare = (expected, received) => {
   return expectedBuffer.length === receivedBuffer.length && crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
 };
 
-const buildSignature = (body) =>
-  crypto.createHmac("sha256", process.env.CHAPA_WEBHOOK_SECRET).update(JSON.stringify(body)).digest("hex");
+const buildSignature = (req) => {
+  const payload = req.rawBody || JSON.stringify(req.body);
+  return crypto.createHmac("sha256", process.env.CHAPA_WEBHOOK_SECRET).update(payload).digest("hex");
+};
 
 const verifyWebhookSignature = (req) => {
   if (!process.env.CHAPA_WEBHOOK_SECRET) return false;
-  const expected = buildSignature(req.body);
+  const expected = buildSignature(req);
   const xChapaSignature = req.headers["x-chapa-signature"];
   const chapaSignature = req.headers["chapa-signature"];
 
@@ -276,4 +279,7 @@ export const verifyPaymentStatus = async (req, res) => {
     return res.status(error.status || 500).json({ message: error.message || "Unable to verify payment status." });
   }
 };
+
+
+
 
