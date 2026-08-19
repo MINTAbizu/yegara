@@ -6,6 +6,15 @@ import "./JoinEqubChallengeModal.css";
 
 const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
+const getPaymentErrorMessage = (error) => {
+  const message = error.response?.data?.message;
+  if (message && typeof message === "object") {
+    const firstField = Object.keys(message)[0];
+    const firstError = Array.isArray(message[firstField]) ? message[firstField][0] : message[firstField];
+    return firstError || "Payment initiation failed. Please try again.";
+  }
+  return message || error.message || "Payment initiation failed. Please try again.";
+};
 const JoinEqubChallengeModal = ({
   challenge,
   isOpen,
@@ -63,11 +72,7 @@ const JoinEqubChallengeModal = ({
       }
     } catch (error) {
       console.error("Payment initiation error:", error);
-      toast.error(
-        error.response?.data?.message ||
-          error.message ||
-          "Payment initiation failed. Please try again."
-      );
+      toast.error(getPaymentErrorMessage(error));
       setLoading(false);
     }
   };

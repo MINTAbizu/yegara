@@ -5,6 +5,16 @@ import { useAuth } from "../../Context/Authcontext";
 
 const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
+const getPaymentErrorMessage = (error) => {
+  const message = error.response?.data?.message;
+  if (message && typeof message === "object") {
+    const firstField = Object.keys(message)[0];
+    const firstError = Array.isArray(message[firstField]) ? message[firstField][0] : message[firstField];
+    return firstError || "Unable to start payment.";
+  }
+  return message || error.message || "Unable to start payment.";
+};
+
 const PaymentProcessor = ({
   purpose,
   amount,
@@ -55,7 +65,7 @@ const PaymentProcessor = ({
 
       window.location.href = checkoutUrl;
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message || "Unable to start payment.");
+      toast.error(getPaymentErrorMessage(error));
     } finally {
       setLoading(false);
     }

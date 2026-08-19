@@ -16,8 +16,22 @@ const CHAPA_VERIFY_URL = "https://api.chapa.co/v1/transaction/verify";
 const PURPOSES = ["DIRECT_PURCHASE", "CROWDFUND_JOIN"];
 
 const frontendUrl = () => (process.env.FRONTEND_URL || process.env.CLIENT_URL || "http://localhost:5173").replace(/\/$/, "");
-const backendUrl = () => (process.env.BACKEND_URL || "http://localhost:5000").replace(/\/$/, "");
+const backendUrl = () => (process.env.BACKEND_URL || process.env.BASE_URL || "http://localhost:5000").replace(/\/$/, "");
 const moneyMatches = (left, right) => Number(left).toFixed(2) === Number(right).toFixed(2);
+const chapaText = (value, fallback, maxLength) => {
+  const text = String(value || fallback || "").trim();
+  return text.length > maxLength ? text.slice(0, maxLength) : text;
+};
+
+const chapaErrorMessage = (error) => {
+  const message = error.response?.data?.message;
+  if (message && typeof message === "object") {
+    const firstField = Object.keys(message)[0];
+    const firstError = Array.isArray(message[firstField]) ? message[firstField][0] : message[firstField];
+    return firstError || "Payment gateway rejected the request.";
+  }
+  return message || error.message || "Unable to initialize payment.";
+};
 
 const safeCompare = (expected, received) => {
   if (!expected || !received) return false;
@@ -163,8 +177,12 @@ export const initializePayment = async (req, res) => {
       callback_url: callbackUrl,
       return_url: returnUrl,
       customization: {
-        title: purpose === "CROWDFUND_JOIN" ? "Join Yegara Equb Challenge" : "Yegara Marketplace Checkout",
-        description: purpose === "CROWDFUND_JOIN" ? "Crowdfunding slot purchase" : "Product purchase",
+        title: chapaText(purpose === "CROWDFUND_JOIN" ? "Yegara Equb" : "Yegara Market", "Yegara", 16),
+        description: chapaText(
+          purpose === "CROWDFUND_JOIN" ? "Crowdfunding slot purchase" : "Product purchase",
+          "Payment",
+          50
+        ),
       },
       meta: {
         purpose,
@@ -198,7 +216,7 @@ export const initializePayment = async (req, res) => {
   } catch (error) {
     console.error("initializePayment error:", error.response?.data || error.message);
     return res.status(error.status || 500).json({
-      message: error.response?.data?.message || error.message || "Unable to initialize payment.",
+      message: chapaErrorMessage(error),
     });
   }
 };
