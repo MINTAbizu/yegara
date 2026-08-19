@@ -66,6 +66,8 @@ import ReferralBounty from './component/Rewardcard/ReferralBounty';
 import BookMarketplace from './component/BookMarketplace';
 import BookPaymentCallback from './pages/BookPaymentCallback';
 import MyPurchases from './BuyerMyPurchasesPage/MyPurchases';
+import Header from './component/Header/Header';
+import Footer from './component/footer/Footer';
 
 
 function App() {
@@ -75,6 +77,7 @@ function App() {
 
     <AuthProvider>
       <Router>
+        <Header />
         <Routes>
           <Route path="/" element={<Landingpage />} />
           <Route path="/register" element={<Register />} />
@@ -424,6 +427,7 @@ function App() {
           />
 
         </Routes>
+        <Footer />
       </Router>
     </AuthProvider>
     </>

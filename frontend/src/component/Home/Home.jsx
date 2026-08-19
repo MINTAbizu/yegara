@@ -19,6 +19,8 @@ const trustItems = [
   { icon: <FaShieldAlt />, label: "Verified seller profiles" },
   { icon: <FaTruck />, label: "Digital and local commerce" },
   { icon: <FaUsers />, label: "Built around Ethiopian buyers" },
+  { icon: <FaUsers />, label: "Crowdfunding" },
+  { icon: <FaUsers />, label: "Crowdfunding Billing" },
 ];
 
 const marketPillars = [
@@ -45,7 +47,7 @@ export default function Home() {
       <section className="landing-hero" aria-labelledby="landing-title">
         <div className="landing-hero__inner">
           <div className="landing-hero__copy">
-            <p className="landing-hero__eyebrow">Yegara Marketplace</p>
+            <p className="landing-hero__eyebrow">Debo Marketplace</p>
             <h1 id="landing-title">A practical marketplace for Ethiopia's digital and local sellers.</h1>
             <p className="landing-hero__lead">
               Browse real listings, start a seller profile, promote products, or join crowdfunded buying with a cleaner flow from discovery to checkout.
@@ -71,12 +73,13 @@ export default function Home() {
           </div>
 
           <div className="landing-hero__visual" aria-label="Yegara marketplace preview">
-            <img src={heroImage} alt="Handmade products promoted online" />
-            <div className="market-snapshot market-snapshot--sales">
+            {/* <img src={heroImage} alt="Handmade products promoted online" /> */}
+            <div className="market-snapshot  market-snapshot--sales" id="marketsnapsho">
+              <FaCheckCircle/>
               <strong>Seller-ready</strong>
-              <span>Publish products and manage orders from one place.</span>
+              <span className="readydescrption">Publish products and manage orders from one place.</span>
             </div>
-            <div className="market-snapshot market-snapshot--secure">
+            <div className="market-snapshot market-snapshot--secure" id="ProfileKYCflow">
               <FaCheckCircle />
               <span>Profile and KYC flow</span>
             </div>
@@ -85,19 +88,23 @@ export default function Home() {
       </section>
 
       <section className="landing-metrics" aria-label="Marketplace highlights">
-        <div>
+        <div className="digital">
           <strong>Digital goods</strong>
           <span>Courses, templates, software, and downloads</span>
         </div>
-        <div>
+        <div className="digital">
           <strong>Local products</strong>
           <span>Physical goods, gifts, and handmade items</span>
         </div>
-        <div>
-          <strong>Equb buying</strong>
+        <div className="digital">
+          <strong>crwod funding buying</strong>
           <span>Group-funded product opportunities</span>
         </div>
-        <div>
+        <div className="digital">
+          <strong>crwod funding billing</strong>
+          <span>Group-funded product opportunities</span>
+        </div>
+        <div className="digital">
           <strong>Referrals</strong>
           <span>Bounty links for measurable growth</span>
         </div>
@@ -105,10 +112,10 @@ export default function Home() {
 
       <section className="market-pillars" aria-labelledby="market-pillars-title">
         <div className="section-heading">
-          <p>Built for buyers and sellers</p>
+          <p className="builtfor">Built for buyers and sellers</p>
           <h2 id="market-pillars-title">Less noise between listing, discovery, and trust</h2>
         </div>
-        <div className="market-pillars__grid">
+        {/* <div className="market-pillars__grid">
           {marketPillars.map((item) => (
             <article className="market-pillar" key={item.title}>
               <div className="market-pillar__icon">{item.icon}</div>
@@ -116,17 +123,17 @@ export default function Home() {
               <p>{item.text}</p>
             </article>
           ))}
-        </div>
+        </div> */}
       </section>
 
-      <section className="landing-cta" aria-labelledby="landing-cta-title">
-        <div>
-          <FaMobileAlt />
+      <section className="landing-cta " id="freeaccount" aria-labelledby="landing-cta-title">
+        <div >
+          <FaMobileAlt className="mobile"/>
           <h2 id="landing-cta-title">Open a seller profile when you are ready.</h2>
           <p>Start by browsing the marketplace, then create an account to sell products, manage orders, or share a referral bounty link.</p>
         </div>
-        <Link to="/register" className="landing-btn landing-btn--dark">
-          Create Free Account
+        <Link to="/register" className="">
+          <button className="landing-btn landing-btn--dark" id="createbtn">Create Free Account</button>
         </Link>
       </section>
     </main>

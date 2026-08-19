@@ -8,9 +8,20 @@
 
 .landing-hero {
   padding: 104px 20px 28px;
-  background:
-    linear-gradient(110deg, rgba(248, 250, 252, 0.98) 0%, rgba(248, 250, 252, 0.88) 52%, rgba(255, 255, 255, 0.64) 100%),
-    url("../../assets/image/officetabel.jpg") center / cover no-repeat;
+  background: #f0af36;
+  color: white;
+  
+}
+#landing-title{
+  color: white;
+}
+.landing-hero__visual{
+  background: white !important; 
+}
+#marketsnapsho{
+    background: #f0af36 !important;
+  color: white !important;
+  display: flex;
 }
 
 .landing-hero__inner {
@@ -173,25 +184,61 @@
 }
 
 .landing-metrics {
-  width: min(1180px, calc(100% - 32px));
+  width: min(1580px, calc(100% - 62px));
   margin: 0 auto;
   transform: translateY(-16px);
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 5fr));
   border: 1px solid #e4e7ec;
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 16px 42px rgba(17, 24, 39, 0.08);
   overflow: hidden;
+  gap: 10px;
 }
 
 .landing-metrics div {
-  padding: 20px;
+  padding: 40px;
   border-right: 1px solid #eef2f6;
 }
 
 .landing-metrics div:last-child {
   border-right: 0;
+}
+.digital{
+  border-bottom:solid 4px orange;
+  border-left: solid 8px orange;
+  border-right-color: solid px red;
+  /* margin-bottom: 10px; */
+
+}
+#createbtn{
+  background-color: white !important;
+  color: orange !important;
+  
+}
+#freeaccount{
+  border-radius:5px;
+  border-color:  orange !important;
+  /* border: 5px; */
+  background: orange;
+}
+#ProfileKYCflow{
+  background-color: orange !important;
+  color: white;
+}
+
+.builtfor{
+  color: orange !important;
+}
+.mobile{
+  background-color: white;
+  width: 60px;
+          height: 60px;
+          margin: auto;
+          border-radius: 50%;
+
+
 }
 
 .landing-metrics strong {

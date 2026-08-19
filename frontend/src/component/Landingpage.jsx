@@ -30,13 +30,13 @@ function Landingpage() {
   return (
     <div>
       
-      <Header />
+      {/* <Header /> */}
         <Home/>
 
         {/* https://themewagon.com/themes/furni-online-store/ */}
                     
                     <HorizontalProductList/>
-                    <Productlist/>
+                    {/* <Productlist/> */}
                     <Giftproducts/>
                     <BookMarketplace/>
                     <PhysicalProductsHome/>
@@ -55,7 +55,7 @@ function Landingpage() {
                     <ProAccount/>
                     <ServicesSection/>
 
-                     <Footer />
+                     {/* <Footer /> */}
                      {/* <SellSocialMediaAccount/>
                      <OrdersDashboard/> */}
                      {/* <DigitalProductsList/> */}

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaBars, FaChevronDown, FaTimes } from "react-icons/fa";
 import "./Header.css";
 import { Link } from "react-router-dom";
-import logo from "../../assets/telegeram/???2.png";
+import logo from "../../assets/telegeram/የጋር2.png";
 
 const shopLinks = [
   { label: "Physical products", to: "/BrowseAllProducts" },
@@ -27,13 +27,13 @@ const Header = () => {
     <header className="site-header">
       <Link to="/" className="brand" onClick={closeMenu}>
         <img src={logo} alt="Yegara" />
-        <span>Yegara</span>
+        <span>DEBo </span>
       </Link>
 
       <nav className="desktop-nav" aria-label="Primary navigation">
         <Link to="/BrowseAllProducts">Marketplace</Link>
-        <Link to="/crowdfunding">Equb</Link>
-        <Link to="/Telegram">Social Accounts</Link>
+        <Link to="/crowdfunding">Crowdfunding</Link>
+        <Link to="/Crowdfunding">Crowdfunding Bill</Link>
         <Link to="/UpgradePro">Seller Tools</Link>
       </nav>
 

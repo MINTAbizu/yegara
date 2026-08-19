@@ -48,7 +48,7 @@
 
 .desktop-nav a:hover,
 .header-link:hover {
-  color: #0b6bcb;
+  color: orange;
 }
 
 .header-cta,
@@ -149,7 +149,7 @@
 
 .slide-menu a:hover,
 .shop-parent:hover {
-  color: #0b6bcb;
+  color: orange;
 }
 
 .shop-submenu {
