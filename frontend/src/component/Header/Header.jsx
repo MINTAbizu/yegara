@@ -1,8 +1,11 @@
-import React, { useState } from "react";
-import { FaBars, FaChevronDown, FaTimes } from "react-icons/fa";
-import "./Header.css";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { FaBars, FaChevronDown, FaTimes, FaUserCircle } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import logo from "../../assets/telegeram/የጋር2.png";
+import "./Header.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const shopLinks = [
   { label: "Physical products", to: "/BrowseAllProducts" },
@@ -15,6 +18,8 @@ const shopLinks = [
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const toggleShop = () => setShopOpen(!shopOpen);
@@ -22,6 +27,24 @@ const Header = () => {
     setMenuOpen(false);
     setShopOpen(false);
   };
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const token = localStorage.getItem("token"); // Assuming auth token is saved in localStorage
+      if (!token) return;
+
+      try {
+        const res = await axios.get(`${API_URL}/api/profile/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUserProfile(res.data);
+      } catch (err) {
+        console.error("Error loading user profile:", err);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   return (
     <header className="site-header">
@@ -38,8 +61,28 @@ const Header = () => {
       </nav>
 
       <div className="header-actions">
-        <Link to="/login" className="header-link">Sign in</Link>
-        <Link to="/register" className="header-cta">Start selling</Link>
+        {userProfile ? (
+          /* Profile view when user is signed up/has profile */
+          <Link to="/userprofile" className="profile-header-link">
+            <img
+              src={userProfile.avatar || "https://via.placeholder.com/40"}
+              alt={userProfile.user?.name || "Profile"}
+              className="header-avatar"
+            />
+            <span className="profile-name">{userProfile.user?.name || "My Account"}</span>
+          </Link>
+        ) : (
+          /* Default auth actions */
+          <>
+            <Link to="/login" className="header-link">
+              Sign in
+            </Link>
+            <Link to="/register" className="header-cta">
+              Start selling
+            </Link>
+          </>
+        )}
+
         <button
           className="menu-icon"
           onClick={toggleMenu}
@@ -50,6 +93,7 @@ const Header = () => {
         </button>
       </div>
 
+      {/* Mobile Drawer Menu */}
       <nav className={`slide-menu ${menuOpen ? "active" : ""}`} aria-label="Mobile navigation">
         <div className="slide-header">
           <div className="brand brand--drawer">
@@ -75,9 +119,24 @@ const Header = () => {
               ))}
             </ul>
           </li>
-          <li><Link to="/userprofile" onClick={closeMenu}>Your account</Link></li>
-          <li><Link to="/login" onClick={closeMenu}>Sign in</Link></li>
-          <li><Link to="/register" className="drawer-cta" onClick={closeMenu}>Create account</Link></li>
+
+          {userProfile ? (
+            <li>
+              <Link to="/userprofile" onClick={closeMenu} className="drawer-user-link">
+                <img
+                  src={userProfile.avatar || "https://via.placeholder.com/30"}
+                  alt=""
+                  style={{ width: 24, height: 24, borderRadius: "50%", marginRight: 8 }}
+                />
+                {userProfile.user?.name || "Your Account"}
+              </Link>
+            </li>
+          ) : (
+            <>
+              <li><Link to="/login" onClick={closeMenu}>Sign in</Link></li>
+              <li><Link to="/register" className="drawer-cta" onClick={closeMenu}>Create account</Link></li>
+            </>
+          )}
         </ul>
       </nav>
     </header>
