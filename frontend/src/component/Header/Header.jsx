@@ -18,6 +18,13 @@ const Header = () => {
         <img src={logo}  style={{width:"50px",  height:"35px", overflow:"hidden", justifyContent:"center" ,alignItems:"center"}} alt="Logo" className="img-fluid" />
       </div>
 
+      <nav className="top-nav" aria-label="Primary navigation">
+        <Link to="/" className="top-nav-link">Home</Link>
+        <Link to="/BrowseAllProducts" className="top-nav-link">Marketplace</Link>
+        <Link to="/books" className="top-nav-link">Books</Link>
+        <Link to="/crowdfunding" className="top-nav-link top-nav-link--highlight">Crowdfunding</Link>
+      </nav>
+
       {/* Menu Icon (always visible) */}
       <div className="menu-icon" onClick={toggleMenu}>
         {menuOpen ? <FaTimes size={25} /> : <FaBars size={25} />}
@@ -32,6 +39,7 @@ const Header = () => {
         <ul className="list-unstyled">
           <li>Freelancer</li>
           <li>Club</li>
+          <Link to="/crowdfunding" onClick={toggleMenu}><li>Crowdfunding</li></Link>
 
           {/* Shop with Submenu */}
           <li onClick={toggleShop} className="shop-parent">
@@ -48,7 +56,8 @@ const Header = () => {
 
           <li>Your Account</li>
           <li>Sign in</li>
-          <Link to={'/register'}>  <li>Sign up for free</li></Link>
+          <Link to="/books" onClick={toggleMenu}><li>Books</li></Link>
+          <Link to={'/register'} onClick={toggleMenu}>  <li>Sign up for free</li></Link>
          
         </ul>
       </nav>

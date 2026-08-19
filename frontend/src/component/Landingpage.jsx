@@ -24,6 +24,7 @@ import BookMarketplace from './BookMarketplace'
 import BuyerProducts from '../nearproducts/BuyerProducts'
 import HowPlatformWorks from '../nearproducts/HowPlatformWorks'
 import PhysicalProductsHome from './PhysicalProducts/PhysicalProductsHome'
+import CrowdfundedProductsList from './Equb/CrowdfundedProductsList'
 
 function Landingpage() {
   return (
@@ -39,6 +40,7 @@ function Landingpage() {
                     <Giftproducts/>
                     <BookMarketplace/>
                     <PhysicalProductsHome/>
+                    <CrowdfundedProductsList/>
                     {/* <RewardsList/> */}
                     {/* <Handmadeproduct/> */}
 
