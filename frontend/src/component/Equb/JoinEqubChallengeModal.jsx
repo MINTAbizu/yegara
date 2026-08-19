@@ -4,7 +4,7 @@ import { useAuth } from "../../Context/Authcontext";
 import { toast } from "react-toastify";
 import "./JoinEqubChallengeModal.css";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 const JoinEqubChallengeModal = ({
   challenge,
@@ -34,53 +34,30 @@ const JoinEqubChallengeModal = ({
     setLoading(true);
 
     try {
-      // Step 2: Initiate payment through Chapa
-      // Create a payment for the slot price
-      const tx_ref = `equb_${challenge._id}_${Date.now()}_${Math.random()
-        .toString(36)
-        .substr(2, 9)}`;
-
-      const paymentData = {
+      const paymentRes = await axios.post(`${API_URL}/api/payments/initialize`, {
+        userId: user._id || user.id,
         amount: challenge.slotPrice,
-        currency: "ETB",
         email: user.email,
-        tx_ref,
-        first_name: user.name?.split(" ")[0] || "User",
-        last_name: user.name?.split(" ")[1] || "Name",
-        title: `Join Equb Challenge: ${challenge.title}`,
-        description: `Slot Price: ${challenge.slotPrice} ETB`,
-        callback_url: `${window.location.origin}/equb/payment-callback?challengeId=${challenge._id}&tx_ref=${tx_ref}`,
-        return_url: `${window.location.origin}/equb/payment-callback?challengeId=${challenge._id}&tx_ref=${tx_ref}`,
-      };
+        firstName: user.name?.split(" ")[0] || "User",
+        purpose: "CROWDFUND_JOIN",
+        targetId: challenge._id,
+      });
 
-      // Initialize payment with Chapa
-      const chapaRes = await axios.post(
-        "https://api.chapa.co/v1/transaction/initialize",
-        paymentData,
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_CHAPA_KEY}`,
-          },
-        }
-      );
-
-      if (chapaRes.data?.data?.checkout_url) {
-        // Store payment reference in session for verification after redirect
+      if (paymentRes.data?.checkout_url) {
         sessionStorage.setItem(
-          `equb_payment_${tx_ref}`,
+          `payment_${paymentRes.data.tx_ref}`,
           JSON.stringify({
             challengeId: challenge._id,
-            userId: user._id,
+            userId: user._id || user.id,
             slotPrice: challenge.slotPrice,
-            tx_ref,
+            tx_ref: paymentRes.data.tx_ref,
           })
         );
 
-        // Redirect to Chapa payment
         setStep(2);
         setTimeout(() => {
-          window.location.href = chapaRes.data.data.checkout_url;
-        }, 1500);
+          window.location.href = paymentRes.data.checkout_url;
+        }, 800);
       } else {
         throw new Error("No checkout URL received");
       }
@@ -244,6 +221,8 @@ const JoinEqubChallengeModal = ({
 };
 
 export default JoinEqubChallengeModal;
+
+
 
 
 

@@ -12,6 +12,7 @@ const shopLinks = [
   { label: "Digital products", to: "/BrowseAllProducts" },
   { label: "Social accounts", to: "/Telegram" },
   { label: "Crowdfunding", to: "/crowdfunding" },
+  { label: "Crowdfunding Billing", to: "/equb-create" },
   { label: "Referral bounty", to: "/referral-bounty" },
 ];
 
@@ -56,7 +57,7 @@ const Header = () => {
       <nav className="desktop-nav" aria-label="Primary navigation">
         <Link to="/BrowseAllProducts">Marketplace</Link>
         <Link to="/crowdfunding">Crowdfunding</Link>
-        <Link to="/Crowdfunding">Crowdfunding Bill</Link>
+        <Link to="/equb-create">Crowdfunding Billing</Link>
         <Link to="/UpgradePro">Seller Tools</Link>
       </nav>
 
@@ -106,7 +107,8 @@ const Header = () => {
         </div>
         <ul>
           <li><Link to="/BrowseAllProducts" onClick={closeMenu}>Marketplace</Link></li>
-          <li><Link to="/crowdfunding" onClick={closeMenu}>Equb crowdfunding</Link></li>
+          <li><Link to="/crowdfunding" onClick={closeMenu}>Crowdfunding</Link></li>
+          <li><Link to="/equb-create" onClick={closeMenu}>Crowdfunding Billing</Link></li>
           <li>
             <button onClick={toggleShop} className="shop-parent" aria-expanded={shopOpen}>
               Shop categories <FaChevronDown />

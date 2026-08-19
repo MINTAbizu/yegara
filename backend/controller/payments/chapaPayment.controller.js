@@ -15,7 +15,7 @@ const CHAPA_INITIALIZE_URL = "https://api.chapa.co/v1/transaction/initialize";
 const CHAPA_VERIFY_URL = "https://api.chapa.co/v1/transaction/verify";
 const PURPOSES = ["DIRECT_PURCHASE", "CROWDFUND_JOIN"];
 
-const frontendUrl = () => (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
+const frontendUrl = () => (process.env.FRONTEND_URL || process.env.CLIENT_URL || "http://localhost:5173").replace(/\/$/, "");
 const backendUrl = () => (process.env.BACKEND_URL || "http://localhost:5000").replace(/\/$/, "");
 const moneyMatches = (left, right) => Number(left).toFixed(2) === Number(right).toFixed(2);
 
@@ -139,7 +139,9 @@ export const initializePayment = async (req, res) => {
 
     const txRef = `tx-${purpose.toLowerCase()}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
     const returnUrl = `${frontendUrl()}/payment-verify?tx_ref=${encodeURIComponent(txRef)}`;
-    const callbackUrl = `${backendUrl()}/api/payments/webhook`;
+    const callbackUrl = process.env.CHAPA_CALLBACK_URL?.includes("/api/payments/webhook")
+      ? process.env.CHAPA_CALLBACK_URL
+      : `${backendUrl()}/api/payments/webhook`;
 
     const transaction = await Transaction.create({
       userId,
@@ -279,6 +281,8 @@ export const verifyPaymentStatus = async (req, res) => {
     return res.status(error.status || 500).json({ message: error.message || "Unable to verify payment status." });
   }
 };
+
+
 
 
 

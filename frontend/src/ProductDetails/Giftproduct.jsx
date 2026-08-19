@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { RingLoader } from "react-spinners";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 const Giftproduct = () => {
   const { id } = useParams();
@@ -91,22 +91,34 @@ const Giftproduct = () => {
 
   /* ================= BUY ================= */
   const handleBuy = async () => {
-    if (!seller?.chapaWallet) {
-      alert("Seller wallet unavailable");
+    let user = null;
+
+    try {
+      const storedUser = localStorage.getItem("user");
+      user = storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      user = null;
+    }
+
+    if (!user?._id && !user?.id) {
+      navigate(`/login?redirect=/giftProductDetails/${product?._id}`);
       return;
     }
 
     try {
-      const res = await axios.post(`${API_URL}/api/payment/initiate`, {
-        productId: product?._id,
+      const res = await axios.post(`${API_URL}/api/payments/initialize`, {
+        userId: user._id || user.id,
         amount: product?.price,
-        recipientWallet: seller.chapaWallet,
+        email: user.email,
+        firstName: user.name?.split(" ")[0] || "User",
+        purpose: "DIRECT_PURCHASE",
+        targetId: product?._id,
       });
 
       window.location.href = res.data.checkout_url;
     } catch (err) {
       console.error(err);
-      alert("Payment failed");
+      alert(err.response?.data?.message || "Payment failed");
     }
   };
 
@@ -269,3 +281,5 @@ const Giftproduct = () => {
 };
 
 export default Giftproduct;
+
+
