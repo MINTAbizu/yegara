@@ -5,7 +5,7 @@ import axios from "axios";
 import logo from "../../assets/telegeram/የጋር2.png";
 import "./Header.css";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 const shopLinks = [
   { label: "Physical products", to: "/BrowseAllProducts" },
@@ -22,29 +22,46 @@ const Header = () => {
   const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleMenu = () => setMenuOpen((open) => !open);
   const toggleShop = () => setShopOpen(!shopOpen);
   const closeMenu = () => {
     setMenuOpen(false);
     setShopOpen(false);
   };
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      const token = localStorage.getItem("token"); // Assuming auth token is saved in localStorage
-      if (!token) return;
+  const fetchUserProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUserProfile(null);
+      return;
+    }
 
-      try {
-        const res = await axios.get(`${API_URL}/api/profile/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUserProfile(res.data);
-      } catch (err) {
+    try {
+      const res = await axios.get(`${API_URL}/api/profile/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUserProfile(res.data);
+    } catch (err) {
+      if (err.response?.status !== 404) {
         console.error("Error loading user profile:", err);
       }
-    };
+      setUserProfile(null);
+    }
+  };
 
+  useEffect(() => {
     fetchUserProfile();
+
+    const handleProfileUpdated = () => fetchUserProfile();
+    const handleWindowFocus = () => fetchUserProfile();
+
+    window.addEventListener("profile-updated", handleProfileUpdated);
+    window.addEventListener("focus", handleWindowFocus);
+
+    return () => {
+      window.removeEventListener("profile-updated", handleProfileUpdated);
+      window.removeEventListener("focus", handleWindowFocus);
+    };
   }, []);
 
   return (
@@ -101,7 +118,7 @@ const Header = () => {
             <img src={logo} alt="" />
             <span>Yegara</span>
           </div>
-          <button className="close-icon" onClick={toggleMenu} aria-label="Close menu">
+          <button className="close-icon" onClick={closeMenu} aria-label="Close menu">
             <FaTimes />
           </button>
         </div>
@@ -146,3 +163,6 @@ const Header = () => {
 };
 
 export default Header;
+
+
+

@@ -54,6 +54,20 @@ export const createProfile = async (req, res) => {
 };
 
 
+
+export const getMyProfile = async (req, res) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+    const profile = await Profile.findOne({ user: req.user._id }).populate("user", "name email role");
+    if (!profile) return res.status(404).json({ message: "Profile not found" });
+
+    res.status(200).json(profile);
+  } catch (error) {
+    console.error("getMyProfile error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 export const ouruser = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -167,6 +181,7 @@ export const getApprovedProfiles = async (req, res) => {
 //     res.status(500).json({ message: "Server error" });
 //   }
 // };
+
 
 
 

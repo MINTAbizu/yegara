@@ -103,3 +103,36 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+html,
+body,
+#root {
+  min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+.landing-page-shell {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+@media (max-width: 640px) {
+  h1 { font-size: 1.9rem; }
+  h2 { font-size: 1.55rem; }
+  h3 { font-size: 1.25rem; }
+
+  .container,
+  .container-fluid {
+    max-width: 100%;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}

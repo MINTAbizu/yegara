@@ -28,7 +28,7 @@ import CrowdfundedProductsList from './Equb/CrowdfundedProductsList'
 
 function Landingpage() {
   return (
-    <div>
+    <div className="landing-page-shell">
       
       <Header />
         <Home/>
@@ -70,3 +70,4 @@ function Landingpage() {
 }
 
 export default Landingpage
+
