@@ -15,6 +15,7 @@ import {
   FaTimes,
   FaGift,
   FaStore,
+  FaBookOpen,
 } from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
@@ -38,6 +39,7 @@ const DashboardLayout = ({ children }) => {
     { name: "Setting", path: "/Settings", icon: <FaCog /> },
     { name: "Bounty Link", path: "/referral-bounty", icon: <FaGift /> },
     { name: "Crowdfunding Billing", path: "/equb-create", icon: <FaStore /> },
+    { name: "My Books", path: "/my-book-purchases", icon: <FaBookOpen /> },
     { name: "Bank", path: "/Bank", icon: <FaUniversity /> },
     { name: "Payments", path: "/payments", icon: <FaMoneyCheckAlt /> },
     { name: "Help", path: "/help", icon: <FaQuestionCircle /> },

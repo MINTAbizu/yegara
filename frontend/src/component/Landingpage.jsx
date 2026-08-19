@@ -20,6 +20,7 @@ import OurCustomers from './User/OurCustomers '
 import StepsAnimated from './StepsAnimated/StepsAnimated'
  import Userprofile from '../component/User/Userprofile'
 import Giftproducts from './giftproduct/Giftproducts'
+import BookMarketplace from './BookMarketplace'
 import BuyerProducts from '../nearproducts/BuyerProducts'
 import HowPlatformWorks from '../nearproducts/HowPlatformWorks'
 import PhysicalProductsHome from './PhysicalProducts/PhysicalProductsHome'
@@ -36,6 +37,7 @@ function Landingpage() {
                     <HorizontalProductList/>
                     <Productlist/>
                     <Giftproducts/>
+                    <BookMarketplace/>
                     <PhysicalProductsHome/>
                     {/* <RewardsList/> */}
                     {/* <Handmadeproduct/> */}

@@ -55,6 +55,7 @@ import AdminSocialAccountsTable from './Admin/products/AdminSocialAccountsTable'
 import AdminCrowdfundingList from './Admin/products/AdminCrowdfundingList';
 import UpgradePro from './kyc/UpgradePro';
 import Giftproduct from './ProductDetails/Giftproduct';
+import BookDetails from './ProductDetails/BookDetails';
 import EqubChallengeDemo from './component/Equb/EqubChallengeDemo';
 import CreateEqubChallenge from './component/Equb/CreateEqubChallenge';
 import AdvancedEqubWheel from './component/Equb/AdvancedEqubWheel/AdvancedEqubWheel';
@@ -62,6 +63,9 @@ import EqubPaymentCallback from './component/Equb/EqubPaymentCallback';
 import CrowdfundedProductsList from './component/Equb/CrowdfundedProductsList';
 import ReferralLanding from './pages/ReferralLanding';
 import ReferralBounty from './component/Rewardcard/ReferralBounty';
+import BookMarketplace from './component/BookMarketplace';
+import BookPaymentCallback from './pages/BookPaymentCallback';
+import MyPurchases from './BuyerMyPurchasesPage/MyPurchases';
 
 
 function App() {
@@ -76,6 +80,9 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/r/:code" element={<ReferralLanding />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/books" element={<BookMarketplace />} />
+          <Route path="/books/:id" element={<BookDetails />} />
+          <Route path="/book/payment-callback" element={<BookPaymentCallback />} />
           <Route path="/TelegeramLanding" element={<TelegeramLanding />} />
           <Route path="/Telegram" element={<Telegram />} />
           <Route path="/SupportChat" element={<SupportChat />} />
@@ -382,6 +389,17 @@ function App() {
                 />
 
           
+
+          <Route
+            path="/my-book-purchases"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <MyPurchases />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/addbook"

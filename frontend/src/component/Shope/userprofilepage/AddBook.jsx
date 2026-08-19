@@ -33,7 +33,7 @@ const AddBook = () => {
         return;
       }
        const res = await axios.post(
-        `${API_URL}/api/Books/create`,
+        `${API_URL}/api/books/create`,
         data,
         {
           headers: {
@@ -42,7 +42,7 @@ const AddBook = () => {
           },
         }
       );
-       alert("Book Product Added Successfully!");
+       alert("Book submitted successfully. Admin approval is required before it appears in the marketplace.");
       setFormData({
          bookName: "",
     price: "",
