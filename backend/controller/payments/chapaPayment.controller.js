@@ -2,6 +2,7 @@ import axios from "axios";
 import crypto from "crypto";
 import mongoose from "mongoose";
 import Transaction from "../../model/Payment/Transaction.js";
+import EqubChallenge from "../../models/EqubChallenge.model.js";
 import User from "../../model/user.model/user.model.js";
 import {
   fulfillDirectPurchase,
@@ -112,8 +113,25 @@ export const initializePayment = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found." });
 
     if (purpose === "DIRECT_PURCHASE") {
-      const product = await findPurchasableProduct(targetId);
-      if (!product) return res.status(404).json({ message: "Product was not found or is not approved." });
+      const resolvedProduct = await findPurchasableProduct(targetId);
+      if (!resolvedProduct) return res.status(404).json({ message: "Product was not found or is not approved." });
+      if (!moneyMatches(resolvedProduct.product.price, numericAmount)) {
+        return res.status(400).json({ message: "Payment amount does not match the product price." });
+      }
+    }
+
+    if (purpose === "CROWDFUND_JOIN") {
+      const challenge = await EqubChallenge.findOne({ _id: targetId, status: "PENDING", expiresAt: { $gt: new Date() } }).lean();
+      if (!challenge) return res.status(404).json({ message: "Challenge was not found or is no longer active." });
+      if (!moneyMatches(challenge.slotPrice, numericAmount)) {
+        return res.status(400).json({ message: "Payment amount does not match the challenge slot price." });
+      }
+      if (challenge.filledSlots.some((slotUserId) => slotUserId.toString() === userId.toString())) {
+        return res.status(409).json({ message: "You already joined this challenge." });
+      }
+      if (challenge.filledSlots.length >= challenge.totalSlots) {
+        return res.status(409).json({ message: "This challenge has no remaining slots." });
+      }
     }
 
     const txRef = `tx-${purpose.toLowerCase()}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
@@ -258,3 +276,4 @@ export const verifyPaymentStatus = async (req, res) => {
     return res.status(error.status || 500).json({ message: error.message || "Unable to verify payment status." });
   }
 };
+
