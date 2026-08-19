@@ -30,7 +30,7 @@ function Landingpage() {
   return (
     <div>
       
-      {/* <Header /> */}
+      <Header />
         <Home/>
 
         {/* https://themewagon.com/themes/furni-online-store/ */}

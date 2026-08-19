@@ -77,7 +77,7 @@ function App() {
 
     <AuthProvider>
       <Router>
-        <Header />
+        {/* <Header /> */}
         <Routes>
           <Route path="/" element={<Landingpage />} />
           <Route path="/register" element={<Register />} />
