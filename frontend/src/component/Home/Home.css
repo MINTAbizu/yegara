@@ -1,14 +1,15 @@
 /* Landing page */
 .home-page {
-  background: #f7f8fb;
+  background: #f8fafc;
   color: #172033;
   overflow-x: hidden;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .landing-hero {
-  padding: 96px 20px 28px;
+  padding: 104px 20px 28px;
   background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.95), rgba(238, 246, 255, 0.88)),
+    linear-gradient(110deg, rgba(248, 250, 252, 0.98) 0%, rgba(248, 250, 252, 0.88) 52%, rgba(255, 255, 255, 0.64) 100%),
     url("../../assets/image/officetabel.jpg") center / cover no-repeat;
 }
 
@@ -17,7 +18,7 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.85fr);
-  gap: 40px;
+  gap: 48px;
   align-items: center;
   min-height: calc(100vh - 124px);
 }
@@ -29,7 +30,7 @@
 .landing-hero__eyebrow,
 .section-heading p {
   margin: 0 0 10px;
-  color: #0b6bcb;
+  color: #0f766e;
   font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -39,17 +40,17 @@
 .landing-hero h1 {
   margin: 0;
   max-width: 760px;
-  color: #111827;
-  font-size: clamp(2.35rem, 6vw, 4.75rem);
-  line-height: 1.02;
-  font-weight: 850;
+  color: #101828;
+  font-size: clamp(2.35rem, 5.4vw, 4.4rem);
+  line-height: 1.04;
+  font-weight: 800;
   letter-spacing: 0;
 }
 
 .landing-hero__lead {
   max-width: 620px;
   margin: 22px 0 0;
-  color: #4b5563;
+  color: #475467;
   font-size: clamp(1rem, 2vw, 1.22rem);
   line-height: 1.7;
 }
@@ -81,19 +82,19 @@
 }
 
 .landing-btn--primary {
-  background: #0b6bcb;
+  background: #0f766e;
   color: #fff;
   box-shadow: 0 14px 30px rgba(11, 107, 203, 0.22);
 }
 
 .landing-btn--secondary {
   background: #fff;
-  color: #111827;
+  color: #101828;
   border-color: #d7deea;
 }
 
 .landing-btn--dark {
-  background: #111827;
+  background: #101828;
   color: #fff;
 }
 
@@ -125,8 +126,8 @@
   min-height: 420px;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 24px 70px rgba(17, 24, 39, 0.2);
-  background: #dbeafe;
+  box-shadow: 0 24px 70px rgba(17, 24, 39, 0.18);
+  background: #e2e8f0;
 }
 
 .landing-hero__visual img {
@@ -148,12 +149,12 @@
 }
 
 .market-snapshot strong {
-  color: #111827;
+  color: #101828;
   font-size: 0.98rem;
 }
 
 .market-snapshot span {
-  color: #5b6472;
+  color: #667085;
   font-size: 0.86rem;
 }
 
@@ -177,7 +178,7 @@
   transform: translateY(-16px);
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  border: 1px solid #e3e8f0;
+  border: 1px solid #e4e7ec;
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 16px 42px rgba(17, 24, 39, 0.08);
@@ -186,7 +187,7 @@
 
 .landing-metrics div {
   padding: 20px;
-  border-right: 1px solid #eef2f7;
+  border-right: 1px solid #eef2f6;
 }
 
 .landing-metrics div:last-child {
@@ -195,7 +196,7 @@
 
 .landing-metrics strong {
   display: block;
-  color: #111827;
+  color: #101828;
   font-size: 1.08rem;
 }
 
@@ -220,7 +221,7 @@
 .section-heading h2,
 .landing-cta h2 {
   margin: 0;
-  color: #111827;
+  color: #101828;
   font-size: clamp(1.75rem, 4vw, 2.65rem);
   line-height: 1.12;
   font-weight: 830;
@@ -235,7 +236,7 @@
 .market-pillar {
   min-height: 230px;
   padding: 22px;
-  border: 1px solid #e4e9f2;
+  border: 1px solid #e4e7ec;
   border-radius: 8px;
   background: #fff;
 }
@@ -246,14 +247,14 @@
   display: grid;
   place-items: center;
   border-radius: 8px;
-  background: #eaf4ff;
-  color: #0b6bcb;
+  background: #ecfdf3;
+  color: #0f766e;
   margin-bottom: 18px;
 }
 
 .market-pillar h3 {
   margin: 0 0 10px;
-  color: #111827;
+  color: #101828;
   font-size: 1.15rem;
   font-weight: 820;
 }
@@ -270,7 +271,7 @@
   padding: 28px;
   border-radius: 8px;
   background: #ffffff;
-  border: 1px solid #e4e9f2;
+  border: 1px solid #e4e7ec;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -278,7 +279,7 @@
 }
 
 .landing-cta svg {
-  color: #0b6bcb;
+  color: #0f766e;
   font-size: 1.6rem;
   margin-bottom: 10px;
 }
@@ -322,7 +323,7 @@
   }
 
   .landing-metrics div:nth-child(-n + 2) {
-    border-bottom: 1px solid #eef2f7;
+    border-bottom: 1px solid #eef2f6;
   }
 }
 
@@ -377,7 +378,7 @@
   .landing-metrics div,
   .landing-metrics div:nth-child(2) {
     border-right: 0;
-    border-bottom: 1px solid #eef2f7;
+    border-bottom: 1px solid #eef2f6;
   }
 
   .landing-metrics div:last-child {

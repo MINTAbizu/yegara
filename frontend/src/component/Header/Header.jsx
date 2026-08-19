@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaChevronDown, FaTimes } from "react-icons/fa";
 import "./Header.css";
 import { Link } from "react-router-dom";
-import logo from "../../assets/telegeram/የጋር2.png";
+import logo from "../../assets/telegeram/???2.png";
+
+const shopLinks = [
+  { label: "Physical products", to: "/BrowseAllProducts" },
+  { label: "Digital products", to: "/BrowseAllProducts" },
+  { label: "Social accounts", to: "/Telegram" },
+  { label: "Crowdfunding", to: "/crowdfunding" },
+  { label: "Referral bounty", to: "/referral-bounty" },
+];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -10,55 +18,66 @@ const Header = () => {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const toggleShop = () => setShopOpen(!shopOpen);
+  const closeMenu = () => {
+    setMenuOpen(false);
+    setShopOpen(false);
+  };
 
   return (
-    <header className="header d-flex justify-content-between align-items-center p-3">
-      {/* Logo */}
-      <div className="logo" >
-        <img src={logo}  style={{width:"50px",  height:"35px", overflow:"hidden", justifyContent:"center" ,alignItems:"center"}} alt="Logo" className="img-fluid" />
-      </div>
+    <header className="site-header">
+      <Link to="/" className="brand" onClick={closeMenu}>
+        <img src={logo} alt="Yegara" />
+        <span>Yegara</span>
+      </Link>
 
-      <nav className="top-nav" aria-label="Primary navigation">
-        <Link to="/" className="top-nav-link">Home</Link>
-        <Link to="/BrowseAllProducts" className="top-nav-link">Marketplace</Link>
-        <Link to="/books" className="top-nav-link">Books</Link>
-        <Link to="/crowdfunding" className="top-nav-link top-nav-link--highlight">Crowdfunding</Link>
+      <nav className="desktop-nav" aria-label="Primary navigation">
+        <Link to="/BrowseAllProducts">Marketplace</Link>
+        <Link to="/crowdfunding">Equb</Link>
+        <Link to="/Telegram">Social Accounts</Link>
+        <Link to="/UpgradePro">Seller Tools</Link>
       </nav>
 
-      {/* Menu Icon (always visible) */}
-      <div className="menu-icon" onClick={toggleMenu}>
-        {menuOpen ? <FaTimes size={25} /> : <FaBars size={25} />}
+      <div className="header-actions">
+        <Link to="/login" className="header-link">Sign in</Link>
+        <Link to="/register" className="header-cta">Start selling</Link>
+        <button
+          className="menu-icon"
+          onClick={toggleMenu}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+        </button>
       </div>
 
-      {/* Slide-in Menu */}
-      <nav className={`slide-menu ${menuOpen ? "active" : ""}`}>
+      <nav className={`slide-menu ${menuOpen ? "active" : ""}`} aria-label="Mobile navigation">
         <div className="slide-header">
-          {/* <img src={logo} alt="Logo" className="slide-logo" /> */}
-          <FaTimes className="close-icon" onClick={toggleMenu} />
+          <div className="brand brand--drawer">
+            <img src={logo} alt="" />
+            <span>Yegara</span>
+          </div>
+          <button className="close-icon" onClick={toggleMenu} aria-label="Close menu">
+            <FaTimes />
+          </button>
         </div>
-        <ul className="list-unstyled">
-          <li>Freelancer</li>
-          <li>Club</li>
-          <Link to="/crowdfunding" onClick={toggleMenu}><li>Crowdfunding</li></Link>
-
-          {/* Shop with Submenu */}
-          <li onClick={toggleShop} className="shop-parent">
-            Shop
+        <ul>
+          <li><Link to="/BrowseAllProducts" onClick={closeMenu}>Marketplace</Link></li>
+          <li><Link to="/crowdfunding" onClick={closeMenu}>Equb crowdfunding</Link></li>
+          <li>
+            <button onClick={toggleShop} className="shop-parent" aria-expanded={shopOpen}>
+              Shop categories <FaChevronDown />
+            </button>
             <ul className={`shop-submenu ${shopOpen ? "active" : ""}`}>
-              {/* <li>💰 Earn</li> */}
-              <li>📦 Physical Products</li>
-              <li>💻 Digital Products</li>
-              <li>💻 Social Media Account</li>
-              <li>🧑‍ Freelancer</li>
-              <li>🤝 Affiliate</li>
+              {shopLinks.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} onClick={closeMenu}>{item.label}</Link>
+                </li>
+              ))}
             </ul>
           </li>
-
-          <li>Your Account</li>
-          <li>Sign in</li>
-          <Link to="/books" onClick={toggleMenu}><li>Books</li></Link>
-          <Link to={'/register'} onClick={toggleMenu}>  <li>Sign up for free</li></Link>
-         
+          <li><Link to="/userprofile" onClick={closeMenu}>Your account</Link></li>
+          <li><Link to="/login" onClick={closeMenu}>Sign in</Link></li>
+          <li><Link to="/register" className="drawer-cta" onClick={closeMenu}>Create account</Link></li>
         </ul>
       </nav>
     </header>

@@ -16,26 +16,26 @@ import heroImage from "../../assets/image/Promoting Handmade Crafts Online.png";
 import "./Home.css";
 
 const trustItems = [
-  { icon: <FaShieldAlt />, label: "Protected checkout" },
-  { icon: <FaTruck />, label: "Digital and local delivery" },
-  { icon: <FaUsers />, label: "Verified community sellers" },
+  { icon: <FaShieldAlt />, label: "Verified seller profiles" },
+  { icon: <FaTruck />, label: "Digital and local commerce" },
+  { icon: <FaUsers />, label: "Built around Ethiopian buyers" },
 ];
 
 const marketPillars = [
   {
     icon: <FaStore />,
-    title: "Sell anything faster",
-    text: "List digital products, gifts, physical items, and social accounts from one dashboard.",
+    title: "One shop, many product types",
+    text: "Manage digital products, gifts, physical goods, books, and social accounts without jumping between tools.",
   },
   {
     icon: <FaLock />,
-    title: "Build buyer trust",
-    text: "KYC, profiles, and order tracking help serious sellers stand out on the platform.",
+    title: "Trust before the first order",
+    text: "Profiles, KYC steps, and clear product pages make it easier for buyers to know who they are dealing with.",
   },
   {
     icon: <FaBolt />,
-    title: "Grow with rewards",
-    text: "Referral bounty links and product promotion paths help users bring more people in.",
+    title: "Growth that is easy to track",
+    text: "Referral bounty links, promotions, and seller dashboards keep the business side visible.",
   },
 ];
 
@@ -46,14 +46,14 @@ export default function Home() {
         <div className="landing-hero__inner">
           <div className="landing-hero__copy">
             <p className="landing-hero__eyebrow">Yegara Marketplace</p>
-            <h1 id="landing-title">Buy, sell, and grow in one trusted Ethiopian marketplace.</h1>
+            <h1 id="landing-title">A practical marketplace for Ethiopia's digital and local sellers.</h1>
             <p className="landing-hero__lead">
-              Discover digital goods, gift products, physical items, crowdfunding opportunities, and seller tools built for everyday commerce.
+              Browse real listings, start a seller profile, promote products, or join crowdfunded buying with a cleaner flow from discovery to checkout.
             </p>
 
             <div className="landing-hero__actions" aria-label="Primary actions">
               <Link to="/BrowseAllProducts" className="landing-btn landing-btn--primary">
-                Browse Products <FaArrowRight />
+                Browse marketplace <FaArrowRight />
               </Link>
               <Link to="/register" className="landing-btn landing-btn--secondary">
                 Start Selling
@@ -73,12 +73,12 @@ export default function Home() {
           <div className="landing-hero__visual" aria-label="Yegara marketplace preview">
             <img src={heroImage} alt="Handmade products promoted online" />
             <div className="market-snapshot market-snapshot--sales">
-              <strong>Fast setup</strong>
-              <span>Create your shop and publish products.</span>
+              <strong>Seller-ready</strong>
+              <span>Publish products and manage orders from one place.</span>
             </div>
             <div className="market-snapshot market-snapshot--secure">
               <FaCheckCircle />
-              <span>Verified seller flow</span>
+              <span>Profile and KYC flow</span>
             </div>
           </div>
         </div>
@@ -86,27 +86,27 @@ export default function Home() {
 
       <section className="landing-metrics" aria-label="Marketplace highlights">
         <div>
-          <strong>Digital</strong>
-          <span>Downloads and online products</span>
+          <strong>Digital goods</strong>
+          <span>Courses, templates, software, and downloads</span>
         </div>
         <div>
-          <strong>Physical</strong>
-          <span>Local products and delivery</span>
+          <strong>Local products</strong>
+          <span>Physical goods, gifts, and handmade items</span>
         </div>
         <div>
-          <strong>Equb</strong>
-          <span>Crowdfunded buying experiences</span>
+          <strong>Equb buying</strong>
+          <span>Group-funded product opportunities</span>
         </div>
         <div>
-          <strong>Bounty</strong>
-          <span>Referral growth for every user</span>
+          <strong>Referrals</strong>
+          <span>Bounty links for measurable growth</span>
         </div>
       </section>
 
       <section className="market-pillars" aria-labelledby="market-pillars-title">
         <div className="section-heading">
           <p>Built for buyers and sellers</p>
-          <h2 id="market-pillars-title">A cleaner way to run marketplace activity</h2>
+          <h2 id="market-pillars-title">Less noise between listing, discovery, and trust</h2>
         </div>
         <div className="market-pillars__grid">
           {marketPillars.map((item) => (
@@ -122,8 +122,8 @@ export default function Home() {
       <section className="landing-cta" aria-labelledby="landing-cta-title">
         <div>
           <FaMobileAlt />
-          <h2 id="landing-cta-title">Ready to explore Yegara?</h2>
-          <p>Start with the marketplace, then create an account when you are ready to buy, sell, or share your bounty link.</p>
+          <h2 id="landing-cta-title">Open a seller profile when you are ready.</h2>
+          <p>Start by browsing the marketplace, then create an account to sell products, manage orders, or share a referral bounty link.</p>
         </div>
         <Link to="/register" className="landing-btn landing-btn--dark">
           Create Free Account
