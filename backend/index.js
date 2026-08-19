@@ -11,7 +11,8 @@ import path from "path";
 import digitalProductRoutes from "./route/digitalProduct.route/digitalProduct.route.js";
 import physicalProductRoutes from "./route/physhicalproduct/phshicalproduct.js";
 import userregister from "./route/user.route/user.route.js";
-import chapapayment from "./route/payments/payment.route.js";`r`nimport chapaPaymentRoutes from "./route/payments/chapaPayment.route.js";
+import chapapayment from "./route/payments/payment.route.js";
+import chapaPaymentRoutes from "./route/payments/chapaPayment.route.js";
 // kyc
 
 import kycRoutes from './route/kyc/kyc.route.js'
@@ -95,7 +96,8 @@ app.use("/api/users", userregister);
 app.use("/api/kyc", kycRoutes)
 // // Profile routes
 app.use("/api/profile", profileRoutes);
-app.use("/api/payment", chapapayment);`r`napp.use("/api/payments", chapaPaymentRoutes);
+app.use("/api/payment", chapapayment);
+app.use("/api/payments", chapaPaymentRoutes);
 // app.use("/telegram", telegeram);
 
 // giftproduct
@@ -131,5 +133,7 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+
 
 
