@@ -12,14 +12,18 @@ const AffiliateDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Filters & State
+  // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
-  const [timeframe, setTimeframe] = useState("ALL");
+  const [timeframe, setTimeframe] = useState("ALL"); // ALL | TODAY | WEEK | MONTH | CUSTOM
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
+
+  // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 6;
 
-  // Custom Commission Rate (e.g., 10% affiliate commission)
+  // Global Affiliate Commission Rate (e.g., 10%)
   const COMMISSION_RATE = 0.10;
 
   useEffect(() => {
@@ -39,7 +43,7 @@ const AffiliateDashboard = () => {
     fetchOrders();
   }, [user]);
 
-  // Affiliate Ref Link Generation
+  // Referral Link Generation
   const affiliateRefLink = `${window.location.origin}/shop?ref=${user?._id || user?.id || "affiliate"}`;
 
   const copyToClipboard = () => {
@@ -48,11 +52,12 @@ const AffiliateDashboard = () => {
     setTimeout(() => setCopiedLink(false), 2500);
   };
 
-  // Date Filtering Logic
+  // Advanced Date Range & Keyword Filtering Logic
   const filteredOrders = orders.filter((order) => {
     const orderDate = new Date(order.createdAt);
     const today = new Date();
 
+    // 1. Timeframe / Date Selection Filtering
     let matchesTime = true;
     if (timeframe === "TODAY") {
       matchesTime = orderDate.toDateString() === today.toDateString();
@@ -64,8 +69,14 @@ const AffiliateDashboard = () => {
       const oneMonthAgo = new Date();
       oneMonthAgo.setDate(today.getDate() - 30);
       matchesTime = orderDate >= oneMonthAgo;
+    } else if (timeframe === "CUSTOM" && startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      matchesTime = orderDate >= start && orderDate <= end;
     }
 
+    // 2. Search Filter
     const email = order.buyerEmail || order.userId?.email || "";
     const txRef = order.txRef || "";
     const query = searchQuery.toLowerCase();
@@ -74,11 +85,13 @@ const AffiliateDashboard = () => {
     return matchesTime && matchesSearch;
   });
 
-  // KPI Calculations
-  const grossSales = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+  // KPI Analytics Calculations
+  const grossSales = filteredOrders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
   const totalCommission = grossSales * COMMISSION_RATE;
-  const totalConversions = orders.length;
-  // Estimated clicks (Mock calculation based on 3.5% avg conversion rate)
+  const totalConversions = filteredOrders.length;
+  const averageOrderValue = totalConversions > 0 ? grossSales / totalConversions : 0;
+  
+  // Estimated Clicks (Mock metric derived from conversion rate standard)
   const estimatedClicks = totalConversions > 0 ? Math.round(totalConversions / 0.035) : 0;
   const conversionRate = estimatedClicks > 0 ? ((totalConversions / estimatedClicks) * 100).toFixed(1) : "0.0";
 
@@ -88,11 +101,11 @@ const AffiliateDashboard = () => {
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
 
-  // Export Affiliate Report to CSV
+  // CSV Export Handler
   const exportToCSV = () => {
     if (filteredOrders.length === 0) return;
 
-    const headers = ["Transaction Ref,Customer Email,Gross Sale (ETB),Affiliate Commission (ETB),Status,Date\n"];
+    const headers = ["Transaction Ref,Customer Email,Gross Sale (ETB),Commission (ETB),Status,Date\n"];
     const rows = filteredOrders.map((o) => {
       const sale = Number(o.amount) || 0;
       const comm = sale * COMMISSION_RATE;
@@ -129,22 +142,22 @@ const AffiliateDashboard = () => {
           </Link>
         </div>
 
-        {/* Global Affiliate Link Generator Widget */}
+        {/* Affiliate Referral Widget */}
         <div className="card border-0 shadow-sm rounded-3 mb-4 bg-white">
           <div className="card-body p-3 p-md-4">
             <div className="row align-items-center g-3">
               <div className="col-12 col-lg-5">
                 <div className="d-flex align-items-center gap-2 mb-1">
                   <span className="badge bg-primary-subtle text-primary fw-bold text-uppercase">Your Referral Link</span>
-                  <span className="text-muted small">• 10% Lifetime Commission</span>
+                  <span className="text-muted small">• 10% Commission</span>
                 </div>
-                <h6 className="fw-bold mb-0 text-dark">Share your unique link to start earning affiliate income</h6>
+                <h6 className="fw-bold mb-0 text-dark">Share your unique link to start earning affiliate commissions</h6>
               </div>
               <div className="col-12 col-lg-7">
                 <div className="input-group">
                   <input
                     type="text"
-                    className="form-control bg-light border-0 py-2 rounded-start-3 small fw-medium"
+                    className="form-control bg-light border-0 py-2 rounded-start-3 small fw-medium text-truncate"
                     value={affiliateRefLink}
                     readOnly
                   />
@@ -152,7 +165,7 @@ const AffiliateDashboard = () => {
                     className={`btn ${copiedLink ? "btn-success" : "btn-primary"} px-4 rounded-end-3 transition-all`}
                     onClick={copyToClipboard}
                   >
-                    {copiedLink ? "✓ Copied!" : "Copy Referral Link"}
+                    {copiedLink ? "✓ Copied!" : "Copy Link"}
                   </button>
                 </div>
               </div>
@@ -160,14 +173,16 @@ const AffiliateDashboard = () => {
           </div>
         </div>
 
-        {/* KPI Performance Metrics Grid */}
+        {/* KPI Metrics Dashboard Grid */}
         <div className="row g-3 mb-4">
           <div className="col-12 col-sm-6 col-xl-3">
             <div className="card border-0 shadow-sm rounded-3 h-100 bg-white">
               <div className="card-body p-3 d-flex align-items-center justify-content-between">
                 <div>
-                  <span className="text-muted small fw-medium text-uppercase">Est. Unpaid Earnings</span>
-                  <h4 className="fw-bold text-success mb-0 mt-1">{totalCommission.toLocaleString(undefined, { minimumFractionDigits: 2 })} ETB</h4>
+                  <span className="text-muted small fw-medium text-uppercase">Total Earned Commission</span>
+                  <h4 className="fw-bold text-success mb-0 mt-1">
+                    {totalCommission.toLocaleString(undefined, { minimumFractionDigits: 2 })} ETB
+                  </h4>
                 </div>
                 <span className="badge bg-success-subtle text-success p-3 rounded-circle fs-5">💎</span>
               </div>
@@ -190,7 +205,7 @@ const AffiliateDashboard = () => {
             <div className="card border-0 shadow-sm rounded-3 h-100 bg-white">
               <div className="card-body p-3 d-flex align-items-center justify-content-between">
                 <div>
-                  <span className="text-muted small fw-medium text-uppercase">Conversions (Sales)</span>
+                  <span className="text-muted small fw-medium text-uppercase">Conversions (Orders)</span>
                   <h4 className="fw-bold text-dark mb-0 mt-1">{totalConversions}</h4>
                 </div>
                 <span className="badge bg-info-subtle text-info p-3 rounded-circle fs-5">⚡</span>
@@ -202,8 +217,10 @@ const AffiliateDashboard = () => {
             <div className="card border-0 shadow-sm rounded-3 h-100 bg-white">
               <div className="card-body p-3 d-flex align-items-center justify-content-between">
                 <div>
-                  <span className="text-muted small fw-medium text-uppercase">Conversion Rate</span>
-                  <h4 className="fw-bold text-dark mb-0 mt-1">{conversionRate}%</h4>
+                  <span className="text-muted small fw-medium text-uppercase">Avg Order Value (AOV)</span>
+                  <h4 className="fw-bold text-dark mb-0 mt-1">
+                    {averageOrderValue.toLocaleString(undefined, { maximumFractionDigits: 0 })} ETB
+                  </h4>
                 </div>
                 <span className="badge bg-warning-subtle text-warning p-3 rounded-circle fs-5">📈</span>
               </div>
@@ -211,60 +228,96 @@ const AffiliateDashboard = () => {
           </div>
         </div>
 
-        {/* Affiliate Commission Transactions Table */}
+        {/* Main Data Table & Toolbar */}
         <div className="card border-0 shadow-sm rounded-3 overflow-hidden bg-white">
           <div className="card-header bg-white py-3 px-4 border-bottom">
-            <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
-              <div>
-                <h5 className="fw-bold mb-0 text-dark">Commission Ledger</h5>
-                <p className="text-muted small mb-0">Detailed breakdown of attributed sales and affiliate payouts</p>
-              </div>
-
-              {/* Action Toolbar */}
-              <div className="d-flex flex-wrap align-items-center gap-2">
-                <select
-                  className="form-select form-select-sm bg-light border-0 py-2 rounded-3"
-                  value={timeframe}
-                  onChange={(e) => {
-                    setTimeframe(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  style={{ width: "auto" }}
-                >
-                  <option value="ALL">All Time</option>
-                  <option value="TODAY">Today</option>
-                  <option value="WEEK">Last 7 Days</option>
-                  <option value="MONTH">Last 30 Days</option>
-                </select>
-
-                <input
-                  type="text"
-                  className="form-control form-control-sm bg-light border-0 py-2 rounded-3"
-                  placeholder="Search buyer/ref..."
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  style={{ minWidth: "160px" }}
-                />
+            <div className="d-flex flex-column gap-3">
+              <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                <div>
+                  <h5 className="fw-bold mb-0 text-dark">Commission Ledger</h5>
+                  <p className="text-muted small mb-0">Track conversions, order amounts, and affiliate earnings</p>
+                </div>
 
                 <button
-                  className="btn btn-sm btn-outline-success rounded-3 py-2 px-3 fw-medium"
+                  className="btn btn-sm btn-outline-success rounded-3 py-2 px-3 fw-medium align-self-start align-self-md-auto"
                   onClick={exportToCSV}
                   disabled={filteredOrders.length === 0}
                 >
                   📥 Export CSV
                 </button>
               </div>
+
+              {/* Advanced Filtering Toolbar */}
+              <div className="row g-2 align-items-center">
+                {/* Timeframe Presets */}
+                <div className="col-12 col-sm-6 col-md-3">
+                  <select
+                    className="form-select form-select-sm bg-light border-0 py-2 rounded-3"
+                    value={timeframe}
+                    onChange={(e) => {
+                      setTimeframe(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <option value="ALL">All Time</option>
+                    <option value="TODAY">Today</option>
+                    <option value="WEEK">Last 7 Days</option>
+                    <option value="MONTH">Last 30 Days</option>
+                    <option value="CUSTOM">Custom Date Range</option>
+                  </select>
+                </div>
+
+                {/* Custom Date Pickers (Shown when timeframe === 'CUSTOM') */}
+                {timeframe === "CUSTOM" && (
+                  <>
+                    <div className="col-6 col-sm-3 col-md-2">
+                      <input
+                        type="date"
+                        className="form-control form-control-sm bg-light border-0 py-2 rounded-3"
+                        value={startDate}
+                        onChange={(e) => {
+                          setStartDate(e.target.value);
+                          setCurrentPage(1);
+                        }}
+                      />
+                    </div>
+                    <div className="col-6 col-sm-3 col-md-2">
+                      <input
+                        type="date"
+                        className="form-control form-control-sm bg-light border-0 py-2 rounded-3"
+                        value={endDate}
+                        onChange={(e) => {
+                          setEndDate(e.target.value);
+                          setCurrentPage(1);
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Search Bar */}
+                <div className={`col-12 ${timeframe === "CUSTOM" ? "col-md-5" : "col-sm-6 col-md-9"}`}>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm bg-light border-0 py-2 rounded-3"
+                    placeholder="Search buyer email or transaction ref..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
+          {/* Responsive Table */}
           <div className="table-responsive">
             <table className="table align-middle mb-0">
               <thead className="table-light text-muted small text-uppercase">
                 <tr>
-                  <th className="ps-4">Attributed Buyer</th>
+                  <th className="ps-4">Buyer Info</th>
                   <th>Order Value</th>
                   <th>Commission (10%)</th>
                   <th>Status</th>
@@ -277,15 +330,15 @@ const AffiliateDashboard = () => {
                   <tr>
                     <td colSpan="6" className="text-center py-4 text-muted">
                       <div className="spinner-border spinner-border-sm me-2 text-primary" role="status" />
-                      Loading affiliate statistics...
+                      Loading ledger records...
                     </td>
                   </tr>
                 ) : currentOrders.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center py-5">
                       <div className="text-muted">
-                        <p className="mb-1 fw-semibold">No commissions earned yet</p>
-                        <span className="small">Share your referral link above to start generating sales.</span>
+                        <p className="mb-1 fw-semibold">No commission records found</p>
+                        <span className="small">Try adjusting your date range or search query.</span>
                       </div>
                     </td>
                   </tr>
@@ -305,7 +358,7 @@ const AffiliateDashboard = () => {
                             </span>
                           </div>
                         </td>
-                        <td className="fw-semibold text-dark">{gross} ETB</td>
+                        <td className="fw-semibold text-dark">{gross.toLocaleString()} ETB</td>
                         <td className="fw-bold text-success">+{commission.toFixed(2)} ETB</td>
                         <td>
                           <span className="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
@@ -318,7 +371,7 @@ const AffiliateDashboard = () => {
                         <td className="text-end pe-4">
                           <button
                             className="btn btn-sm btn-light border rounded-2 px-2"
-                            title="Copy Transaction Ref"
+                            title="Copy Ref"
                             onClick={() => navigator.clipboard.writeText(order.txRef || order._id)}
                           >
                             📋
@@ -332,7 +385,7 @@ const AffiliateDashboard = () => {
             </table>
           </div>
 
-          {/* Table Footer / Pagination */}
+          {/* Footer & Pagination Controls */}
           <div className="card-footer bg-white border-top py-3 px-4 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
             <span className="small text-muted">
               Showing {filteredOrders.length > 0 ? indexOfFirstOrder + 1 : 0} to{" "}
