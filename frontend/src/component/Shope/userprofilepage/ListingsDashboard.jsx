@@ -31,6 +31,14 @@ const ListingsDashboard = () => {
 
   return (
     <div className="container-fluid min-vh-100 bg-light p-3 p-md-4">
+       <div className="d-flex align-items-center justify-content-between mb-3 gap-2 flex-wrap">
+          <button
+            onClick={() => navigate(-1)}
+            className="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-2 px-3 fw-medium bg-white shadow-sm"
+          >
+            <span>←</span> Go Back
+          </button>
+        </div>
       {/* Header Section */}
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
