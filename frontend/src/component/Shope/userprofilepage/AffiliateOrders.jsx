@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../../Context/Authcontext";
 import DashboardLayout from "../../../kyc/DashboardLayout";
@@ -8,10 +8,10 @@ import "./order.css";
 const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 const AffiliateDashboard = () => {
+  const navigate = useNavigate();
   const { user } = useAuth() || {};
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,7 +53,7 @@ const AffiliateDashboard = () => {
     setTimeout(() => setCopiedLink(false), 2500);
   };
 
-  // Advanced Date Range & Keyword Filtering Logic
+  // Date Range & Keyword Filtering Logic
   const filteredOrders = orders.filter((order) => {
     const orderDate = new Date(order.createdAt);
     const today = new Date();
@@ -91,10 +91,6 @@ const AffiliateDashboard = () => {
   const totalCommission = grossSales * COMMISSION_RATE;
   const totalConversions = filteredOrders.length;
   const averageOrderValue = totalConversions > 0 ? grossSales / totalConversions : 0;
-  
-  // Estimated Clicks (Mock metric derived from conversion rate standard)
-  const estimatedClicks = totalConversions > 0 ? Math.round(totalConversions / 0.035) : 0;
-  const conversionRate = estimatedClicks > 0 ? ((totalConversions / estimatedClicks) * 100).toFixed(1) : "0.0";
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage) || 1;
@@ -126,15 +122,17 @@ const AffiliateDashboard = () => {
   return (
     <DashboardLayout>
       <div className="container-fluid p-3 p-md-4 bg-light min-vh-100">
-        <div className="mb-3">
-  <button
-    onClick={() => Navigate(-1)}
-    className="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-2 px-3 fw-medium"
-  >
-    <span>←</span> Go Back
-  </button>
-</div>
         
+        {/* Navigation & Go Back Bar */}
+        <div className="d-flex align-items-center justify-content-between mb-3 gap-2 flex-wrap">
+          <button
+            onClick={() => navigate(-1)}
+            className="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-2 px-3 fw-medium bg-white shadow-sm"
+          >
+            <span>←</span> Go Back
+          </button>
+        </div>
+
         {/* Navigation Tabs */}
         <div className="nav nav-pills bg-white p-2 rounded-3 shadow-sm border mb-4 gap-2 flex-nowrap overflow-auto">
           <Link to="/shop" className="nav-link text-dark fw-semibold text-nowrap rounded-2">
@@ -151,7 +149,7 @@ const AffiliateDashboard = () => {
           </Link>
         </div>
 
-        {/* Affiliate Referral Widget */}
+        {/* Affiliate Referral Link Generator */}
         <div className="card border-0 shadow-sm rounded-3 mb-4 bg-white">
           <div className="card-body p-3 p-md-4">
             <div className="row align-items-center g-3">
@@ -182,7 +180,7 @@ const AffiliateDashboard = () => {
           </div>
         </div>
 
-        {/* KPI Metrics Dashboard Grid */}
+        {/* KPI Dashboard Cards */}
         <div className="row g-3 mb-4">
           <div className="col-12 col-sm-6 col-xl-3">
             <div className="card border-0 shadow-sm rounded-3 h-100 bg-white">
@@ -237,7 +235,7 @@ const AffiliateDashboard = () => {
           </div>
         </div>
 
-        {/* Main Data Table & Toolbar */}
+        {/* Ledger & Custom Filter Section */}
         <div className="card border-0 shadow-sm rounded-3 overflow-hidden bg-white">
           <div className="card-header bg-white py-3 px-4 border-bottom">
             <div className="d-flex flex-column gap-3">
@@ -256,9 +254,8 @@ const AffiliateDashboard = () => {
                 </button>
               </div>
 
-              {/* Advanced Filtering Toolbar */}
+              {/* Advanced Controls Toolbar */}
               <div className="row g-2 align-items-center">
-                {/* Timeframe Presets */}
                 <div className="col-12 col-sm-6 col-md-3">
                   <select
                     className="form-select form-select-sm bg-light border-0 py-2 rounded-3"
@@ -276,7 +273,7 @@ const AffiliateDashboard = () => {
                   </select>
                 </div>
 
-                {/* Custom Date Pickers (Shown when timeframe === 'CUSTOM') */}
+                {/* Custom Range Inputs */}
                 {timeframe === "CUSTOM" && (
                   <>
                     <div className="col-6 col-sm-3 col-md-2">
@@ -304,7 +301,7 @@ const AffiliateDashboard = () => {
                   </>
                 )}
 
-                {/* Search Bar */}
+                {/* Search Field */}
                 <div className={`col-12 ${timeframe === "CUSTOM" ? "col-md-5" : "col-sm-6 col-md-9"}`}>
                   <input
                     type="text"
@@ -321,7 +318,7 @@ const AffiliateDashboard = () => {
             </div>
           </div>
 
-          {/* Responsive Table */}
+          {/* Table */}
           <div className="table-responsive">
             <table className="table align-middle mb-0">
               <thead className="table-light text-muted small text-uppercase">
@@ -394,7 +391,7 @@ const AffiliateDashboard = () => {
             </table>
           </div>
 
-          {/* Footer & Pagination Controls */}
+          {/* Pagination Controls */}
           <div className="card-footer bg-white border-top py-3 px-4 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
             <span className="small text-muted">
               Showing {filteredOrders.length > 0 ? indexOfFirstOrder + 1 : 0} to{" "}
