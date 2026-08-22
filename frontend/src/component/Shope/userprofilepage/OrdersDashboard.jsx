@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../../Context/Authcontext";
 import DashboardLayout from "../../../kyc/DashboardLayout";
@@ -11,6 +11,7 @@ const OrdersDashboard = () => {
   const { user } = useAuth() || {};
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Filter & Search Controls
   const [searchQuery, setSearchQuery] = useState("");
@@ -100,6 +101,14 @@ const OrdersDashboard = () => {
   return (
     <DashboardLayout>
       <div className="container-fluid p-3 p-md-4">
+         <div className="d-flex align-items-center justify-content-between mb-3 gap-2 flex-wrap">
+          <button
+            onClick={() => navigate(-1)}
+            className="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-2 px-3 fw-medium bg-white shadow-sm"
+          >
+            <span>←</span> Go Back
+          </button>
+        </div>
         {/* Banner Alert */}
         <div className="alert alert-primary border-0 shadow-sm d-flex flex-column flex-sm-row justify-content-between align-items-sm-center rounded-3 mb-4 gap-2">
           <div>
