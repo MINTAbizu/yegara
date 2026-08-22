@@ -18,6 +18,7 @@
     "bootstrap-icons": "^1.13.1",
     "cloudinary": "^2.10.0",
     "framer-motion": "^12.23.24",
+    "lucide-react": "^1.33.0",
     "multer-storage-cloudinary": "^2.2.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.10",
