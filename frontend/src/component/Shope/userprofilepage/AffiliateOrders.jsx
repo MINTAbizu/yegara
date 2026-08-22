@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../../Context/Authcontext";
 import DashboardLayout from "../../../kyc/DashboardLayout";
@@ -11,6 +11,7 @@ const AffiliateDashboard = () => {
   const { user } = useAuth() || {};
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
@@ -125,6 +126,14 @@ const AffiliateDashboard = () => {
   return (
     <DashboardLayout>
       <div className="container-fluid p-3 p-md-4 bg-light min-vh-100">
+        <div className="mb-3">
+  <button
+    onClick={() => Navigate(-1)}
+    className="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-2 px-3 fw-medium"
+  >
+    <span>←</span> Go Back
+  </button>
+</div>
         
         {/* Navigation Tabs */}
         <div className="nav nav-pills bg-white p-2 rounded-3 shadow-sm border mb-4 gap-2 flex-nowrap overflow-auto">
