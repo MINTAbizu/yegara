@@ -21,6 +21,7 @@ import profileRoutes from './route/profile.route/profile.route.js'
 import giftproduct from ".//route/giftproduct-route/giftproductroute.js";
 import bookRoutes from "./route/Book/Book.route.js";
 import accountRoutes from "./route/Accountsell/account.route.js";
+import orderRoutes from "./route/orders/order.route.js";
 
 
 // reward systems routes
@@ -108,6 +109,7 @@ app.use("/api/payments", chapaPaymentRoutes);
    app.use("/api/giftproduct", giftproduct);
 app.use("/api/books", bookRoutes);
 app.use("/api/accounts", accountRoutes); 
+app.use("/api/orders", orderRoutes);
 
 
 

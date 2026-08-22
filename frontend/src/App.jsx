@@ -69,6 +69,7 @@ import MyPurchases from './BuyerMyPurchasesPage/MyPurchases';
 import Header from './component/Header/Header';
 import Footer from './component/footer/Footer';
 import PaymentVerify from './component/Payment/PaymentVerify';
+import InternationalSellerDashboard from './InternationalSellerDashboard';
 
 
 function App() {
@@ -111,7 +112,9 @@ function App() {
           
 
 
-          <Route path="/dashboard" element={<DashboardLayout><h2>Dashboard Home</h2></DashboardLayout>} />
+          <Route path="/dashboard" element={<DashboardLayout>
+           <InternationalSellerDashboard/>
+          </DashboardLayout>} />
 
 
           
