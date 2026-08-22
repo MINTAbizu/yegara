@@ -1,173 +1,169 @@
 import React, { useState } from 'react';
 import { 
-  Globe2, DollarSign, TrendingUp, Ship, ShieldCheck, 
-  ArrowUpRight, Download, RefreshCw, Layers, CreditCard,
-  Building2, AlertTriangle, ChevronDown, Filter
+  Globe, DollarSign, Wallet, ArrowUpRight, TrendingUp, 
+  BookOpen, Share2, Heart, Award, ShieldCheck, Download, 
+  CreditCard, ChevronRight, RefreshCcw, Lock, Truck, Users, BarChart3
 } from 'lucide-react';
 
-export default function InternationalSellerDashboard() {
-  const [selectedCurrency, setSelectedCurrency] = useState('USD');
+export default function AdvancedYegaraSellerDashboard() {
+  const [currency, setCurrency] = useState('USD');
+  const [activeTab, setActiveTab] = useState('all');
 
-  // KPI Metrics
-  const metrics = [
-    { label: 'Global GMV (Gross Revenue)', value: '$148,290.00', subtext: '≈ 17,201,640 ETB', change: '+18.4%', trend: 'up' },
-    { label: 'Cross-Border Shipments', value: '3,842', subtext: '24 Target Countries', change: '+12.1%', trend: 'up' },
-    { label: 'Customs & Tax Held', value: '$3,120.00', subtext: 'Duties Pre-cleared (DDP)', change: '-4.2%', trend: 'down' },
-    { label: 'Net Foreign Payout', value: '$42,850.00', subtext: 'Ready for SWIFT / Local Bank', change: '+8.7%', trend: 'up' },
+  // Key platform metrics categorized by Yegara revenue streams
+  const stats = [
+    { label: 'Total Revenue (GMV)', usd: '$148,290.00', etb: '17,201,640 ETB', change: '+18.4%', sub: 'All Streams' },
+    { label: 'Crowdfunding Backers', usd: '$42,800.00', etb: '4,964,800 ETB', change: '+24.1%', sub: '3 Active Campaigns' },
+    { label: 'Escrowed Deals (Social Accounts)', usd: '$12,400.00', etb: '1,438,400 ETB', change: '+9.5%', sub: '2 Telegram/FB Pending' },
+    { label: 'Bounty & Referral Earnings', usd: '$3,850.00', etb: '446,600 ETB', change: '+14.2%', sub: '128 Converted Clicks' },
   ];
 
-  // International Orders
-  const internationalOrders = [
-    { id: 'EXP-9082', destination: '🇺🇸 United States', buyer: 'Global Logistics LLC', amount: '$1,250.00', incoterm: 'DDP', carrier: 'DHL Express', status: 'Customs Cleared' },
-    { id: 'EXP-9081', destination: '🇬🇧 United Kingdom', buyer: 'London Afro-Hub', amount: '$840.00', incoterm: 'DAP', carrier: 'FedEx Int.', status: 'In Transit' },
-    { id: 'EXP-9080', destination: '🇦🇪 UAE (Dubai)', buyer: 'Emirates Trading Co.', amount: '$3,400.00', incoterm: 'DDP', carrier: 'Aramex', status: 'Processing' },
-    { id: 'EXP-9079', destination: '🇩🇪 Germany', buyer: 'Müller Imports', amount: '$620.00', incoterm: 'DDP', carrier: 'DHL Express', status: 'Out for Delivery' },
-  ];
-
-  // Top Global Markets
-  const topMarkets = [
-    { country: 'United States', code: 'US', revenue: '$64,200', share: '43%' },
-    { country: 'United Arab Emirates', code: 'AE', revenue: '$32,100', share: '21%' },
-    { country: 'United Kingdom', code: 'GB', revenue: '$22,500', share: '15%' },
-    { country: 'European Union', code: 'EU', revenue: '$18,100', share: '12%' },
+  // Multi-stream sales history tailored to Yegara sidebar links
+  const transactions = [
+    { id: 'YEG-9082', title: 'Modern Amharic Tech Guide (E-Book)', category: 'My Books', buyer: 'Diaspora (US)', amount: '$45.00', payout: 'Direct', status: 'Completed' },
+    { id: 'YEG-9081', title: 'Tech Hub Fundraiser', category: 'Crowdfunding', buyer: 'Global Backer (UK)', amount: '$500.00', payout: 'Escrow Released', status: 'Completed' },
+    { id: 'YEG-9080', title: 'Verified Telegram Channel (50k subs)', category: 'Social Account', buyer: 'Ethiopia Business', amount: '$1,200.00', payout: 'In Escrow', status: 'Verification' },
+    { id: 'YEG-9079', title: 'Pro Account Affiliate Bounty', category: 'Bounty Link', buyer: 'Ref #DEBO-992', amount: '$25.00', payout: 'Instant', status: 'Completed' },
+    { id: 'YEG-9078', title: 'Handmade Leather Export Pack', category: 'Physical Product', buyer: 'Buyer (Germany)', amount: '$340.00', payout: 'DDP Shipment', status: 'In Transit' },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-6 font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 p-6 font-sans">
       
-      {/* Top Bar Navigation */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      {/* Top Bar Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2">
-            <span className="bg-blue-500/10 text-blue-400 text-xs font-bold px-2.5 py-1 rounded-full border border-blue-500/20 uppercase tracking-widest">
-              Global Merchant
+            <span className="bg-blue-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+              Yegara Merchant Pro
             </span>
-            <span className="text-slate-500 text-sm">Seller ID: DEBO-INT-8839</span>
+            <span className="text-slate-500 text-xs font-mono">Seller ID: DEBO-INT-8839</span>
           </div>
-          <h1 className="text-2xl font-bold text-white mt-1">Cross-Border Dashboard</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mt-1">International Seller & Creator Dashboard</h1>
         </div>
 
         {/* Global Controls */}
         <div className="flex flex-wrap items-center gap-3">
           {/* Base Currency Selector */}
-          <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm">
-            <Globe2 className="w-4 h-4 text-slate-400 mr-2" />
-            <span className="text-slate-400 mr-2 text-xs">Display Currency:</span>
+          <div className="flex items-center bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm shadow-sm">
+            <Globe className="w-4 h-4 text-blue-600 mr-2" />
+            <span className="text-slate-500 text-xs mr-2">Currency:</span>
             <select 
-              value={selectedCurrency} 
-              onChange={(e) => setSelectedCurrency(e.target.value)}
-              className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer"
+              value={currency} 
+              onChange={(e) => setCurrency(e.target.value)}
+              className="bg-transparent font-bold text-slate-900 focus:outline-none cursor-pointer"
             >
-              <option value="USD" className="bg-slate-900">USD ($)</option>
-              <option value="EUR" className="bg-slate-900">EUR (€)</option>
-              <option value="GBP" className="bg-slate-900">GBP (£)</option>
-              <option value="ETB" className="bg-slate-900">ETB (Br)</option>
+              <option value="USD">USD ($)</option>
+              <option value="ETB">ETB (Br)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
             </select>
           </div>
 
-          <button className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 px-3.5 py-2 rounded-lg text-sm font-medium transition">
-            <Download className="w-4 h-4" /> Tax & Tariff Report
+          <button className="flex items-center gap-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 px-3.5 py-2 rounded-lg text-sm font-semibold transition shadow-sm">
+            <Download className="w-4 h-4" /> Export FX Report
           </button>
 
-          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-lg shadow-blue-600/20">
-            <Ship className="w-4 h-4" /> Create Export Shipment
+          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm">
+            + Add Product / Campaign
           </button>
         </div>
       </div>
 
-      {/* Global Compliance & FX Banner */}
-      <div className="mt-6 bg-gradient-to-r from-blue-950/40 via-slate-900 to-indigo-950/40 border border-blue-800/30 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* Compliance & Exchange Rate Bar */}
+      <div className="mt-6 bg-gradient-to-r from-blue-900 via-slate-900 to-indigo-900 text-white rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-md">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-blue-500/10 text-blue-400 rounded-lg border border-blue-500/20">
+          <div className="p-2.5 bg-blue-500/20 text-blue-300 rounded-lg border border-blue-400/30">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-white">Cross-Border Tax & Compliance Status</h4>
-            <p className="text-xs text-slate-400">US-Sales Tax (100% Compliant) • EU IOSS Registered • DDP Clearance Active</p>
+            <h4 className="text-sm font-bold text-white">Cross-Border Foreign Exchange & Local Settlement Active</h4>
+            <p className="text-xs text-slate-300">Automated conversion to Commercial Bank of Ethiopia (CBE), Telebirr, or SWIFT Wire</p>
           </div>
         </div>
         <div className="flex items-center gap-4 text-xs">
           <div className="text-right hidden sm:block">
-            <p className="text-slate-400">Live FX Guarantee Rate</p>
-            <p className="font-semibold text-emerald-400">1 USD = 116.02 ETB</p>
+            <p className="text-slate-400">Guaranteed FX Rate</p>
+            <p className="font-bold text-emerald-400">1 USD = 116.02 ETB</p>
           </div>
-          <button className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-md font-medium text-xs transition border border-slate-700">
-            Configure Payout Banks
+          <button className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-md font-semibold text-xs transition border border-blue-400">
+            Configure Bank Details
           </button>
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-        {metrics.map((item, index) => (
-          <div key={index} className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl p-5 transition">
+        {stats.map((item, idx) => (
+          <div key={idx} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
             <div className="flex justify-between items-start">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{item.label}</span>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                item.trend === 'up' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-              }`}>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{item.label}</span>
+              <span className="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
                 {item.change}
               </span>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold text-white tracking-tight">{item.value}</h2>
-              <p className="text-xs text-slate-400 mt-1">{item.subtext}</p>
+              <h2 className="text-2xl font-black text-slate-900">
+                {currency === 'USD' ? item.usd : item.etb}
+              </h2>
+              <div className="flex justify-between items-center mt-1">
+                <span className="text-xs text-slate-500">{currency === 'USD' ? `≈ ${item.etb}` : `≈ ${item.usd}`}</span>
+                <span className="text-[11px] font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">{item.sub}</span>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Main Grid Section */}
+      {/* Main Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         
-        {/* Recent International Shipments / Orders */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
+        {/* Multi-Stream Transactions Table */}
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <div>
-              <h3 className="text-base font-bold text-white">Active Cross-Border Orders</h3>
-              <p className="text-xs text-slate-400">Real-time tracking, Incoterms, and customs status</p>
+              <h3 className="text-base font-bold text-slate-900">Live Multi-Stream Activity</h3>
+              <p className="text-xs text-slate-500">Books, Crowdfunding, Social Accounts Escrow, & Physical Export Orders</p>
             </div>
-            <div className="flex items-center gap-2">
-              <button className="p-1.5 bg-slate-800 hover:bg-slate-700 rounded-md text-slate-300 text-xs border border-slate-700">
-                <Filter className="w-3.5 h-3.5" />
-              </button>
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-medium">
+              <button onClick={() => setActiveTab('all')} className={`px-2 py-1 rounded ${activeTab === 'all' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-600'}`}>All</button>
+              <button onClick={() => setActiveTab('escrow')} className={`px-2 py-1 rounded ${activeTab === 'escrow' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-600'}`}>Escrow</button>
+              <button onClick={() => setActiveTab('books')} className={`px-2 py-1 rounded ${activeTab === 'books' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-600'}`}>Books</button>
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+              <thead className="bg-slate-100 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-3">Order / Buyer</th>
-                  <th className="py-3 px-3">Destination</th>
-                  <th className="py-3 px-3">Incoterm</th>
+                  <th className="py-3 px-3">Item / Campaign</th>
+                  <th className="py-3 px-3">Module</th>
+                  <th className="py-3 px-3">Buyer / Origin</th>
                   <th className="py-3 px-3">Amount</th>
-                  <th className="py-3 px-3">Logistics</th>
+                  <th className="py-3 px-3">Payout Mode</th>
                   <th className="py-3 px-3 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
-                {internationalOrders.map((order, idx) => (
-                  <tr key={idx} className="hover:bg-slate-800/30 transition">
-                    <td className="py-3 px-3">
-                      <div className="font-semibold text-blue-400">{order.id}</div>
-                      <div className="text-slate-400 text-[11px]">{order.buyer}</div>
+              <tbody className="divide-y divide-slate-100">
+                {transactions.map((tx, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50 transition">
+                    <td className="py-3.5 px-3">
+                      <div className="font-bold text-slate-900">{tx.title}</div>
+                      <div className="text-slate-400 text-[10px] font-mono">{tx.id}</div>
                     </td>
-                    <td className="py-3 px-3 font-medium text-slate-200">{order.destination}</td>
-                    <td className="py-3 px-3">
-                      <span className="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-[10px] font-mono border border-slate-700">
-                        {order.incoterm}
+                    <td className="py-3.5 px-3">
+                      <span className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded font-semibold text-[11px] border border-slate-200">
+                        {tx.category}
                       </span>
                     </td>
-                    <td className="py-3 px-3 font-semibold text-white">{order.amount}</td>
-                    <td className="py-3 px-3 text-slate-300">{order.carrier}</td>
-                    <td className="py-3 px-3 text-right">
-                      <span className={`px-2 py-1 rounded-md text-[11px] font-medium ${
-                        order.status === 'Customs Cleared' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                        order.status === 'In Transit' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                        'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                    <td className="py-3.5 px-3 text-slate-600 font-medium">{tx.buyer}</td>
+                    <td className="py-3.5 px-3 font-bold text-slate-900">{tx.amount}</td>
+                    <td className="py-3.5 px-3 text-slate-500 font-medium">{tx.payout}</td>
+                    <td className="py-3.5 px-3 text-right">
+                      <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold ${
+                        tx.status === 'Completed' ? 'bg-emerald-100 text-emerald-800' :
+                        tx.status === 'In Transit' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'
                       }`}>
-                        {order.status}
+                        {tx.status}
                       </span>
                     </td>
                   </tr>
@@ -177,54 +173,49 @@ export default function InternationalSellerDashboard() {
           </div>
         </div>
 
-        {/* Global Payouts & Market Distribution */}
+        {/* Local Settlement & Escrow Summary Panel */}
         <div className="space-y-6">
           
-          {/* Multi-Currency Settlement Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <h3 className="text-base font-bold text-white mb-1">Global Payout Settlement</h3>
-            <p className="text-xs text-slate-400 mb-4">Direct Wire (SWIFT), Stripe Connect, or Local Bank</p>
+          {/* Bank Withdrawal Widget */}
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h3 className="text-base font-bold text-slate-900 mb-1">Global Settlement & Payout</h3>
+            <p className="text-xs text-slate-500 mb-4">Direct transfer foreign earnings into your local account</p>
 
-            <div className="bg-slate-950 rounded-xl p-4 border border-slate-800/80 mb-4">
+            <div className="bg-slate-950 text-white rounded-xl p-4 mb-4 border border-slate-800">
               <div className="flex justify-between items-center text-xs text-slate-400 mb-1">
                 <span>Available Balance</span>
-                <span className="text-emerald-400 font-medium">Auto-Payout Ready</span>
+                <span className="text-emerald-400 font-bold bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">Auto-Payout Ready</span>
               </div>
-              <div className="text-2xl font-black text-white">$42,850.00 <span className="text-xs text-slate-500 font-normal">USD</span></div>
-              <div className="text-xs text-slate-400 mt-2 pt-2 border-t border-slate-800/80 flex justify-between">
-                <span>Local Equivalent:</span>
-                <span className="text-slate-200 font-semibold">4,971,457.00 ETB</span>
+              <div className="text-3xl font-black text-white">$42,850.00 <span className="text-xs text-slate-400 font-normal">USD</span></div>
+              <div className="text-xs text-slate-300 mt-3 pt-2.5 border-t border-slate-800 flex justify-between items-center">
+                <span>Local Bank Equivalent:</span>
+                <span className="font-extrabold text-emerald-400 text-sm">4,971,457.00 ETB</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <button className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg text-xs transition flex items-center justify-center gap-2">
-                <CreditCard className="w-4 h-4" /> Withdraw via SWIFT / Wire
+              <button className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs transition shadow-md flex items-center justify-center gap-2">
+                <Wallet className="w-4 h-4" /> Transfer to Local Ethiopian Bank
               </button>
-              <button className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg text-xs transition border border-slate-700 flex items-center justify-center gap-2">
-                <Building2 className="w-4 h-4" /> Payout to Local Ethiopian Bank
+              <button className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-lg text-xs transition border border-slate-300 flex items-center justify-center gap-2">
+                <CreditCard className="w-4 h-4" /> Withdraw via SWIFT / Foreign Wire
               </button>
             </div>
           </div>
 
-          {/* Regional Market Share */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <h3 className="text-base font-bold text-white mb-3">Top Export Markets</h3>
-            <div className="space-y-3">
-              {topMarkets.map((market, idx) => (
-                <div key={idx} className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-slate-400 font-semibold">{market.code}</span>
-                    <span className="text-slate-200 font-medium">{market.country}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-slate-400">{market.revenue}</span>
-                    <span className="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono text-[10px] border border-slate-700">
-                      {market.share}
-                    </span>
-                  </div>
-                </div>
-              ))}
+          {/* Social Accounts & Crowdfunding Escrow Lock */}
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Lock className="w-4 h-4 text-amber-600" />
+              <h3 className="text-sm font-bold text-slate-900">Active Escrow Protection</h3>
+            </div>
+            <p className="text-xs text-slate-500 mb-3">Funds held safely until buyer confirms account transfer or campaign goals are met.</p>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs">
+              <div className="flex justify-between font-bold text-amber-900">
+                <span>Total Held in Escrow:</span>
+                <span>$12,400.00 USD</span>
+              </div>
+              <div className="text-[11px] text-amber-700 mt-1">2 Social Accounts pending verification</div>
             </div>
           </div>
 
