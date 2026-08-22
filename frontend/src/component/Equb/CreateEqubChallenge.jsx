@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import DashboardLayout from "../../kyc/DashboardLayout";
 import { useAuth } from "../../Context/Authcontext";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 const initialFormData = {
   title: "",
@@ -58,6 +58,10 @@ const CreateEqubChallenge = ({ embedded = false }) => {
   useEffect(() => {
     if (!authLoading && !isAdmin) {
       setFormData((prev) => ({ ...prev, fundingType: "PRODUCT_LOCKED" }));
+    }
+
+    if (!authLoading && isAdmin) {
+      setFormData((prev) => ({ ...prev, fundingType: "FLEXIBLE", productId: "" }));
     }
   }, [authLoading, isAdmin]);
 
@@ -125,7 +129,7 @@ const CreateEqubChallenge = ({ embedded = false }) => {
                   <div className="mb-4">
                     <h3 className="fw-bold mb-1">Create Crowdfunding Round</h3>
                     <p className="text-muted mb-0">
-                      Choose open crowdfunding, or lock the winner checkout to one approved marketplace product.
+                      Admin crowdfunding and seller crowdfunding billing are separate flows.
                     </p>
                   </div>
 
@@ -134,7 +138,7 @@ const CreateEqubChallenge = ({ embedded = false }) => {
                       <label className="form-label fw-semibold">Funding mode</label>
                       <div className="row g-3">
                         {isAdmin && (
-                          <div className="col-md-6">
+                          <div className="col-12">
                             <label className={`border rounded-3 p-3 h-100 d-block ${!isProductLocked ? "border-primary bg-primary-subtle" : ""}`}>
                               <input type="radio" name="fundingType" value="FLEXIBLE" checked={!isProductLocked} onChange={handleFundingTypeChange} className="form-check-input me-2" />
                               <strong>Crowdfunding</strong>
@@ -142,25 +146,31 @@ const CreateEqubChallenge = ({ embedded = false }) => {
                             </label>
                           </div>
                         )}
-                        <div className={isAdmin ? "col-md-6" : "col-12"}>
-                          <label className={`border rounded-3 p-3 h-100 d-block ${isProductLocked ? "border-primary bg-primary-subtle" : ""}`}>
-                            <input type="radio" name="fundingType" value="PRODUCT_LOCKED" checked={isProductLocked} onChange={handleFundingTypeChange} className="form-check-input me-2" />
-                            <strong>Crowdfunding Billing</strong>
-                            <small className="d-block text-muted mt-1">Approved sellers can lock the winner checkout to one approved product.</small>
-                          </label>
-                        </div>
+                        {!isAdmin && (
+                          <div className="col-12">
+                            <label className={`border rounded-3 p-3 h-100 d-block ${isProductLocked ? "border-primary bg-primary-subtle" : ""}`}>
+                              <input type="radio" name="fundingType" value="PRODUCT_LOCKED" checked={isProductLocked} onChange={handleFundingTypeChange} className="form-check-input me-2" />
+                              <strong>Crowdfunding Billing</strong>
+                              <small className="d-block text-muted mt-1">Approved sellers lock the winner checkout to one approved product.</small>
+                            </label>
+                          </div>
+                        )}
                       </div>
-                      {!isAdmin && <small className="text-muted d-block mt-2">General crowdfunding is managed by the platform owner. Sellers can use crowdfunding billing for approved products.</small>}
+                      {isAdmin ? (
+                        <small className="text-muted d-block mt-2">Admin crowdfunding does not require product selection. The winner receives marketplace buying credit.</small>
+                      ) : (
+                        <small className="text-muted d-block mt-2">General crowdfunding is managed by the platform owner. Sellers use crowdfunding billing for approved products.</small>
+                      )}
                     </div>
 
                     <div className="mb-3">
                       <label className="form-label">Challenge title</label>
-                      <input type="text" className="form-control" name="title" value={formData.title} onChange={handleChange} placeholder="Premium Laptop Equb Challenge" required />
+                      <input type="text" className="form-control" name="title" value={formData.title} onChange={handleChange} placeholder={isProductLocked ? "Premium Laptop Billing Round" : "Marketplace Credit Crowdfunding Round"} required />
                     </div>
 
                     <div className="mb-3">
                       <label className="form-label">Description</label>
-                      <textarea className="form-control" rows="4" name="description" value={formData.description} onChange={handleChange} placeholder="Describe the goal, rules, product, and winner checkout promise..." required />
+                      <textarea className="form-control" rows="4" name="description" value={formData.description} onChange={handleChange} placeholder={isProductLocked ? "Describe the product billing rules and winner checkout promise..." : "Describe the goal, rules, and marketplace credit prize..."} required />
                     </div>
 
                     {isProductLocked && (
@@ -230,6 +240,7 @@ const CreateEqubChallenge = ({ embedded = false }) => {
 
                     <div className="mb-4">
                       <label className="form-label">Challenge expiry date</label>
+                      <small className="text-muted d-block mb-2">If all slots are filled before this time, the winner is selected immediately.</small>
                       <input type="datetime-local" className="form-control" name="expiresAt" value={formData.expiresAt} onChange={handleChange} required />
                     </div>
 

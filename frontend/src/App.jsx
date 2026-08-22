@@ -96,7 +96,8 @@ function App() {
           <Route path="/Userprofiless" element={<Userprofile />} />
           <Route path="/UpgradePro" element={<UpgradePro  />} />
           <Route path="/equb-demo" element={<EqubChallengeDemo />} />
-          <Route path="/crowdfunding" element={<CrowdfundedProductsList />} />
+          <Route path="/crowdfunding" element={<CrowdfundedProductsList mode="FLEXIBLE" />} />
+          <Route path="/crowdfunding-billing" element={<CrowdfundedProductsList mode="PRODUCT_LOCKED" />} />
           <Route path="/equb/payment-callback" element={<EqubPaymentCallback />} />
           <Route path="/AdvancedEqubWheel/:challengeId?" element={
 

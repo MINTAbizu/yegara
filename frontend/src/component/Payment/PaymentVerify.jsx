@@ -21,14 +21,14 @@ const successCopy = {
 
 const PaymentVerify = () => {
   const location = useLocation();
-  const [state, setState] = useState({ status: "verifying", purpose: null, message: "" });
+  const [state, setState] = useState({ status: "verifying", purpose: null, message: "", detail: "" });
 
   useEffect(() => {
     const verify = async () => {
       const txRef = new URLSearchParams(location.search).get("tx_ref");
 
       if (!txRef) {
-        setState({ status: "failed", purpose: null, message: "Payment reference is missing." });
+        setState({ status: "failed", purpose: null, message: "Payment reference is missing.", detail: "" });
         return;
       }
 
@@ -37,17 +37,38 @@ const PaymentVerify = () => {
         const payment = response.data;
 
         if (payment.status !== "SUCCESS") {
-          setState({ status: "pending", purpose: payment.purpose, message: "Payment is not confirmed yet." });
+          setState({ status: "pending", purpose: payment.purpose, message: "Payment is not confirmed yet.", detail: "" });
           return;
         }
 
+        let detail = "";
+        const storedPayment = sessionStorage.getItem(`payment_${txRef}`);
+
+        if (payment.purpose === "CROWDFUND_JOIN" && payment.targetId) {
+          try {
+            const challengeRes = await axios.get(`${API_URL}/api/equb/${payment.targetId}`);
+            const challenge = challengeRes.data;
+            const storedUserId = storedPayment ? JSON.parse(storedPayment).userId : null;
+            const winnerId = challenge?.winnerId?._id || challenge?.winnerId;
+
+            if (challenge?.status === "SUCCESS") {
+              detail = winnerId && storedUserId && winnerId.toString() === storedUserId.toString()
+                ? "All slots are full. You won this round and your redemption is ready."
+                : "All slots are full. The winner has been selected and redemption is ready.";
+            }
+          } catch (challengeError) {
+            console.error("Unable to load challenge settlement status:", challengeError);
+          }
+        }
+
         sessionStorage.removeItem(`payment_${txRef}`);
-        setState({ status: "success", purpose: payment.purpose, message: "" });
+        setState({ status: "success", purpose: payment.purpose, message: "", detail });
       } catch (error) {
         setState({
           status: "failed",
           purpose: null,
           message: error.response?.data?.message || "Payment verification failed.",
+          detail: "",
         });
       }
     };
@@ -72,7 +93,7 @@ const PaymentVerify = () => {
       {state.status === "success" && (
         <>
           <h2 className="text-success">{copy.title}</h2>
-          <p className="text-muted">{copy.body}</p>
+          <p className="text-muted">{state.detail || copy.body}</p>
           <Link className="btn btn-primary" to={copy.link}>
             {copy.linkText}
           </Link>

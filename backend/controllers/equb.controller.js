@@ -6,6 +6,7 @@ import DigitalProduct from "../model/digitalproducts/digital products.js";
 import GiftProduct from "../model/giftproduct/giftproduct.js";
 import BookProduct from "../model/Book/Book.model.js";
 import Profile from "../model/UserProfile/UserProfile.js";
+import { settleEqubChallengeIfReady } from "../services/equbSettlement.service.js";
 
 const FUNDING_TYPES = ["FLEXIBLE", "PRODUCT_LOCKED"];
 const PRODUCT_TYPES = {
@@ -67,6 +68,10 @@ export const createEqubChallenge = async (req, res) => {
 
   if (normalizedFundingType === "FLEXIBLE" && !isAdmin(req.user)) {
     return res.status(403).json({ message: "Only admins can create general crowdfunding challenges." });
+  }
+
+  if (normalizedFundingType === "PRODUCT_LOCKED" && isAdmin(req.user)) {
+    return res.status(403).json({ message: "Admins create general crowdfunding only. Product-locked billing belongs to approved sellers." });
   }
 
   if (normalizedFundingType === "PRODUCT_LOCKED") {
@@ -371,6 +376,10 @@ export const verifyEqubPayment = async (req, res) => {
         challenge.filledSlots.push(userId);
         challenge.paymentRef = txRef;
         await challenge.save({ session });
+
+        if (challenge.filledSlots.length >= challenge.totalSlots) {
+          challenge = await settleEqubChallengeIfReady(challenge._id, session);
+        }
       });
     } finally {
       await session.endSession();
@@ -429,6 +438,10 @@ export const joinEqubChallenge = async (req, res) => {
       challenge.filledSlots.push(userId);
       challenge.paymentRef = paymentRef || challenge.paymentRef;
       await challenge.save({ session });
+
+      if (challenge.filledSlots.length >= challenge.totalSlots) {
+        challenge = await settleEqubChallengeIfReady(challenge._id, session);
+      }
     });
 
     return res.status(200).json({ message: "Slot reserved successfully.", challenge, remainingSlots: challenge.totalSlots - challenge.filledSlots.length });

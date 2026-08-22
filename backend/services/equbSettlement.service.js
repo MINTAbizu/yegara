@@ -16,6 +16,60 @@ export const triggerEqubRefund = async (challengeId) => {
   return { ok: true, challengeId };
 };
 
+
+export const settleEqubChallengeIfReady = async (challengeId, session = null) => {
+  const latestChallenge = await EqubChallenge.findById(challengeId).session(session);
+
+  if (!latestChallenge || latestChallenge.status !== "PENDING") {
+    return latestChallenge;
+  }
+
+  const filledUserIds = latestChallenge.filledSlots.map((userId) => userId.toString());
+  const isExpired = new Date(latestChallenge.expiresAt) <= new Date();
+  const isFullyFilled = filledUserIds.length >= latestChallenge.totalSlots;
+
+  if (isFullyFilled) {
+    const winnerId = filledUserIds[crypto.randomInt(0, filledUserIds.length)];
+
+    latestChallenge.status = "SUCCESS";
+    latestChallenge.winnerId = winnerId;
+    latestChallenge.winnerRedemption = {
+      type: latestChallenge.fundingType === "PRODUCT_LOCKED" ? "PRODUCT_CHECKOUT" : "MARKETPLACE_CREDIT",
+      amount: latestChallenge.slotPrice * latestChallenge.totalSlots,
+      productId: latestChallenge.fundingType === "PRODUCT_LOCKED" ? latestChallenge.productId : null,
+      status: "READY",
+      readyAt: new Date(),
+    };
+    await latestChallenge.save({ session });
+
+    const losers = filledUserIds.filter((userId) => userId !== winnerId);
+
+    if (losers.length > 0) {
+      const couponDocs = losers.map((userId) => ({
+        code: generateCouponCode(),
+        value: 1000,
+        userId,
+        minOrderAmount: 2000,
+        isUsed: false,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        challengeId: latestChallenge._id,
+      }));
+
+      await Coupon.insertMany(couponDocs, { session, ordered: false });
+    }
+
+    return latestChallenge;
+  }
+
+  if (isExpired) {
+    latestChallenge.status = "FAILED";
+    await latestChallenge.save({ session });
+    await triggerEqubRefund(latestChallenge._id);
+  }
+
+  return latestChallenge;
+};
+
 export const settleExpiredEqubChallenges = async () => {
   const now = new Date();
 
@@ -35,50 +89,7 @@ export const settleExpiredEqubChallenges = async () => {
 
     try {
       await session.withTransaction(async () => {
-        const latestChallenge = await EqubChallenge.findById(challenge._id).session(session);
-
-        if (!latestChallenge || latestChallenge.status !== "PENDING") {
-          return;
-        }
-
-        const filledUserIds = latestChallenge.filledSlots.map((userId) => userId.toString());
-
-        if (filledUserIds.length >= latestChallenge.totalSlots) {
-          const winnerId = filledUserIds[crypto.randomInt(0, filledUserIds.length)];
-
-          latestChallenge.status = "SUCCESS";
-          latestChallenge.winnerId = winnerId;
-          latestChallenge.winnerRedemption = {
-            type: latestChallenge.fundingType === "PRODUCT_LOCKED" ? "PRODUCT_CHECKOUT" : "MARKETPLACE_CREDIT",
-            amount: latestChallenge.slotPrice * latestChallenge.totalSlots,
-            productId: latestChallenge.fundingType === "PRODUCT_LOCKED" ? latestChallenge.productId : null,
-            status: "READY",
-            readyAt: new Date(),
-          };
-          await latestChallenge.save({ session });
-
-          const losers = filledUserIds.filter((userId) => userId !== winnerId);
-
-          if (losers.length > 0) {
-            const couponDocs = losers.map((userId) => ({
-              code: generateCouponCode(),
-              value: 1000,
-              userId,
-              minOrderAmount: 2000,
-              isUsed: false,
-              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-              challengeId: latestChallenge._id,
-            }));
-
-            await Coupon.insertMany(couponDocs, { session, ordered: false });
-          }
-
-          return;
-        }
-
-        latestChallenge.status = "FAILED";
-        await latestChallenge.save({ session });
-        await triggerEqubRefund(latestChallenge._id);
+        await settleEqubChallengeIfReady(challenge._id, session);
       });
     } catch (error) {
       console.error("Error settling Equb challenge:", error);

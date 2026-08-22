@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import EqubChallenge from "../models/EqubChallenge.model.js";
+import { settleEqubChallengeIfReady } from "./equbSettlement.service.js";
 import Order from "../model/Order/Order.js";
 import Book from "../model/Book/Book.model.js";
 import DigitalProduct from "../model/digitalproducts/digital products.js";
@@ -34,6 +35,11 @@ export const reserveEqubSlot = async ({ challengeId, userId, paymentRef, session
   challenge.filledSlots.push(userId);
   challenge.paymentRef = paymentRef || challenge.paymentRef;
   await challenge.save({ session });
+
+  if (challenge.filledSlots.length >= challenge.totalSlots) {
+    return settleEqubChallengeIfReady(challenge._id, session);
+  }
+
   return challenge;
 };
 
