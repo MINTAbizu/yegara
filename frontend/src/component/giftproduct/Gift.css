@@ -1,161 +1,323 @@
-.gift-section {
-  padding: 80px 20px;
-  background: linear-gradient(135deg,#fff,#fdf2f8);
+:root {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-secondary: #0f172a;
+  --color-secondary-hover: #1e293b;
+  --color-border: #cbd5e1;
+  --color-text-main: #0f172a;
+  --color-text-muted: #64748b;
+  --color-accent: #d97706;
+  --color-accent-bg: #fef3c7;
+  --color-warning-bg: #fef3c7;
+  --color-warning-text: #92400e;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-full: 9999px;
 }
 
+/* SECTION CONTAINER */
+.gift-section {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* OFFLINE BANNER */
+.offline-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* HERO SECTION */
 .gift-hero {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
+}
+
+.gift-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #e0e7ff;
+  color: var(--color-primary);
+  border: 1px solid #c7d2fe;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
 }
 
 .gift-hero h2 {
-  font-size: 28px;
-  margin: 10px 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  margin: 0 0 0.5rem 0;
 }
 
 .gift-hero p {
-  color: #666;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin: 0;
 }
 
+/* FILTER PILLS */
 .gift-filters {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 0.5rem;
   flex-wrap: wrap;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 }
 
-.gift-filters button {
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  background: #eee;
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.gift-filters .active {
-  background: #ec4899;
-  color: white;
+.filter-btn:hover {
+  background-color: #f1f5f9;
 }
 
-.gift-scroll {
+.filter-btn.active {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+  border-color: var(--color-secondary);
+}
+
+.btn-icon {
   display: flex;
-  gap: 20px;
+  font-size: 0.85rem;
+}
+
+/* SCROLL CONTAINER & CONTROLS */
+.scroll-wrapper {
+  position: relative;
+}
+
+.scroll-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.scroll-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+  cursor: pointer;
+}
+
+.scroll-nav-btn:hover {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+  border-color: var(--color-secondary);
+}
+
+.gift-scroll-container {
+  display: flex;
+  gap: 1.25rem;
   overflow-x: auto;
-  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
 }
 
+/* CARD STYLING */
 .gift-card {
-  min-width: 260px;
-  background: white;
-  border-radius: 14px;
-  box-shadow: 0 8px 25px rgba(0,0,0,.06);
-  transition: .3s ease;
-}
-
-.gift-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 35px rgba(0,0,0,.12);
+  flex: 0 0 clamp(240px, 70vw, 270px);
+  scroll-snap-align: start;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .gift-image-wrapper {
   position: relative;
+  width: 100%;
+  height: 160px;
+  background-color: #f1f5f9;
 }
 
 .gift-image-wrapper img {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 14px 14px 0 0;
 }
 
 .gift-badge {
   position: absolute;
   top: 10px;
   left: 10px;
-  background: #ec4899;
-  color: white;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--color-accent-bg);
+  color: var(--color-accent);
+  border: 1px solid #fcd34d;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
+/* CARD CONTENT */
 .gift-card-body {
-  padding: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.product-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .gift-price {
-  font-weight: bold;
-  color: #ec4899;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.seller-info {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.775rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+/* ACTION BUTTONS */
+.gift-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
 }
 
 .gift-btn {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #ec4899;
-  color: white;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.825rem;
+  font-weight: 700;
+  text-decoration: none;
   cursor: pointer;
-  margin-top: 10px;
+  border: 1px solid transparent;
 }
 
-.gift-btn:hover {
-  background: #db2777;
+.primary-btn {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+}
+
+.primary-btn:hover {
+  background-color: var(--color-secondary-hover);
+}
+
+.secondary-btn {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.secondary-btn:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.secondary-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* SKELETON & EMPTY STATES */
+.gift-skeleton-wrapper {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: hidden;
 }
 
 .gift-skeleton-card {
-  min-width: 260px;
-  height: 300px;
-  border-radius: 14px;
-  background: linear-gradient(90deg,#eee,#f5f5f5,#eee);
-  animation: shimmer 1.5s infinite;
+  flex: 0 0 270px;
+  height: 290px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: #e2e8f0;
 }
 
-@keyframes shimmer {
-  0% { background-position:-200px 0; }
-  100% { background-position:200px 0; }
-}
-
-
-.offline-banner {
-  background: #ffcc00;
-  color: #000;
+.gift-empty-state {
   text-align: center;
-  padding: 8px;
-  font-weight: 500;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
 }
 
-.gift-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  flex-wrap: wrap;
+.empty-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
 }
 
-.gift-btn {
-  padding: 8px 12px;
-  border: none;
-  cursor: pointer;
-  border-radius: 6px;
-  font-size: 14px;
+.spin-icon {
+  animation: spin 1s linear infinite;
 }
 
-.gift-btn.primary {
-  background: #6c2bd9;
-  color: white;
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-.gift-btn.secondary {
-  background: #0ea5e9;
-  color: white;
-}
+/* RESPONSIVE DESIGN */
+@media (max-width: 640px) {
+  .gift-hero h2 {
+    font-size: 1.35rem;
+  }
 
-.gift-btn.outline {
-  background: transparent;
-  border: 1px solid #ccc;
-}
-
-.gift-btn:hover {
-  opacity: 0.9;
+  .scroll-actions {
+    display: none;
+  }
 }
