@@ -116,3 +116,47 @@ const equbChallengeSchema = new mongoose.Schema(
 const EqubChallenge = mongoose.model("EqubChallenge", equbChallengeSchema);
 
 export default EqubChallenge;
+
+
+// Inside JoinEqubChallengeModal.jsx
+
+
+
+const handleJoinClick = async () => {
+  if (!user) {
+    toast.error("Please log in to join.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const paymentRes = await axios.post(`${API_URL}/api/payments/initialize`, {
+      userId: user._id || user.id,
+      amount: challenge.slotPrice,
+      email: user.email,
+      firstName: user.name?.split(" ")[0] || "User",
+      purpose: "CROWDFUND_JOIN",
+      targetId: challenge._id,
+    });
+
+    if (paymentRes.data?.checkout_url) {
+      const tg = window.Telegram?.WebApp;
+
+      if (tg) {
+        // If inside Telegram Mini App, open Chapa checkout inside Telegram browser
+        tg.openLink(paymentRes.data.checkout_url);
+        onClose(); // Close modal while user completes checkout
+      } else {
+        // Fallback for standard web browser
+        window.location.href = paymentRes.data.checkout_url;
+      }
+    } else {
+      throw new Error("No checkout URL received");
+    }
+  } catch (error) {
+    toast.error(error.message || "Payment initiation failed");
+  } finally {
+    setLoading(false);
+  }
+};
