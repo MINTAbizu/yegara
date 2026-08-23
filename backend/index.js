@@ -21,6 +21,7 @@ import profileRoutes from './route/profile.route/profile.route.js'
 import giftproduct from ".//route/giftproduct-route/giftproductroute.js";
 import bookRoutes from "./route/Book/Book.route.js";
 import accountRoutes from "./route/Accountsell/account.route.js";
+import authRoutes from "./route/auth/auth.route.js";
 import orderRoutes from "./route/orders/order.route.js";
 
 
@@ -96,6 +97,7 @@ app.use("/uploads/bookProducts", express.static(booksProductUploadPath));
 app.use("/api/digital-products", digitalProductRoutes);
 app.use("/api/physical-products", physicalProductRoutes);
 app.use("/api/users", userregister);
+app.use("/api/auth", authRoutes);
 // app.use('/api',socialmedia)
 // kyc
 app.use("/api/kyc", kycRoutes)

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuth } from "../../Context/Authcontext";
 import { toast } from "react-toastify";
 import "./JoinEqubChallengeModal.css";
+import { initTelegramUser, isTelegramMiniApp } from "../../utils/telegramAuth";
 
 const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
@@ -21,7 +22,7 @@ const JoinEqubChallengeModal = ({
   onClose,
   onSuccess,
 }) => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1); // 1: Confirm, 2: Payment Pending
   const token = localStorage.getItem("token");
@@ -29,25 +30,36 @@ const JoinEqubChallengeModal = ({
   if (!isOpen || !challenge) return null;
 
   const handleJoinClick = async () => {
-    // Step 1: Validate
-    if (!user) {
-      toast.error("Please login to join a challenge.");
-      return;
-    }
-
-    if (!token) {
-      toast.error("Authentication required. Please login again.");
-      return;
-    }
-
     setLoading(true);
+    let redirectingToPayment = false;
 
     try {
+      let activeUser = user;
+      let activeToken = localStorage.getItem("token");
+
+      if ((!activeUser || !activeToken) && isTelegramMiniApp()) {
+        activeUser = await initTelegramUser();
+        activeToken = localStorage.getItem("token");
+        if (activeUser && refreshUser) {
+          activeUser = await refreshUser() || activeUser;
+        }
+      }
+
+      if (!activeUser) {
+        toast.error(isTelegramMiniApp() ? "Telegram login failed. Please reopen the mini app." : "Please login to join a challenge.");
+        return;
+      }
+
+      if (!activeToken) {
+        toast.error("Authentication required. Please login again.");
+        return;
+      }
+
       const paymentRes = await axios.post(`${API_URL}/api/payments/initialize`, {
-        userId: user._id || user.id,
+        userId: activeUser._id || activeUser.id,
         amount: challenge.slotPrice,
-        email: user.email,
-        firstName: user.name?.split(" ")[0] || "User",
+        email: activeUser.email,
+        firstName: activeUser.name?.split(" ")[0] || "Telegram",
         purpose: "CROWDFUND_JOIN",
         targetId: challenge._id,
       });
@@ -57,12 +69,13 @@ const JoinEqubChallengeModal = ({
           `payment_${paymentRes.data.tx_ref}`,
           JSON.stringify({
             challengeId: challenge._id,
-            userId: user._id || user.id,
+            userId: activeUser._id || activeUser.id,
             slotPrice: challenge.slotPrice,
             tx_ref: paymentRes.data.tx_ref,
           })
         );
 
+        redirectingToPayment = true;
         setStep(2);
         setTimeout(() => {
           window.location.href = paymentRes.data.checkout_url;
@@ -73,7 +86,8 @@ const JoinEqubChallengeModal = ({
     } catch (error) {
       console.error("Payment initiation error:", error);
       toast.error(getPaymentErrorMessage(error));
-      setLoading(false);
+    } finally {
+      if (!redirectingToPayment) setLoading(false);
     }
   };
 

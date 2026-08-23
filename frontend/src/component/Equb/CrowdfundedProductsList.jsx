@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import CrowdfundTimer from "./CrowdfundTimer";
 import EqubSlotProgress from "./EqubSlotProgress";
 import JoinEqubChallengeModal from "./JoinEqubChallengeModal";
@@ -13,6 +13,7 @@ const CrowdfundedProductsList = ({ mode = "FLEXIBLE" }) => {
   const [error, setError] = useState(null);
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const location = useLocation();
   const isBillingPage = mode === "PRODUCT_LOCKED";
   const pageTitle = isBillingPage ? "Crowdfunding Billing" : "Crowdfunding";
   const pageDescription = isBillingPage
@@ -38,6 +39,14 @@ const CrowdfundedProductsList = ({ mode = "FLEXIBLE" }) => {
   useEffect(() => {
     fetchChallenges();
   }, [mode]);
+
+  useEffect(() => {
+    const challengeId = new URLSearchParams(location.search).get("challengeId");
+    if (!challengeId || challenges.length === 0 || modalOpen) return;
+
+    const challenge = challenges.find((item) => item._id === challengeId);
+    if (challenge) openJoinModal(challenge);
+  }, [challenges, location.search, modalOpen]);
 
   const openJoinModal = (challenge) => {
     setSelectedChallenge(challenge);
