@@ -184,7 +184,6 @@ export default function HorizontalProductList() {
 
   return (
     <section className="designer-marketplace-section">
-
       {/* Category Pills Header */}
       <div className="filter-pill-container">
         {CATEGORIES.map((cat) => (
@@ -219,7 +218,7 @@ export default function HorizontalProductList() {
           {filteredProducts.map((p) => {
             const isFav = favorites.includes(p._id);
 
-            // 🔹 Dynamic Seller Profile Resolution
+            // Dynamic Seller Profile Resolution
             const sellerId = p.seller?._id || p.seller || p.user?._id || p.user;
             const sellerProfile = sellerId ? profileMap.get(sellerId.toString()) : null;
 
@@ -319,7 +318,6 @@ export default function HorizontalProductList() {
                       <FaCheckCircle className="verified-icon" />
                     </div>
                   </div>
-
                 </div>
               </div>
             );
@@ -376,7 +374,6 @@ export default function HorizontalProductList() {
           </div>
         </div>
       )}
-
     </section>
   );
 }
