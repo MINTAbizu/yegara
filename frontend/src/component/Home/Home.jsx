@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 import heroImage from "../../assets/image/Promoting Handmade Crafts Online.png";
 import "./Home.css";
+// import "../../pages/Login.css"
 
 const trustItems = [
   { icon: <FaShieldAlt />, label: "Verified seller profiles" },
@@ -43,7 +44,7 @@ const marketPillars = [
 
 export default function Home() {
   return (
-    <main className="home-page">
+    <main className="home-page  login">
       <section className="landing-hero" aria-labelledby="landing-title">
         <div className="landing-hero__inner">
           <div className="landing-hero__copy">
@@ -72,18 +73,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="landing-hero__visual" aria-label="Yegara marketplace preview">
-            {/* <img src={heroImage} alt="Handmade products promoted online" /> */}
-            <div className="market-snapshot  market-snapshot--sales" id="marketsnapsho">
-              <FaCheckCircle/>
-              <strong>Seller-ready</strong>
-              <span className="readydescrption">Publish products and manage orders from one place.</span>
-            </div>
-            <div className="market-snapshot market-snapshot--secure" id="ProfileKYCflow">
-              <FaCheckCircle />
-              <span>Profile and KYC flow</span>
-            </div>
-          </div>
+          
         </div>
       </section>
 

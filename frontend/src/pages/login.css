@@ -1,0 +1,18 @@
+.login{
+    background-image: url('../../dist/debo_640x360.png' );
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !
+    ;
+    height: 100vh !important;
+    /* display: flex; */
+    border: 10px;
+    padding: 20px;
+    /* margin: 20px; */
+    
+
+
+
+
+
+}

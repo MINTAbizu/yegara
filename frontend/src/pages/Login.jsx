@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/Authcontext";
-
+import '../pages/login.css'
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
@@ -36,7 +36,8 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div className="login">
+      <div className=" d-flex justify-content-center align-items-center vh-100 ">
       <div className="card p-4 shadow-sm" style={{ maxWidth: "400px", width: "100%" }}>
         <h2 className="card-title text-center mb-3">Login</h2>
         {message && <div className="alert alert-danger">{message}</div>}
@@ -57,6 +58,7 @@ const Login = () => {
           </button>
         </form>
       </div>
+    </div>
     </div>
   );
 };
