@@ -70,6 +70,7 @@ import Header from './component/Header/Header';
 import Footer from './component/footer/Footer';
 import PaymentVerify from './component/Payment/PaymentVerify';
 import InternationalSellerDashboard from './InternationalSellerDashboard';
+import BuyerProducts from './nearproducts/BuyerProducts';
 
 
 function App() {
@@ -99,6 +100,9 @@ function App() {
           <Route path="/crowdfunding" element={<CrowdfundedProductsList mode="FLEXIBLE" />} />
           <Route path="/crowdfunding-billing" element={<CrowdfundedProductsList mode="PRODUCT_LOCKED" />} />
           <Route path="/equb/payment-callback" element={<EqubPaymentCallback />} />
+          <Route path="BuyerProducts" element={<BuyerProducts />} />
+
+
           <Route path="/AdvancedEqubWheel/:challengeId?" element={
 
             <AdvancedEqubWheel  

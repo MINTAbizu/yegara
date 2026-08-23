@@ -93,6 +93,7 @@ const Header = () => {
           <Link to="/crowdfunding">Crowdfunding</Link>
           <Link to="/crowdfunding-billing">Crowdfunding Billing</Link>
           <Link to="/UpgradePro">Seller Tools</Link>
+          <Link to="/BuyerProducts">📍 Products_Near_You</Link>
         </nav>
 
         {/* Desktop Header Actions & Mobile Toggle */}
