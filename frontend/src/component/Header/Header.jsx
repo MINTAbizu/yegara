@@ -14,6 +14,7 @@ const shopLinks = [
   { label: "Crowdfunding", to: "/crowdfunding" },
   { label: "Crowdfunding Billing", to: "/crowdfunding-billing" },
   { label: "Referral bounty", to: "/referral-bounty" },
+  { label: "📍 Products_Near_You", to: "/BuyerProducts" },
 ];
 
 const Header = () => {
