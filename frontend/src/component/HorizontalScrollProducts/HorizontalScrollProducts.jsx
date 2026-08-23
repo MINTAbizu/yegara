@@ -15,10 +15,11 @@ import {
   FaCode,
   FaPaintBrush,
   FaLayerGroup,
+  FaUserCircle,
 } from "react-icons/fa";
 import "./HorizontalScrollProducts.css";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 const CATEGORIES = [
   { name: "All", icon: <FaLayerGroup /> },
@@ -44,6 +45,7 @@ const normalizeData = (value) => {
 
 export default function HorizontalProductList() {
   const [products, setProducts] = useState([]);
+  const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -65,29 +67,54 @@ export default function HorizontalProductList() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  /* ================= FETCH PRODUCTS & PROFILES ================= */
   useEffect(() => {
     const controller = new AbortController();
-    const fetchProducts = async () => {
+
+    const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get(`${API_URL}/api/digital-products/`, {
-          signal: controller.signal,
-        });
-        setProducts(normalizeData(res.data));
+        const [productsRes, profilesRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/api/digital-products/`, { signal: controller.signal }),
+          axios.get(`${API_URL}/api/profile/approved`, { signal: controller.signal }),
+        ]);
+
+        if (productsRes.status === "fulfilled") {
+          setProducts(normalizeData(productsRes.value.data));
+        } else if (!axios.isCancel(productsRes.reason)) {
+          setError("Failed to load products. Please try again.");
+        }
+
+        if (profilesRes.status === "fulfilled") {
+          setProfiles(profilesRes.value.data || []);
+        }
       } catch (err) {
         if (!axios.isCancel(err)) {
-          setError("Failed to load products. Please try again.");
+          setError("Failed to load marketplace data.");
         }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchData();
     return () => controller.abort();
   }, []);
 
+  /* ================= PROFILE MAP FOR O(1) LOOKUP ================= */
+  const profileMap = useMemo(() => {
+    const map = new Map();
+    profiles.forEach((profile) => {
+      const userId = profile.user?._id || profile.user;
+      if (userId) {
+        map.set(userId.toString(), profile);
+      }
+    });
+    return map;
+  }, [profiles]);
+
+  /* ================= FILTERED PRODUCTS ================= */
   const filteredProducts = useMemo(() => {
     if (activeCategory === "All") return products;
     return products.filter((p) =>
@@ -134,9 +161,17 @@ export default function HorizontalProductList() {
       );
 
       const updatedRating = res.data.averageRating;
+      const updatedNumReviews = res.data.numReviews;
+
       setProducts((prev) =>
         prev.map((p) =>
-          p._id === selectedProduct._id ? { ...p, averageRating: updatedRating } : p
+          p._id === selectedProduct._id
+            ? {
+                ...p,
+                averageRating: updatedRating,
+                numReviews: updatedNumReviews ?? (p.numReviews || 0) + 1,
+              }
+            : p
         )
       );
       setSelectedProduct(null);
@@ -184,6 +219,25 @@ export default function HorizontalProductList() {
           {filteredProducts.map((p) => {
             const isFav = favorites.includes(p._id);
 
+            // 🔹 Dynamic Seller Profile Resolution
+            const sellerId = p.seller?._id || p.seller || p.user?._id || p.user;
+            const sellerProfile = sellerId ? profileMap.get(sellerId.toString()) : null;
+
+            const sellerName =
+              sellerProfile?.fullName ||
+              p.sellerName ||
+              p.seller?.name ||
+              p.seller?.username ||
+              "Verified Seller";
+
+            const sellerAvatar =
+              sellerProfile?.profileImage ||
+              p.seller?.profileImage ||
+              p.seller?.avatar;
+
+            const reviewCount = p.numReviews ?? p.reviews?.length ?? 0;
+            const productDescription = p.description || "No description provided for this product.";
+
             return (
               <div key={p._id} className="designer-card">
                 <div className="designer-media">
@@ -192,11 +246,11 @@ export default function HorizontalProductList() {
                     alt={p.productName}
                     loading="lazy"
                   />
-                  
+
                   {/* Rating Tag */}
                   <div className="rating-tag" onClick={() => openRatingModal(p)}>
                     <FaStar className="star-gold" />
-                    <span>{p.averageRating ? p.averageRating.toFixed(1) : "0.0"}</span>
+                    <span>{p.averageRating ? Number(p.averageRating).toFixed(1) : "0.0"}</span>
                   </div>
 
                   {/* Favorite Button */}
@@ -218,12 +272,14 @@ export default function HorizontalProductList() {
                     {formatCurrency(p.price)} <span className="currency-unit">ETB</span>
                   </div>
 
-                  <p className="designer-description">
-                    {p.description || "Exquisite craftsmanship for home or gifting"}
+                  {/* Dynamic Description */}
+                  <p className="designer-description" title={productDescription}>
+                    {productDescription}
                   </p>
 
+                  {/* Dynamic User Reviews */}
                   <p className="designer-reviews">
-                    User reviews: {p.numReviews || 32}
+                    User reviews: {reviewCount}
                   </p>
 
                   <button
@@ -234,16 +290,32 @@ export default function HorizontalProductList() {
                   </button>
 
                   <div className="designer-footer">
+                    {/* Dynamic Reviewer Avatar Stack */}
                     <div className="avatar-stack">
-                      <img src="https://i.pravatar.cc/40?img=33" alt="user" />
-                      <img src="https://i.pravatar.cc/40?img=12" alt="user" />
-                      <img src="https://i.pravatar.cc/40?img=47" alt="user" />
-                      <span className="avatar-count">+30</span>
+                      {reviewCount > 0 ? (
+                        <>
+                          <img src={`https://i.pravatar.cc/40?u=${p._id}-1`} alt="reviewer" />
+                          {reviewCount > 1 && <img src={`https://i.pravatar.cc/40?u=${p._id}-2`} alt="reviewer" />}
+                          {reviewCount > 2 && <img src={`https://i.pravatar.cc/40?u=${p._id}-3`} alt="reviewer" />}
+                          {reviewCount > 3 && (
+                            <span className="avatar-count">+{reviewCount - 3}</span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="avatar-count flex-avatar">New</span>
+                      )}
                     </div>
 
+                    {/* Dynamic Seller Badge */}
                     <div className="seller-badge">
-                      <span className="seller-label">Trusted Seller:</span>
-                      <span className="seller-name">{p.sellerName || "Bizuayehw"}</span>
+                      {sellerAvatar ? (
+                        <img src={sellerAvatar} alt={sellerName} className="seller-avatar-img" />
+                      ) : (
+                        <FaUserCircle className="seller-avatar-icon" />
+                      )}
+                      <div className="seller-info-text">
+                        <span className="seller-name">{sellerName}</span>
+                      </div>
                       <FaCheckCircle className="verified-icon" />
                     </div>
                   </div>

@@ -391,3 +391,54 @@
 
 .cancel-btn { background: #f3f4f6; color: var(--text-primary); }
 .submit-btn { background: var(--accent-teal); color: #ffffff; }
+
+
+
+.seller-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.seller-avatar-img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #cbd5e1;
+}
+
+.seller-avatar-icon {
+  font-size: 18px;
+  color: #64748b;
+}
+
+.seller-info-text {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seller-name {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #1e293b;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.designer-description {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.4em;
+}
